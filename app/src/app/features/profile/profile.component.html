@@ -215,12 +215,12 @@
     } @else {
       <div class="space-y-6 max-w-4xl">
         @for (avaliacao of avaliacoes(); track avaliacao.id) {
-          <article class="bg-[#1a1a1a] rounded-xl p-6">
+          <article class="bg-[#1a1a1a] rounded-xl p-6 min-w-0">
             <div class="flex flex-wrap items-baseline justify-between gap-3">
               @if (avaliacao.media; as midia) {
                 <a
                   [routerLink]="['/search', tipoDeCard(midia), midia.tmdbId]"
-                  class="text-lg font-semibold text-white hover:text-red-500 transition duration-300">
+                  class="min-w-0 text-lg font-semibold text-white hover:text-red-500 transition duration-300">
                   {{ midia.title }}
                 </a>
               }

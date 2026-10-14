@@ -129,4 +129,6 @@ body {
   background-color: #111111;
   color: white;
   font-family: 'Sora Variable', sans-serif;
+  /* palavra ou link sem espaço quebra dentro da caixa em vez de vazar */
+  overflow-wrap: anywhere;
 }
