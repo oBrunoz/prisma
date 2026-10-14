@@ -21,6 +21,8 @@ import { LucideChevronLeft, LucideChevronRight } from '@lucide/angular';
 export class CarouselRowComponent implements AfterViewInit, OnDestroy {
   @Input() step = 0.8;
   @Input() loop = true;
+  // false dentro de caixas (modal, card): sem gutter da página para sangrar
+  @Input() sangria = true;
 
   @ViewChild('track') trackRef!: ElementRef<HTMLElement>;
 
