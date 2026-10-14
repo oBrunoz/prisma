@@ -1,0 +1,10 @@
+<p class="text-gray-300 whitespace-pre-line" [class.line-clamp-6]="longo && !aberto()">{{ texto }}</p>
+@if (longo) {
+  <button
+    type="button"
+    (click)="aberto.set(!aberto())"
+    [attr.aria-expanded]="aberto()"
+    class="mt-2 text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+    {{ aberto() ? 'Mostrar menos' : 'Ler mais' }}
+  </button>
+}

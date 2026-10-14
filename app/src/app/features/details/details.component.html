@@ -96,7 +96,7 @@
                       }
                     </div>
                     @if (avaliacao.content) {
-                      <p class="mt-3 text-gray-300 whitespace-pre-line">{{ avaliacao.content }}</p>
+                      <app-texto-recolhivel class="block mt-3" [texto]="avaliacao.content"></app-texto-recolhivel>
                     }
                     <p class="mt-3 text-xs text-gray-500">{{ avaliacao.createdAt | date: 'dd/MM/yyyy' }}</p>
                   </article>

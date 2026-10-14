@@ -21,6 +21,7 @@ import { SeasonListComponent } from '../../shared/components/season-list/season-
 import { MediaGalleryComponent } from '../../shared/components/media-gallery/media-gallery.component';
 import { ReviewCardComponent } from '../../shared/components/review-card/review-card.component';
 import { MediaActionsComponent } from '../../shared/components/media-actions/media-actions.component';
+import { TextoRecolhivelComponent } from '../../shared/components/texto-recolhivel/texto-recolhivel.component';
 import { AvaliacaoService } from '../../core/services/avaliacao.service';
 import { FichaSyncService } from '../../core/services/ficha-sync.service';
 import { SmoothScrollService } from '../../core/services/smooth-scroll.service';
@@ -73,6 +74,7 @@ const REVIEWS_VAZIAS: TmdbListResponse<Review> = {
     MediaGalleryComponent,
     ReviewCardComponent,
     MediaActionsComponent,
+    TextoRecolhivelComponent,
   ],
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css'],

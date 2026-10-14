@@ -13,6 +13,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { WatchlistService } from '../../core/services/watchlist.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { UserAvatarComponent } from '../../shared/components/user-avatar/user-avatar.component';
+import { TextoRecolhivelComponent } from '../../shared/components/texto-recolhivel/texto-recolhivel.component';
 import { StripesBannerComponent } from '../../shared/components/stripes-banner/stripes-banner.component';
 
 @Component({
@@ -24,6 +25,7 @@ import { StripesBannerComponent } from '../../shared/components/stripes-banner/s
     FormsModule,
     MovieCardComponent,
     UserAvatarComponent,
+    TextoRecolhivelComponent,
     StripesBannerComponent,
     LucideX,
     LucideTrash2,
