@@ -69,6 +69,7 @@
         <input
           #searchInput
           type="text"
+          maxlength="100"
           [value]="searchQuery()"
           (input)="onSearchInput($any($event.target).value)"
           (focus)="onSearchFocus()"

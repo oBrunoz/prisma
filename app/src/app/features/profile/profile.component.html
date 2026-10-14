@@ -109,6 +109,7 @@
             (ngModelChange)="formEmail.set($event)"
             name="email"
             autocomplete="email"
+            maxlength="180"
             placeholder="deixe em branco para manter o atual"
             aria-describedby="ajuda-email"
             class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -128,6 +129,7 @@
               (ngModelChange)="formSenha.set($event)"
               name="senhaAtual"
               autocomplete="current-password"
+              maxlength="128"
               class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
