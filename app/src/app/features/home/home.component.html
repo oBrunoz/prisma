@@ -1,5 +1,6 @@
 <div class="app">
-  <div class="relative group/hero">
+  <!-- no toque, deslizar troca o destaque -->
+  <div class="relative group/hero" (touchstart)="aoTocarDestaque($event)" (touchend)="aoSoltarDestaque($event)">
     <app-hero-section
       label="Em destaque"
       [title]="currentSpotlight?.movie?.title ?? ''"
@@ -27,7 +28,7 @@
       <button
         type="button"
         (click)="prevSlide()"
-        class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-white backdrop-blur-sm transition duration-300 hover:bg-black/70 hover:border-white/30 opacity-0 group-hover/hero:opacity-100 focus-visible:opacity-100"
+        class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 hidden mouse:flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-white backdrop-blur-sm transition duration-300 hover:bg-black/70 hover:border-white/30 opacity-0 group-hover/hero:opacity-100 focus-visible:opacity-100"
         aria-label="Destaque anterior">
         <svg lucideChevronLeft [size]="24" strokeWidth="2"></svg>
       </button>
@@ -35,22 +36,29 @@
       <button
         type="button"
         (click)="nextSlide()"
-        class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-white backdrop-blur-sm transition duration-300 hover:bg-black/70 hover:border-white/30 opacity-0 group-hover/hero:opacity-100 focus-visible:opacity-100"
+        class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 hidden mouse:flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-white backdrop-blur-sm transition duration-300 hover:bg-black/70 hover:border-white/30 opacity-0 group-hover/hero:opacity-100 focus-visible:opacity-100"
         aria-label="Próximo destaque">
         <svg lucideChevronRight [size]="24" strokeWidth="2"></svg>
       </button>
     }
 
     @if(this.shouldDisplayCarouselDots()) {
-      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+      <!-- o ponto é pequeno, mas a área de toque do botão tem 24px de altura -->
+      <div class="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex z-20">
         @for (item of spotlights(); track $index) {
           <button
+            type="button"
             (click)="goToSlide($index)"
-            [class.w-5]="carouselCurrentIndex() === $index"
-            [class.w-2]="carouselCurrentIndex() !== $index"
-            class="h-2 rounded-full bg-white transition-all duration-300"
-            [class.opacity-100]="carouselCurrentIndex() === $index"
-            [class.opacity-40]="carouselCurrentIndex() !== $index">
+            [attr.aria-label]="'Destaque ' + ($index + 1)"
+            [attr.aria-current]="carouselCurrentIndex() === $index"
+            class="py-2 px-1.5 cursor-pointer">
+            <span
+              class="block h-2 rounded-full bg-white transition-all duration-300"
+              [class.w-5]="carouselCurrentIndex() === $index"
+              [class.w-2]="carouselCurrentIndex() !== $index"
+              [class.opacity-100]="carouselCurrentIndex() === $index"
+              [class.opacity-40]="carouselCurrentIndex() !== $index">
+            </span>
           </button>
         }
       </div>
@@ -58,22 +66,22 @@
   </div>
 
   <!-- Content Below Hero -->
-  <main id="content" class="pt-16">
+  <main id="content" class="pt-12 sm:pt-16">
 
     <!-- Em alta esta semana -->
-    <section class="px-20 mb-16">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-white">Em alta esta semana</h2>
-        <a routerLink="/movies" class="text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group">
+    <section class="px-gutter mb-12 sm:mb-16">
+      <div class="flex justify-between items-baseline gap-4 mb-5 sm:mb-8">
+        <h2 class="titulo-secao min-w-0">Em alta esta semana</h2>
+        <a routerLink="/movies" class="shrink-0 text-sm sm:text-base text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group whitespace-nowrap">
           Ver todos <svg lucideArrowRight [size]="16" strokeWidth="2" class="group-hover:text-red-500 transition duration-300"></svg>
         </a>
       </div>
 
       <div>
         @if (trendingMovies().length === 0) {
-          <div class="flex gap-4 overflow-hidden">
+          <div class="flex gap-4 overflow-hidden trilho-sangria">
             @for (item of skeletonItems; track $index) {
-              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg flex-none w-60">
+              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg card-trilho">
                 <div class="aspect-[2/3] bg-[#242424] animate-pulse"></div>
                 <div class="p-3">
                   <div class="h-4 bg-[#242424] rounded animate-pulse mb-2"></div>
@@ -85,7 +93,7 @@
         } @else {
           <app-carousel-row>
             @for (movie of trendingMovies(); track movie.id) {
-              <div class="flex-none w-60 snap-start">
+              <div class="card-trilho">
                 <app-movie-card
                   [id]="movie.id"
                   [title]="movie.title"
@@ -114,19 +122,19 @@
     </app-content-shelf>
 
     <!-- Filmes populares -->
-    <section class="px-20 mb-20">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-white">Filmes populares</h2>
-        <a routerLink="/movies" class="text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group">
+    <section class="px-gutter mb-14 sm:mb-20">
+      <div class="flex justify-between items-baseline gap-4 mb-5 sm:mb-8">
+        <h2 class="titulo-secao min-w-0">Filmes populares</h2>
+        <a routerLink="/movies" class="shrink-0 text-sm sm:text-base text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group whitespace-nowrap">
           Ver todos <svg lucideArrowRight [size]="16" strokeWidth="2" class="group-hover:text-red-500 transition duration-300"></svg>
         </a>
       </div>
 
       <div>
         @if (popularMovies().length === 0) {
-          <div class="flex gap-4 overflow-hidden">
+          <div class="flex gap-4 overflow-hidden trilho-sangria">
             @for (item of skeletonItems; track $index) {
-              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg flex-none w-60">
+              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg card-trilho">
                 <div class="aspect-[2/3] bg-[#242424] animate-pulse"></div>
                 <div class="p-3">
                   <div class="h-4 bg-[#242424] rounded animate-pulse mb-2"></div>
@@ -138,7 +146,7 @@
         } @else {
           <app-carousel-row>
             @for (movie of popularMovies(); track movie.id) {
-              <div class="flex-none w-60 snap-start">
+              <div class="card-trilho">
                 <app-movie-card
                   [id]="movie.id"
                   [title]="movie.title"
@@ -167,39 +175,39 @@
     </app-content-shelf>
 
     <!-- Explorar por gênero -->
-    <section class="stripes-accent px-20 py-20 border-y border-white/5 bg-[#0d0d0d]">
-      <h2 class="text-4xl md:text-5xl font-bold text-white">O que você quer descobrir hoje?</h2>
+    <section class="stripes-accent px-gutter py-14 sm:py-20 border-y border-white/5 bg-[#0d0d0d]">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white">O que você quer descobrir hoje?</h2>
       <p class="text-gray-400 mt-4">Escolha um gênero e comece por aí.</p>
 
-      <div class="flex flex-wrap items-baseline gap-x-3 gap-y-2 mt-10">
+      <div class="flex flex-wrap items-baseline gap-x-3 gap-y-2 mt-8 sm:mt-10">
         @for (genre of exploreGenres; track genre.id; let last = $last) {
           <a
             routerLink="/movies"
             [queryParams]="{ genero: genre.id }"
-            class="text-2xl md:text-3xl font-bold text-gray-500 hover:text-white transition duration-300">
+            class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-500 hover:text-white transition duration-300">
             {{ genre.name }}
           </a>
           @if (!last) {
-            <span class="text-2xl md:text-3xl font-bold text-gray-700 select-none">&middot;</span>
+            <span class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 select-none">&middot;</span>
           }
         }
       </div>
     </section>
 
     <!-- Séries em alta -->
-    <section class="px-20 py-20">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-white">Séries em alta</h2>
-        <a routerLink="/series" class="text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group">
+    <section class="px-gutter py-14 sm:py-20">
+      <div class="flex justify-between items-baseline gap-4 mb-5 sm:mb-8">
+        <h2 class="titulo-secao min-w-0">Séries em alta</h2>
+        <a routerLink="/series" class="shrink-0 text-sm sm:text-base text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group whitespace-nowrap">
           Ver todas <svg lucideArrowRight [size]="16" strokeWidth="2" class="group-hover:text-red-500 transition duration-300"></svg>
         </a>
       </div>
 
       <div>
         @if (trendingSeries().length === 0) {
-          <div class="flex gap-4 overflow-hidden">
+          <div class="flex gap-4 overflow-hidden trilho-sangria">
             @for (item of skeletonItems; track $index) {
-              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg flex-none w-60">
+              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg card-trilho">
                 <div class="aspect-[2/3] bg-[#242424] animate-pulse"></div>
                 <div class="p-3">
                   <div class="h-4 bg-[#242424] rounded animate-pulse mb-2"></div>
@@ -211,7 +219,7 @@
         } @else {
           <app-carousel-row>
             @for (serie of trendingSeries(); track serie.id) {
-              <div class="flex-none w-60 snap-start">
+              <div class="card-trilho">
                 <app-movie-card
                   [id]="serie.id"
                   [title]="serie.name"
@@ -240,7 +248,7 @@
     </app-content-shelf>
 
     <!-- Convite para cadastro -->
-    <section class="relative min-h-[680px] flex items-center overflow-hidden bg-[#0d0d0d]">
+    <section class="relative min-h-[520px] sm:min-h-[680px] py-20 flex items-center overflow-hidden bg-[#0d0d0d]">
       <img
         src="images/bg-fight-club.png"
         alt="Clube da Luta"
@@ -251,16 +259,16 @@
         style="background: linear-gradient(to bottom, #111111, rgba(17,17,17,0.35) 30%, rgba(17,17,17,0.35) 70%, #111111);">
       </div>
 
-      <div class="px-20 relative z-10 w-full">
+      <div class="px-gutter relative z-10 w-full">
         <div class="max-w-3xl">
-          <h2 class="text-5xl md:text-6xl font-bold text-white leading-[1.1]">
-            Todo filme que você assiste<br>conta uma história.
+          <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.1]">
+            Todo filme que você assiste<br class="hidden sm:block"> conta uma história.
           </h2>
-          <p class="text-2xl text-gray-300 mt-8 font-light">
+          <p class="text-lg sm:text-2xl text-gray-300 mt-6 sm:mt-8 font-light">
             Crie sua conta para guardar os filmes que marcaram você.
           </p>
 
-          <div class="flex space-x-4 flex-wrap gap-y-3 mt-10">
+          <div class="flex flex-wrap gap-3 sm:gap-4 mt-8 sm:mt-10">
             <a routerLink="/register"
               class="px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 flex items-center">
               <svg lucideUserPlus class="mr-2" [size]="16" strokeWidth="2"></svg> Criar conta agora
@@ -275,13 +283,13 @@
     </section>
 
     <!-- Em destaque -->
-    <section class="px-20 py-20">
-      <h2 class="text-3xl font-bold text-white mb-8">Em destaque</h2>
+    <section class="px-gutter py-14 sm:py-20">
+      <h2 class="titulo-secao mb-5 sm:mb-8">Em destaque</h2>
 
       @if (highlightPair().length < 2) {
         <div class="grid md:grid-cols-2 gap-6">
           @for (item of [0, 1]; track $index) {
-            <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg h-[440px] animate-pulse">
+            <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg h-[440px] sm:h-[550px] animate-pulse">
               <div class="h-full w-full bg-[#242424]"></div>
             </div>
           }
@@ -289,7 +297,7 @@
       } @else {
         <div class="grid md:grid-cols-2 gap-6">
           @for (item of highlightPair(); track item.movie.id) {
-            <div class="relative h-[550px] rounded-xl overflow-hidden shadow-lg bg-[#1a1a1a] group">
+            <div class="relative h-[440px] sm:h-[550px] rounded-xl overflow-hidden shadow-lg bg-[#1a1a1a] group">
               <img
                 [src]="item.backgroundUrl"
                 [alt]="item.movie.title"
@@ -297,11 +305,11 @@
                 loading="lazy" />
               <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/70 to-black/30"></div>
 
-              <div class="relative z-10 h-full flex flex-col justify-end p-6">
+              <div class="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6">
                 @if (item.logoUrl) {
-                  <img [src]="item.logoUrl" [alt]="item.movie.title" class="max-h-20 max-w-[240px] object-contain object-left drop-shadow-lg" />
+                  <img [src]="item.logoUrl" [alt]="item.movie.title" class="max-h-16 sm:max-h-20 max-w-[70%] sm:max-w-[240px] object-contain object-left drop-shadow-lg" />
                 } @else {
-                  <h3 class="text-3xl font-bold text-white line-clamp-2">{{ item.movie.title }}</h3>
+                  <h3 class="text-2xl sm:text-3xl font-bold text-white line-clamp-2">{{ item.movie.title }}</h3>
                 }
 
                 <div class="flex items-center flex-wrap gap-x-4 text-white text-sm mt-4 [&>*+*]:before:content-['•'] [&>*+*]:before:pr-4 [&>*+*]:before:text-gray-400">
@@ -341,7 +349,7 @@
     </section>
 
     <!-- Uma última recomendação -->
-    <section class="relative min-h-[85vh] flex items-end overflow-hidden bg-[#0d0d0d]">
+    <section class="relative min-h-[70svh] sm:min-h-[85vh] flex items-end overflow-hidden bg-[#0d0d0d]">
       @if (lastRecommendation(); as pick) {
         <img
           [src]="pick.backgroundUrl"
@@ -352,17 +360,17 @@
           style="background: linear-gradient(to bottom, #111111 0%, transparent 25%, rgba(17,17,17,0.85) 78%, #111111 100%);">
         </div>
 
-        <div class="px-20 pb-24 relative z-10 w-full text-center">
+        <div class="px-gutter pb-16 sm:pb-24 relative z-10 w-full text-center">
           <p class="text-gray-400 text-sm tracking-[0.3em] uppercase">Uma última recomendação</p>
 
           @if (pick.logoUrl) {
-            <img [src]="pick.logoUrl" [alt]="pick.movie.title" class="mt-8 max-h-32 max-w-md object-contain mx-auto drop-shadow-lg" />
+            <img [src]="pick.logoUrl" [alt]="pick.movie.title" class="mt-6 sm:mt-8 max-h-20 sm:max-h-32 max-w-[80%] sm:max-w-md object-contain mx-auto drop-shadow-lg" />
           } @else {
-            <h2 class="text-5xl md:text-6xl font-bold text-white mt-8 line-clamp-2">{{ pick.movie.title }}</h2>
+            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mt-6 sm:mt-8 line-clamp-2">{{ pick.movie.title }}</h2>
           }
 
           @if (pick.details.tagline) {
-            <p class="text-2xl md:text-3xl text-gray-200 italic font-light mt-8">"{{ pick.details.tagline }}"</p>
+            <p class="text-xl sm:text-2xl md:text-3xl text-gray-200 italic font-light mt-6 sm:mt-8">"{{ pick.details.tagline }}"</p>
           }
 
           <div class="flex items-center justify-center flex-wrap gap-x-4 text-white text-sm mt-6 [&>*+*]:before:content-['•'] [&>*+*]:before:pr-4 [&>*+*]:before:text-gray-400">
@@ -384,7 +392,7 @@
           </a>
         </div>
       } @else {
-        <div class="w-full h-[85vh] bg-[#161616] animate-pulse"></div>
+        <div class="w-full h-[70svh] sm:h-[85vh] bg-[#161616] animate-pulse"></div>
       }
     </section>
   </main>

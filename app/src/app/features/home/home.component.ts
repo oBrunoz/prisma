@@ -210,6 +210,26 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.goToSlide((this.carouselCurrentIndex() + 1) % total);
   }
 
+  private toqueInicio: { x: number; y: number } | null = null;
+
+  aoTocarDestaque(evento: TouchEvent): void {
+    const toque = evento.changedTouches[0];
+    this.toqueInicio = toque ? { x: toque.clientX, y: toque.clientY } : null;
+  }
+
+  // só conta como troca o gesto horizontal: rolar a página na vertical não mexe no destaque
+  aoSoltarDestaque(evento: TouchEvent): void {
+    const inicio = this.toqueInicio;
+    const toque = evento.changedTouches[0];
+    this.toqueInicio = null;
+    if (!inicio || !toque || !this.shouldDisplayCarouselDots()) return;
+    const dx = toque.clientX - inicio.x;
+    const dy = toque.clientY - inicio.y;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    if (dx < 0) this.nextSlide();
+    else this.prevSlide();
+  }
+
   prevSlide(): void {
     const total = this.spotlights().length;
     if (!total) return;

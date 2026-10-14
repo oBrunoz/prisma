@@ -1,16 +1,32 @@
+.hero {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* o trailer cobre o hero inteiro, qualquer que seja a altura dele */
+.trailer-box {
+  container-type: size;
+}
+
 .trailer-iframe {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100vw;
-    height: 56.25vw; /* 16:9 */
-    min-height: 100vh;
-    min-width: 177.77vh; /* 16:9 invertido */
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    border: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100cqw, 177.78cqh); /* 16:9 */
+  height: max(56.25cqw, 100cqh);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border: none;
+}
+
+/* celular em pé: cobrir mostraria um terço do quadro; o trailer aparece inteiro */
+@media (orientation: portrait) and (max-width: 767.98px) {
+  .trailer-iframe {
+    width: 100cqw;
+    height: 56.25cqw;
   }
-  
+}
+
 .hero-edge {
   box-shadow: 0 20px 32px 0 rgba(0, 0, 0, 0.45);
 }
