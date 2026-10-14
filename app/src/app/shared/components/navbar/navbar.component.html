@@ -4,7 +4,7 @@
   [ngClass]="isScrolled() ? 'bg-[#111111]/90 backdrop-blur-md border-b border-white/5' : ''">
 
   <div
-    class="progress-track absolute bottom-0 left-0 right-0 h-[3px] overflow-hidden pointer-events-none transition-opacity duration-300"
+    class="progress-track absolute bottom-0 left-0 right-0 z-[60] h-[3px] overflow-hidden pointer-events-none transition-opacity duration-300"
     [class.progress-track--solid]="isScrolled()"
     [class.opacity-0]="!loading.visible()"
     [class.opacity-100]="loading.visible()">
@@ -56,12 +56,23 @@
   </a>
 
   <!-- Busca + conta -->
-  <div class="flex items-center justify-end gap-2 sm:gap-3 min-w-0 z-50">
+  <div class="flex items-center justify-end gap-1 sm:gap-3 min-w-0 z-50">
+
+    <!-- abaixo de xl a busca fica atrás do ícone e abre como uma barra sobre a navbar -->
+    <button
+      type="button"
+      (click)="abrirBusca()"
+      [attr.aria-expanded]="buscaAberta()"
+      aria-label="Buscar"
+      class="xl:hidden shrink-0 w-10 h-10 flex items-center justify-center rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition duration-300 cursor-pointer">
+      <svg lucideSearch [size]="20" strokeWidth="2"></svg>
+    </button>
 
     <!-- Search -->
-    <div class="relative">
+    <div class="busca" [class.aberta]="buscaAberta()">
+    <div class="relative flex-1 min-w-0 max-w-2xl xl:max-w-none">
       <div
-        class="flex items-center gap-2 h-10 w-36 sm:w-44 md:w-56 lg:w-80 pl-3 sm:pl-4 pr-2 rounded-full border transition-colors duration-300"
+        class="flex items-center gap-2 h-10 w-full xl:w-64 2xl:w-80 pl-4 pr-2 rounded-full border transition-colors duration-300"
         [ngClass]="showResults() ? 'bg-[#1a1a1a] border-white/20' : 'bg-white/5 border-white/10 hover:border-white/20'">
 
         <svg lucideSearch [size]="16" strokeWidth="2" class="shrink-0 text-gray-400"></svg>
@@ -77,7 +88,7 @@
           (keydown)="onSearchKeydown($event)"
           placeholder="Buscar"
           aria-label="Buscar filmes, séries ou pessoas"
-          class="min-w-0 flex-1 h-full bg-transparent text-sm text-white placeholder-gray-500 outline-none"
+          class="min-w-0 flex-1 h-full bg-transparent text-base sm:text-sm text-white placeholder-gray-500 outline-none"
         />
 
         @if (searchQuery()) {
@@ -95,7 +106,7 @@
       <!-- Search Results Dropdown -->
       <div
         data-lenis-prevent
-        class="dropdown-panel absolute top-12 right-0 max-h-[420px] w-[min(20rem,calc(100vw-1.5rem))] overflow-y-auto z-40 bg-[#1a1a1a] shadow-2xl rounded-2xl text-white border border-white/10"
+        class="dropdown-panel absolute top-12 inset-x-0 xl:left-auto xl:w-80 max-h-[min(420px,calc(100svh-5rem))] overflow-y-auto z-40 bg-[#1a1a1a] shadow-2xl rounded-2xl text-white border border-white/10"
         [class.is-open]="showResults()">
 
         @if (isSearching()) {
@@ -163,6 +174,15 @@
       </div>
     </div>
 
+      <button
+        type="button"
+        (mousedown)="$event.preventDefault()"
+        (click)="fecharBusca()"
+        class="xl:hidden shrink-0 px-1 py-2 text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+        Cancelar
+      </button>
+    </div>
+
     <!-- Conta -->
     @if (auth.autenticado()) {
       <div
@@ -226,85 +246,87 @@
       </div>
     } @else {
       <a routerLink="/login"
-        class="hidden md:flex px-5 py-2 rounded-full text-sm font-medium text-gray-400 hover:text-white transition duration-300">
+        class="hidden md:flex px-3 lg:px-5 py-2 rounded-full text-sm font-medium text-gray-400 hover:text-white transition duration-300 whitespace-nowrap">
         Entrar
       </a>
       <a routerLink="/register"
-        class="hidden md:flex px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-300 flex items-center whitespace-nowrap">
+        class="hidden md:flex px-4 lg:px-6 py-2.5 rounded-full text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-300 items-center whitespace-nowrap">
         Cadastrar
       </a>
     }
   </div>
-  <!-- Sidebar (abaixo de md) -->
-  <div
-    class="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40 transition-opacity duration-300"
-    [class.opacity-0]="!sidebarOpen()"
-    [class.pointer-events-none]="!sidebarOpen()"
-    [class.opacity-100]="sidebarOpen()"
-    (click)="closeSidebar()">
+</nav>
+
+<!-- Sidebar (abaixo de md): fora do <nav>, cujo backdrop-blur prenderia os fixed à altura dele -->
+<div
+  class="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[55] transition-opacity duration-300"
+  [class.opacity-0]="!sidebarOpen()"
+  [class.pointer-events-none]="!sidebarOpen()"
+  [class.opacity-100]="sidebarOpen()"
+  (click)="closeSidebar()">
+</div>
+
+<aside
+  class="md:hidden fixed top-0 left-0 h-full w-72 max-w-[80vw] z-[56] flex flex-col bg-[#0d0d0d]/95 backdrop-blur-xl border-r border-white/5 transition-transform duration-300 ease-in-out"
+  [class.-translate-x-full]="!sidebarOpen()"
+  [class.translate-x-0]="sidebarOpen()">
+
+  <div class="flex items-center justify-between px-6 h-16">
+    <app-logo class="h-8"></app-logo>
+    <button
+      (click)="closeSidebar()"
+      class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white transition duration-300"
+      aria-label="Fechar menu">
+      <svg lucideX [size]="16" strokeWidth="2"></svg>
+    </button>
   </div>
 
-  <aside
-    class="md:hidden fixed top-0 left-0 h-full w-72 max-w-[80vw] z-50 flex flex-col bg-[#0d0d0d]/95 backdrop-blur-xl border-r border-white/5 transition-transform duration-300 ease-in-out"
-    [class.-translate-x-full]="!sidebarOpen()"
-    [class.translate-x-0]="sidebarOpen()">
+  <nav data-lenis-prevent class="flex-1 px-6 pt-4 overflow-y-auto space-y-1">
+    <a routerLink="/" (click)="closeSidebar(); scrollToTop()"
+      routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item flex items-center px-4 py-3 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
+      Home
+    </a>
+    <a routerLink="/movies" (click)="closeSidebar()" routerLinkActive="is-active"
+      class="nav-item flex items-center px-4 py-3 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
+      Filmes
+    </a>
+    <a routerLink="/series" (click)="closeSidebar()" routerLinkActive="is-active"
+      class="nav-item flex items-center px-4 py-3 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
+      Séries
+    </a>
+  </nav>
 
-    <div class="flex items-center justify-between px-6 h-16">
-      <app-logo class="h-8"></app-logo>
-      <button
-        (click)="closeSidebar()"
-        class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white transition duration-300"
-        aria-label="Fechar menu">
-        <svg lucideX [size]="16" strokeWidth="2"></svg>
-      </button>
-    </div>
-
-    <nav data-lenis-prevent class="flex-1 px-6 pt-4 overflow-y-auto space-y-1">
-      <a routerLink="/" (click)="closeSidebar(); scrollToTop()"
-        routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }"
-        class="nav-item flex items-center px-4 py-3 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
-        Home
-      </a>
-      <a routerLink="/movies" (click)="closeSidebar()" routerLinkActive="is-active"
-        class="nav-item flex items-center px-4 py-3 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
-        Filmes
-      </a>
-      <a routerLink="/series" (click)="closeSidebar()" routerLinkActive="is-active"
-        class="nav-item flex items-center px-4 py-3 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
-        Séries
-      </a>
-    </nav>
-
-    <div class="px-6 pb-8 pt-6 space-y-3">
-      @if (auth.autenticado()) {
-        <a routerLink="/perfil" (click)="closeSidebar()"
-          class="flex items-center gap-3 px-2 pb-3 transition duration-300 group/conta">
-          <app-user-avatar
-            [nome]="auth.usuario()?.name ?? ''"
-            [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
-            tamanho="sm">
-          </app-user-avatar>
-          <span class="min-w-0">
-            <span class="block text-sm font-medium text-white truncate group-hover/conta:text-red-500 transition duration-300">
-              {{ auth.usuario()?.name }}
-            </span>
-            <span class="block text-xs text-gray-400 truncate">/{{ auth.usuario()?.username }}</span>
+  <div class="px-6 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))] space-y-3">
+    @if (auth.autenticado()) {
+      <a routerLink="/perfil" (click)="closeSidebar()"
+        class="flex items-center gap-3 px-2 pb-3 transition duration-300 group/conta">
+        <app-user-avatar
+          [nome]="auth.usuario()?.name ?? ''"
+          [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
+          tamanho="sm">
+        </app-user-avatar>
+        <span class="min-w-0">
+          <span class="block text-sm font-medium text-white truncate group-hover/conta:text-red-500 transition duration-300">
+            {{ auth.usuario()?.name }}
           </span>
-        </a>
-        <button type="button" (click)="sair()"
-          class="w-full px-6 py-3 rounded-full transition duration-300 flex items-center justify-center text-sm font-medium text-white bg-white/10 hover:bg-white/20 cursor-pointer">
-          Sair
-        </button>
-      } @else {
-        <a routerLink="/register" (click)="closeSidebar()"
-          class="w-full px-6 py-3 rounded-full transition duration-300 flex items-center justify-center text-sm font-medium text-white bg-red-600 hover:bg-red-700">
-          Cadastrar
-        </a>
-        <a routerLink="/login" (click)="closeSidebar()"
-          class="w-full px-6 py-3 rounded-full transition duration-300 flex items-center justify-center text-sm font-medium text-white bg-white/10 hover:bg-white/20">
-          Entrar
-        </a>
-      }
-    </div>
-  </aside>
-</nav>
+          <span class="block text-xs text-gray-400 truncate">/{{ auth.usuario()?.username }}</span>
+        </span>
+      </a>
+      <button type="button" (click)="sair()"
+        class="w-full px-6 py-3 rounded-full transition duration-300 flex items-center justify-center text-sm font-medium text-white bg-white/10 hover:bg-white/20 cursor-pointer">
+        Sair
+      </button>
+    } @else {
+      <a routerLink="/register" (click)="closeSidebar()"
+        class="w-full px-6 py-3 rounded-full transition duration-300 flex items-center justify-center text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+        Cadastrar
+      </a>
+      <a routerLink="/login" (click)="closeSidebar()"
+        class="w-full px-6 py-3 rounded-full transition duration-300 flex items-center justify-center text-sm font-medium text-white bg-white/10 hover:bg-white/20">
+        Entrar
+      </a>
+    }
+  </div>
+</aside>
+

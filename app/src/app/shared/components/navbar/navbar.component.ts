@@ -8,6 +8,7 @@ import {
   ViewChildren,
   ElementRef,
   QueryList,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -34,6 +35,8 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 export class NavbarComponent implements OnInit, OnDestroy {
   sidebarOpen = signal(false);
   menuContaAberto = signal(false);
+  // abaixo de xl a busca fica recolhida no ícone
+  buscaAberta = signal(false);
 
   isScrolled = signal(false);
   searchQuery = signal('');
@@ -52,7 +55,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private movieService: MovieService,
     private router: Router,
     public loading: LoadingService,
-    public auth: AuthService
+    public auth: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -116,6 +120,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
       .subscribe(() => void this.router.navigateByUrl('/'));
   }
 
+  abrirBusca(): void {
+    this.buscaAberta.set(true);
+    // renderiza já e foca no mesmo toque: fora do gesto o iOS não abre o teclado
+    this.cdr.detectChanges();
+    this.searchInput?.nativeElement.focus();
+  }
+
+  fecharBusca(): void {
+    this.buscaAberta.set(false);
+    this.searchQuery.set('');
+    this.searchSubject.next('');
+    this.searchResults.set([]);
+    this.showResults.set(false);
+    this.activeIndex.set(-1);
+  }
+
   onSearchInput(value: string): void {
     this.searchQuery.set(value);
     this.searchSubject.next(value);
@@ -177,7 +197,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   onSearchBlur(): void {
-    setTimeout(() => this.showResults.set(false), 150);
+    setTimeout(() => {
+      this.showResults.set(false);
+      if (!this.searchQuery().trim()) this.buscaAberta.set(false);
+    }, 150);
   }
 
   navigateTo(result: any): void {
@@ -190,6 +213,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/search', type, result.id]);
     this.showResults.set(false);
     this.searchQuery.set('');
+    this.buscaAberta.set(false);
   }
 
   getResultTitle(result: any): string {
@@ -226,6 +250,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   onEscape(): void {
     this.sidebarOpen.set(false);
     this.menuContaAberto.set(false);
+    this.buscaAberta.set(false);
     this.showResults.set(false);
     this.activeIndex.set(-1);
     this.searchInput?.nativeElement.blur();
@@ -241,6 +266,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
 
     event.preventDefault();
-    this.searchInput?.nativeElement.focus();
+    this.abrirBusca();
   }
 }
