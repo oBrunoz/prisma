@@ -4,7 +4,7 @@
       <button
         type="button"
         (click)="toggle(season)"
-        class="w-full flex items-center gap-5 p-4 text-left transition duration-300 hover:bg-white/5">
+        class="w-full flex items-center gap-4 sm:gap-5 p-3 sm:p-4 text-left transition duration-300 hover:bg-white/5">
         @if (posterUrl(season)) {
           <img
             [src]="posterUrl(season)"
@@ -39,7 +39,7 @@
       </button>
 
       @if (openSeason() === season.season_number) {
-        <div class="border-t border-white/5 p-4">
+        <div class="border-t border-white/5 p-2 sm:p-4">
           @if (loadingSeason() === season.season_number) {
             <div class="space-y-3">
               @for (skeleton of [1, 2, 3]; track skeleton) {

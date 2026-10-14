@@ -1,6 +1,6 @@
 <!-- Fundo: fecha ao clicar; z acima da navbar (z-50) -->
 <div
-  class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+  class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 md:p-8"
   (click)="close()">
 
   <div
@@ -8,7 +8,7 @@
     role="dialog"
     aria-modal="true"
     [attr.aria-label]="person()?.name ?? 'Detalhes da pessoa'"
-    class="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl bg-[#1a1a1a] border border-white/10 shadow-2xl"
+    class="relative w-full max-w-4xl max-h-[90svh] sm:max-h-[85vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-[#1a1a1a] border border-white/10 border-b-0 sm:border-b shadow-2xl pb-[env(safe-area-inset-bottom)]"
     (click)="$event.stopPropagation()">
 
     <button
@@ -20,9 +20,9 @@
     </button>
 
     @if (isLoading()) {
-      <div class="p-8">
-        <div class="flex flex-col sm:flex-row gap-6">
-          <div class="w-40 shrink-0 aspect-[2/3] rounded-xl skeleton bg-[#242424]"></div>
+      <div class="p-5 sm:p-8">
+        <div class="flex flex-col sm:flex-row gap-5 sm:gap-6">
+          <div class="w-28 sm:w-40 shrink-0 aspect-[2/3] rounded-xl skeleton bg-[#242424]"></div>
           <div class="flex-1 space-y-3 pt-2">
             <div class="h-7 w-2/5 rounded skeleton bg-[#242424]"></div>
             <div class="h-4 w-1/3 rounded skeleton bg-[#242424]"></div>
@@ -37,21 +37,21 @@
         <p class="text-gray-400">Não foi possível carregar os dados desta pessoa.</p>
       </div>
     } @else {
-      <div class="p-8">
-        <div class="flex flex-col sm:flex-row gap-6">
+      <div class="p-5 sm:p-8">
+        <div class="flex flex-col sm:flex-row gap-5 sm:gap-6">
           @if (profileUrl) {
             <img
               [src]="profileUrl"
               [alt]="person()!.name"
-              class="w-40 shrink-0 aspect-[2/3] object-cover rounded-xl bg-[#242424]" />
+              class="w-28 sm:w-40 shrink-0 aspect-[2/3] object-cover rounded-xl bg-[#242424]" />
           } @else {
-            <div class="w-40 shrink-0 aspect-[2/3] rounded-xl overflow-hidden">
+            <div class="w-28 sm:w-40 shrink-0 aspect-[2/3] rounded-xl overflow-hidden">
               <app-media-fallback kind="person" [label]="person()!.name"></app-media-fallback>
             </div>
           }
 
           <div class="flex-1 min-w-0">
-            <h2 class="text-3xl font-bold text-white pr-12 line-clamp-2">{{ person()!.name }}</h2>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white pr-12 line-clamp-2">{{ person()!.name }}</h2>
 
             @if (role) {
               <p class="text-gray-400 mt-1">{{ role }}</p>
@@ -110,9 +110,9 @@
           <section class="mt-10">
             <h3 class="text-xl font-bold text-white mb-5">Conhecido por</h3>
 
-            <app-carousel-row>
+            <app-carousel-row [sangria]="false">
               @for (credit of knownFor(); track credit.media_type + credit.id) {
-                <div class="flex-none w-40 snap-start" (click)="close()">
+                <div class="flex-none w-32 sm:w-40 snap-start" (click)="close()">
                   <app-movie-card
                     [id]="credit.id"
                     [title]="getCreditTitle(credit)"

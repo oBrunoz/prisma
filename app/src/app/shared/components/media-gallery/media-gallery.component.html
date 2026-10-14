@@ -1,7 +1,7 @@
 @if (hasMedia()) {
   <div>
     <!-- Abas -->
-    <div class="flex flex-wrap gap-2 mb-8">
+    <div class="flex flex-wrap gap-2 mb-6 sm:mb-8">
       @for (tab of tabs(); track tab.id) {
         <button
           type="button"
@@ -21,7 +21,7 @@
       [attr.data-lenis-prevent]="isScrollable() ? '' : null">
 
       @if (resolvedTab() === 'videos') {
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           @for (item of items(); track item.id) {
             <button
               type="button"
@@ -51,9 +51,9 @@
       } @else {
         <div
           [ngClass]="resolvedTab() === 'posters'
-            ? 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6'
+            ? 'grid-cols-3 sm:grid-cols-4 lg:grid-cols-6'
             : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'"
-          class="grid gap-4">
+          class="grid gap-3 sm:gap-4">
           @for (item of items(); track item.id) {
             <button
               type="button"
@@ -85,7 +85,7 @@
 
       <!-- Barra superior -->
       <div
-        class="flex items-center justify-between gap-4 px-6 py-4 shrink-0"
+        class="barra-lightbox flex items-center justify-between gap-4 px-gutter sm:px-6 py-3 sm:py-4 pt-[max(0.75rem,env(safe-area-inset-top))] shrink-0"
         (click)="$event.stopPropagation()">
         <div class="min-w-0">
           @if (item.title) {
@@ -126,7 +126,7 @@
       </div>
 
       <!-- Palco -->
-      <div class="flex-1 min-h-0 flex items-center justify-center px-4 sm:px-20 relative">
+      <div class="flex-1 min-h-0 flex items-center justify-center px-2 sm:px-20 relative">
         @if (items().length > 1) {
           <button
             type="button"
@@ -166,7 +166,7 @@
       @if (items().length > 1) {
         <div
           data-lenis-prevent
-          class="shrink-0 flex gap-2 overflow-x-auto px-6 py-4 thumb-strip"
+          class="shrink-0 flex gap-2 overflow-x-auto px-gutter sm:px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] thumb-strip"
           (click)="$event.stopPropagation()">
           @for (thumb of items(); track thumb.id) {
             <button

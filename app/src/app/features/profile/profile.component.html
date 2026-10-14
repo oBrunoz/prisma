@@ -1,8 +1,8 @@
 <div class="pt-32 pb-20">
-  <section class="relative bg-[#0d0d0d] border-b border-white/5 -mt-32 pt-40 pb-12 overflow-hidden">
+  <section class="relative bg-[#0d0d0d] border-b border-white/5 -mt-32 pt-32 sm:pt-40 pb-10 sm:pb-12 overflow-hidden">
     <app-stripes-banner></app-stripes-banner>
 
-    <div class="relative px-20 flex flex-wrap items-center gap-8">
+    <div class="relative px-gutter flex flex-wrap items-center gap-5 sm:gap-8">
       <app-user-avatar
         [nome]="auth.usuario()?.name ?? ''"
         [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
@@ -15,7 +15,7 @@
         @if (auth.usuario()?.bio; as bio) {
           <p class="mt-3 max-w-xl text-gray-300">{{ bio }}</p>
         }
-        <div class="mt-4 flex flex-wrap items-center gap-6 text-gray-400">
+        <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm sm:text-base text-gray-400">
           <span>{{ watchlist().length }} na watchlist</span>
           <span>{{ avaliacoes().length }} avaliações</span>
           @if (notaMedia(); as media) {
@@ -38,7 +38,7 @@
   </section>
 
   @if (editando()) {
-    <section class="px-20 py-10 border-b border-white/5">
+    <section class="px-gutter py-8 sm:py-10 border-b border-white/5">
       <h2 class="text-xl font-bold text-white mb-6">Editar perfil</h2>
       <form class="max-w-2xl space-y-5" (ngSubmit)="salvarPerfil()">
         <div>
@@ -158,15 +158,15 @@
     </section>
   }
 
-  <section class="px-20 mt-16">
-    <h2 class="text-3xl font-bold mb-8 text-white">Sua watchlist</h2>
+  <section class="px-gutter mt-12 sm:mt-16">
+    <h2 class="titulo-secao mb-5 sm:mb-8">Sua watchlist</h2>
 
     @if (erroWatchlist()) {
       <p class="text-sm text-red-400 mb-6" role="alert">{{ erroWatchlist() }}</p>
     }
 
     @if (carregandoWatchlist()) {
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      <div class="grade-posters">
         @for (vazio of [1, 2, 3, 4, 5]; track vazio) {
           <div class="aspect-[2/3] rounded-xl bg-[#1a1a1a]"></div>
         }
@@ -177,7 +177,7 @@
         <span class="text-white">Adicionar à watchlist</span>.
       </p>
     } @else {
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      <div class="grade-posters">
         @for (item of watchlist(); track item.id) {
           <div class="relative group">
             <app-movie-card
@@ -192,7 +192,7 @@
               (click)="removerDaWatchlist(item)"
               [disabled]="removendo() === item.id"
               [attr.aria-label]="'Remover ' + item.media.title + ' da watchlist'"
-              class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/70 text-gray-300 hover:text-white hover:bg-black/90 transition duration-300 cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 disabled:opacity-60 disabled:cursor-not-allowed">
+              class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/70 text-gray-300 hover:text-white hover:bg-black/90 transition duration-300 cursor-pointer mouse:opacity-0 mouse:group-hover:opacity-100 focus:opacity-100 disabled:opacity-60 disabled:cursor-not-allowed">
               <svg lucideX [size]="14" strokeWidth="2"></svg>
             </button>
           </div>
@@ -201,8 +201,8 @@
     }
   </section>
 
-  <section class="px-20 mt-20">
-    <h2 class="text-3xl font-bold mb-8 text-white">Suas avaliações</h2>
+  <section class="px-gutter mt-14 sm:mt-20">
+    <h2 class="titulo-secao mb-5 sm:mb-8">Suas avaliações</h2>
 
     @if (erroAvaliacoes()) {
       <p class="text-sm text-red-400" role="alert">{{ erroAvaliacoes() }}</p>
@@ -217,7 +217,7 @@
     } @else {
       <div class="space-y-6 max-w-4xl">
         @for (avaliacao of avaliacoes(); track avaliacao.id) {
-          <article class="bg-[#1a1a1a] rounded-xl p-6 min-w-0">
+          <article class="bg-[#1a1a1a] rounded-xl p-5 sm:p-6 min-w-0">
             <div class="flex flex-wrap items-baseline justify-between gap-3">
               @if (avaliacao.media; as midia) {
                 <a

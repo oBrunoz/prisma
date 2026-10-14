@@ -1,6 +1,6 @@
 <div>
   <!-- Cabeçalho -->
-  <section class="relative overflow-hidden bg-black rounded-b-[2rem] border-b border-white/10 hero-edge">
+  <section class="relative overflow-hidden bg-black rounded-b-3xl sm:rounded-b-[2rem] border-b border-white/10 hero-edge">
 
     <!-- fundo: cena do título mais conhecido -->
     <div class="absolute inset-0">
@@ -27,15 +27,15 @@
       style="background: linear-gradient(to bottom, transparent, rgba(17,17,17,0.92)); z-index: 11;">
     </div>
 
-    <div class="px-20 relative z-20 pt-40 pb-16">
+    <div class="px-gutter relative z-20 pt-24 sm:pt-32 md:pt-40 pb-12 sm:pb-16">
       @if (isLoading()) {
-        <div class="flex flex-col md:flex-row gap-12 animate-pulse">
-          <div class="skeleton bg-[#242424] w-64 aspect-[2/3] rounded-2xl shrink-0"></div>
+        <div class="flex flex-col md:flex-row gap-8 md:gap-12 animate-pulse">
+          <div class="skeleton bg-[#242424] w-36 sm:w-48 md:w-64 aspect-[2/3] rounded-2xl shrink-0"></div>
           <div class="flex-1 space-y-6 pt-4">
             <div class="skeleton bg-[#242424] w-32 h-7 rounded-full"></div>
             <div class="skeleton bg-[#242424] h-14 w-3/5 rounded"></div>
             <div class="skeleton bg-[#242424] h-5 w-2/5 rounded"></div>
-            <div class="flex gap-12 pt-4">
+            <div class="flex gap-8 sm:gap-12 pt-4">
               <div class="skeleton bg-[#242424] h-12 w-24 rounded"></div>
               <div class="skeleton bg-[#242424] h-12 w-32 rounded"></div>
               <div class="skeleton bg-[#242424] h-12 w-20 rounded"></div>
@@ -43,23 +43,23 @@
           </div>
         </div>
       } @else if (person(); as person) {
-        <div class="flex flex-col md:flex-row gap-12 items-start">
+        <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
           @if (profileUrl()) {
             <img
               [src]="profileUrl()"
               [alt]="person.name"
-              class="w-64 shrink-0 aspect-[2/3] object-cover rounded-2xl bg-[#1a1a1a] shadow-2xl"
+              class="w-36 sm:w-48 md:w-64 shrink-0 aspect-[2/3] object-cover rounded-2xl bg-[#1a1a1a] shadow-2xl"
             />
           } @else {
-            <div class="w-64 shrink-0 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl">
+            <div class="w-36 sm:w-48 md:w-64 shrink-0 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl">
               <app-media-fallback kind="person" [label]="person.name"></app-media-fallback>
             </div>
           }
 
-          <div class="flex-1 min-w-0 space-y-6">
+          <div class="flex-1 min-w-0 space-y-5 sm:space-y-6">
             <div>
               <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">Pessoa</span>
-              <h1 class="text-5xl md:text-6xl font-bold mt-4 leading-tight text-white line-clamp-2">
+              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mt-4 leading-tight text-white line-clamp-2">
                 {{ person.name }}
               </h1>
             </div>
@@ -91,22 +91,22 @@
 
             <!-- a carreira resumida em três números -->
             @if (titleCount() > 0) {
-              <div class="flex flex-wrap gap-x-16 gap-y-6 pt-2">
+              <div class="flex flex-wrap gap-x-8 sm:gap-x-16 gap-y-5 sm:gap-y-6 pt-2">
                 <div>
-                  <p class="text-3xl font-bold text-white">{{ titleCount() }}</p>
+                  <p class="text-2xl sm:text-3xl font-bold text-white">{{ titleCount() }}</p>
                   <p class="text-gray-400 text-sm mt-1">
                     {{ titleCount() === 1 ? 'título creditado' : 'títulos creditados' }}
                   </p>
                 </div>
                 @if (careerSpan()) {
                   <div>
-                    <p class="text-3xl font-bold text-white">{{ careerSpan() }}</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-white">{{ careerSpan() }}</p>
                     <p class="text-gray-400 text-sm mt-1">de carreira</p>
                   </div>
                 }
                 @if (averageRating() !== null) {
                   <div>
-                    <p class="text-3xl font-bold text-yellow-400">{{ averageRating()!.toFixed(1) }}</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-yellow-400">{{ averageRating()!.toFixed(1) }}</p>
                     <p class="text-gray-400 text-sm mt-1">nota média dos títulos</p>
                   </div>
                 }
@@ -126,9 +126,9 @@
   @if (person(); as person) {
     <!-- Biografia -->
     @if (person.biography) {
-      <section class="bg-[#0d0d0d] py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Biografia</h2>
+      <section class="bg-[#0d0d0d] py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Biografia</h2>
           <p
             class="text-gray-300 leading-relaxed whitespace-pre-line max-w-4xl"
             [class.line-clamp-6]="!bioExpanded()">
@@ -146,9 +146,9 @@
 
     <!-- Conhecido por -->
     @if (knownFor().length > 0) {
-      <section class="py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Conhecido por</h2>
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Conhecido por</h2>
           <app-carousel-row class="block">
             @for (credit of knownFor(); track credit.media_type + credit.id) {
               <div class="flex-shrink-0 snap-start w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]">
@@ -170,10 +170,10 @@
       </section>
     }
   } @else if (isLoading()) {
-    <section class="py-16">
-      <div class="px-20">
-        <h2 class="text-3xl font-bold mb-8 text-white">Conhecido por</h2>
-        <div class="flex overflow-x-hidden gap-4">
+    <section class="py-12 sm:py-16">
+      <div class="px-gutter">
+        <h2 class="titulo-secao mb-5 sm:mb-8">Conhecido por</h2>
+        <div class="flex overflow-x-hidden gap-4 trilho-sangria">
           @for (item of skeletonCards; track $index) {
             <div class="flex-shrink-0 bg-[#1a1a1a] rounded-lg animate-pulse aspect-[2/3] w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]"></div>
           }

@@ -21,11 +21,11 @@
 
     <!-- Watchlist e avaliação do usuário -->
     @if (details(); as conteudo) {
-      <section id="sua-avaliacao" class="bg-[#0d0d0d] py-16">
-        <div class="px-20 grid lg:grid-cols-[minmax(0,1fr)_50rem] gap-12 items-start">
+      <section id="sua-avaliacao" class="bg-[#0d0d0d] py-12 sm:py-16">
+        <div class="px-gutter grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-[minmax(0,1fr)_50rem] gap-10 lg:gap-12 items-start">
           <!-- sua ficha -->
           <div>
-            <h2 class="text-3xl font-bold mb-8 text-white">Sua avaliação</h2>
+            <h2 class="titulo-secao mb-5 sm:mb-8">Sua avaliação</h2>
             <app-media-actions
               [tmdbId]="conteudo.id"
               [mediaType]="apiType()">
@@ -37,15 +37,15 @@
           <div class="lg:mt-16">
             @if (estatisticas(); as stats) {
               @if (stats.total > 0) {
-                <div class="bg-[#1a1a1a] rounded-xl px-8 py-7 mb-6">
+                <div class="bg-[#1a1a1a] rounded-xl px-5 py-6 sm:px-8 sm:py-7 mb-6">
                   <h3 class="text-xs tracking-wider text-gray-500 uppercase">Notas no Prisma</h3>
 
                   <div class="mt-6 flex items-end justify-between gap-6">
                     <!-- largura fixa: esticar as barras na coluna larga transforma
                          as notas sem voto em traços compridos -->
-                    <div class="flex items-end gap-1.5 h-20" aria-hidden="true">
+                    <div class="flex items-end gap-1 sm:gap-1.5 h-20" aria-hidden="true">
                       @for (barra of barras(); track barra.nota) {
-                        <div class="w-5 h-full flex items-end">
+                        <div class="w-3.5 sm:w-5 h-full flex items-end">
                           <div
                             class="w-full bg-white/30 rounded-sm min-h-[2px]"
                             [style.height.%]="barra.altura"></div>
@@ -110,9 +110,9 @@
 
     <!-- Onde assistir -->
     @if (hasWatchProviders()) {
-      <section class="bg-[#0d0d0d] py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Onde assistir</h2>
+      <section class="bg-[#0d0d0d] py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Onde assistir</h2>
           <app-watch-providers [providers]="watchProviders()"></app-watch-providers>
         </div>
       </section>
@@ -120,9 +120,9 @@
 
     <!-- Ficha técnica -->
     @if (details()) {
-      <section class="py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Ficha técnica</h2>
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Ficha técnica</h2>
           <app-content-facts
             [details]="details()"
             [type]="apiType()"
@@ -134,9 +134,9 @@
 
     <!-- Temporadas -->
     @if (isSeries() && seasons().length > 0) {
-      <section class="bg-[#0d0d0d] py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Temporadas</h2>
+      <section class="bg-[#0d0d0d] py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Temporadas</h2>
           <app-season-list [tvId]="details()!.id" [seasons]="seasons()"></app-season-list>
         </div>
       </section>
@@ -144,9 +144,9 @@
 
     <!-- Elenco -->
     @if (mappedCast().length > 0) {
-      <section class="py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Elenco</h2>
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Elenco</h2>
           <app-carousel-row class="block">
             @for (actor of mappedCast(); track actor.id) {
               <div class="flex-shrink-0 snap-start w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]">
@@ -157,10 +157,10 @@
         </div>
       </section>
     } @else if (isLoading()) {
-      <section class="py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Elenco</h2>
-          <div class="flex overflow-x-hidden gap-4">
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Elenco</h2>
+          <div class="flex overflow-x-hidden gap-4 trilho-sangria">
             @for (item of skeletonCast; track $index) {
               <div class="flex-shrink-0 bg-[#1a1a1a] rounded-lg animate-pulse aspect-[2/3] w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]"></div>
             }
@@ -171,9 +171,9 @@
 
     <!-- Mídia -->
     @if (hasMedia()) {
-      <section class="bg-[#0d0d0d] py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Mídia</h2>
+      <section class="bg-[#0d0d0d] py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Mídia</h2>
           <app-media-gallery
             [videos]="videos()"
             [backdrops]="backdrops()"
@@ -185,10 +185,10 @@
 
     <!-- Avaliações da TMDB -->
     @if (reviews().length > 0) {
-      <section class="py-16">
-        <div class="px-20">
-          <div class="flex items-baseline gap-3 mb-8">
-            <h2 class="text-3xl font-bold text-white">Avaliações na TMDB</h2>
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <div class="flex items-baseline gap-3 mb-5 sm:mb-8">
+            <h2 class="titulo-secao">Avaliações na TMDB</h2>
             <span class="text-gray-400">{{ reviews().length }}</span>
           </div>
           <div class="grid md:grid-cols-2 gap-6 items-start">
@@ -202,9 +202,9 @@
 
     <!-- Recomendações -->
     @if (mappedRecommendations().length > 0) {
-      <section class="bg-[#0d0d0d] py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Recomendados para você</h2>
+      <section class="bg-[#0d0d0d] py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Recomendados para você</h2>
           <app-carousel-row class="block">
             @for (item of mappedRecommendations(); track item.id) {
               <div class="flex-shrink-0 snap-start w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]">
@@ -225,9 +225,9 @@
 
     <!-- Similares -->
     @if (mappedSimilar().length > 0) {
-      <section class="py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Conteúdo similar</h2>
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Conteúdo similar</h2>
           <app-carousel-row class="block">
             @for (item of mappedSimilar(); track item.id) {
               <div class="flex-shrink-0 snap-start w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]">
@@ -245,10 +245,10 @@
         </div>
       </section>
     } @else if (isLoading()) {
-      <section class="py-16">
-        <div class="px-20">
-          <h2 class="text-3xl font-bold mb-8 text-white">Conteúdo similar</h2>
-          <div class="flex overflow-x-hidden gap-4">
+      <section class="py-12 sm:py-16">
+        <div class="px-gutter">
+          <h2 class="titulo-secao mb-5 sm:mb-8">Conteúdo similar</h2>
+          <div class="flex overflow-x-hidden gap-4 trilho-sangria">
             @for (item of skeletonSimilar; track $index) {
               <div class="flex-shrink-0 bg-[#1a1a1a] rounded-lg animate-pulse aspect-[2/3] w-[calc(50%-0.5rem)] sm:w-[calc(33.3333%-0.6666rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.6666%-0.8333rem)]"></div>
             }

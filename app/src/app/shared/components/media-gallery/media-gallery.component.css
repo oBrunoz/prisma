@@ -1,6 +1,11 @@
+/* altura tomada pela barra de cima e pelas miniaturas */
+:host {
+  --folga: 13rem;
+}
+
 /* largura derivada da altura livre: o trailer cabe na tela sem deformar */
 .stage-video {
-  width: min(100%, calc((100vh - 13rem) * 16 / 9));
+  width: min(100%, calc((100dvh - var(--folga)) * 16 / 9));
   aspect-ratio: 16 / 9;
 }
 
@@ -12,13 +17,14 @@
 }
 
 .stage-image {
-  max-height: calc(100vh - 13rem);
+  max-height: calc(100dvh - var(--folga));
   max-width: 100%;
   object-fit: contain;
 }
 
+/* no celular o painel não passa de uma tela, senão vira armadilha de rolagem */
 .media-scroll {
-  max-height: 50rem;
+  max-height: min(50rem, 75svh);
   overflow-y: auto;
   padding-right: 0.75rem;
   scrollbar-width: thin;
@@ -44,4 +50,19 @@
 
 .thumb-strip::-webkit-scrollbar {
   display: none;
+}
+
+/* celular deitado: sem miniaturas e com a barra enxuta, o palco fica com quase toda a altura */
+@media (max-height: 500px) {
+  :host {
+    --folga: 4.5rem;
+  }
+
+  .thumb-strip {
+    display: none;
+  }
+
+  .barra-lightbox {
+    padding-block: 0.5rem;
+  }
 }
