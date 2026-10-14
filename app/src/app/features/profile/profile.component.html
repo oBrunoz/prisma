@@ -10,7 +10,7 @@
       </app-user-avatar>
 
       <div class="flex-1 min-w-0">
-        <h1 class="text-4xl font-bold text-white">{{ auth.usuario()?.name }}</h1>
+        <h1 class="text-4xl font-bold text-white line-clamp-2">{{ auth.usuario()?.name }}</h1>
         <p class="mt-2 text-gray-400">/{{ auth.usuario()?.username }}</p>
         @if (auth.usuario()?.bio; as bio) {
           <p class="mt-3 max-w-xl text-gray-300">{{ bio }}</p>
