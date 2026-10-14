@@ -1,8 +1,14 @@
+const plugin = require('tailwindcss/plugin');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './src/**/*.{html,ts}',
   ],
+  // hover: só vale com mouse; no toque o estado não "gruda" depois do tap
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {
@@ -16,7 +22,17 @@ module.exports = {
         // erro de campo e de toast: o trecho quente do espectro, sem brigar com o vermelho de ação
         coral: '#D85057',
       },
+      // margem lateral das seções, definida em styles.css (--gutter) por breakpoint
+      spacing: {
+        gutter: 'var(--gutter)',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    // decidir pelo tipo de ponteiro, não pela largura: tablet grande também é toque
+    plugin(({ addVariant }) => {
+      addVariant('mouse', '@media (hover: hover) and (pointer: fine)');
+      addVariant('toque', '@media not all and (hover: hover) and (pointer: fine)');
+    }),
+  ],
 };
