@@ -42,6 +42,11 @@
   border-radius: 0 2px 2px 0;
 }
 
+/* escondida, a barra para de girar a cor: senão a navbar (com blur) é repintada a cada quadro */
+.progress-track.opacity-0 .progress-bar {
+  animation: none;
+}
+
 .progress-bar--beam {
   box-shadow: 0 0 10px rgba(255, 227, 173, 0.45), 0 0 22px rgba(216, 80, 87, 0.35);
 }
