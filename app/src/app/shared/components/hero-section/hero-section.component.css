@@ -30,3 +30,16 @@
 .hero-edge {
   box-shadow: 0 20px 32px 0 rgba(0, 0, 0, 0.45);
 }
+
+/* rolagem da sinopse longa: barra fina e discreta, no tom do texto de apoio */
+.sinopse {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  overscroll-behavior: contain;
+}
+
+.sinopse:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
+  border-radius: 4px;
+}

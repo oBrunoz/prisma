@@ -155,8 +155,15 @@
 
           <!-- Overview -->
           @if (overview) {
-            <!-- justificado só em coluna larga: no celular abre rios entre as palavras -->
-            <div class="text-gray-200 line-clamp-3 sm:line-clamp-4 xl:line-clamp-none md:text-justify">{{ overview }}</div>
+            <!-- justificado só em coluna larga: no celular abre rios entre as palavras.
+                 Até xl corta em 3-4 linhas; daí em diante mostra até 6 e o resto rola dentro -->
+            <div
+              data-lenis-prevent
+              tabindex="0"
+              aria-label="Sinopse"
+              class="sinopse text-gray-200 line-clamp-3 sm:line-clamp-4 xl:line-clamp-none xl:max-h-36 xl:overflow-y-auto xl:pr-3 md:text-justify">
+              {{ overview }}
+            </div>
           }
 
           <!-- Buttons -->
