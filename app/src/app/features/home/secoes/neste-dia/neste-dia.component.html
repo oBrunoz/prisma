@@ -1,0 +1,58 @@
+<section (appAparecer)="carregar()">
+  @if (dados()?.highlight; as filme) {
+    <div class="bg-[#0d0d0d] border-y border-white/5 py-14 sm:py-20 px-gutter mb-14 sm:mb-20">
+      <div class="grid lg:grid-cols-[1.35fr_1fr] gap-8 lg:gap-14 items-center">
+        <a [routerLink]="['/search', 'movies', filme.tmdbId]" class="group relative block aspect-video rounded-lg overflow-hidden bg-[#1a1a1a]">
+          @if (filme.backdropPath) {
+            <img
+              [src]="imagens + '/w1280' + filme.backdropPath"
+              [alt]="filme.title"
+              loading="lazy"
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          }
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        </a>
+
+        <div class="min-w-0">
+          <p class="text-gray-400">{{ dataPorExtenso() }}</p>
+          <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold text-white leading-[1.1] mt-3 text-balance">
+            Há {{ filme.years }} {{ filme.years === 1 ? 'ano' : 'anos' }}, {{ filme.title }} chegava aos cinemas.
+          </h2>
+          <p class="text-gray-400 mt-4 flex items-center flex-wrap gap-x-2">
+            @if (filme.director) {
+              <span>Direção de {{ filme.director }}</span>
+              <span aria-hidden="true">·</span>
+            }
+            <span class="flex items-center gap-1 text-white">
+              <svg lucideStar [size]="14" strokeWidth="2" class="text-yellow-500" fill="currentColor"></svg>
+              {{ filme.rating | number: '1.1-1' }}
+            </span>
+          </p>
+          <a [routerLink]="['/search', 'movies', filme.tmdbId]"
+            class="px-6 py-3 mt-7 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 flex items-center w-fit">
+            Ver detalhes <svg lucideArrowRight class="ml-2" [size]="16" strokeWidth="2"></svg>
+          </a>
+        </div>
+      </div>
+
+      @if (dados()?.others?.length) {
+        <h3 class="text-gray-400 text-sm mt-12 sm:mt-14">Também estrearam num {{ dataPorExtenso() }}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+          @for (outro of dados()!.others; track outro.tmdbId) {
+            <a [routerLink]="['/search', 'movies', outro.tmdbId]" class="flex items-center gap-4 rounded-lg p-2 -m-2 hover:bg-white/5 transition duration-300 min-w-0">
+              <span class="w-12 aspect-[2/3] rounded overflow-hidden bg-[#1a1a1a] flex-none">
+                @if (outro.posterPath) {
+                  <img [src]="imagens + '/w154' + outro.posterPath" alt="" loading="lazy" class="w-full h-full object-cover" />
+                }
+              </span>
+              <span class="min-w-0">
+                <span class="block text-white font-semibold text-sm truncate">{{ outro.title }}</span>
+                <span class="block text-gray-400 text-xs tabular-nums mt-0.5">{{ ano(outro.date) }} · há {{ outro.years }} {{ outro.years === 1 ? 'ano' : 'anos' }}</span>
+              </span>
+            </a>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>

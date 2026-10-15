@@ -1,0 +1,14 @@
+<section (appAparecer)="carregar()">
+  @if (resenhas().length) {
+    <div class="px-gutter py-14 sm:py-20">
+      <h2 class="titulo-secao mb-5 sm:mb-8">O que estão dizendo</h2>
+      <app-carousel-row>
+        @for (r of resenhas(); track r.id) {
+          <div class="card-trilho-largo">
+            <app-cartao-avaliacao [avaliacao]="r" [resumido]="true" [mostrarAutor]="true"></app-cartao-avaliacao>
+          </div>
+        }
+      </app-carousel-row>
+    </div>
+  }
+</section>

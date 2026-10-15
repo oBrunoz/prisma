@@ -34,6 +34,11 @@ export class AvaliacaoService {
     });
   }
 
+  // as resenhas com texto mais novas da comunidade, uma por pessoa
+  recentes(limite = 6): Observable<AvaliacaoUsuario[]> {
+    return this.http.get<AvaliacaoUsuario[]>(`${this.base}/recentes`, { params: { limit: limite } });
+  }
+
   estatisticas(tmdbId: number, tipo: TipoMidia): Observable<EstatisticasMidia> {
     return this.http.get<EstatisticasMidia>(`${this.base}/media/${tipo}/${tmdbId}/stats`);
   }

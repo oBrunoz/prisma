@@ -105,6 +105,9 @@
     </section>
 
 
+    <!-- Jogos de hoje -->
+    <app-jogos-hoje></app-jogos-hoje>
+
     <!-- Nos cinemas -->
     <app-content-shelf
       [type]="shelfNosCinemas.type"
@@ -112,6 +115,9 @@
       [params]="shelfNosCinemas.params"
       [large]="true">
     </app-content-shelf>
+
+    <!-- Quanto tempo você tem hoje? -->
+    <app-quanto-tempo></app-quanto-tempo>
 
     <!-- Filmes populares -->
     <section class="px-gutter mb-14 sm:mb-20">
@@ -148,6 +154,9 @@
       </div>
     </section>
 
+
+    <!-- Neste dia -->
+    <app-neste-dia></app-neste-dia>
 
     <!-- Em breve nos cinemas -->
     <app-content-shelf
@@ -214,6 +223,9 @@
     </section>
 
 
+    <!-- Na cadeira do diretor -->
+    <app-cadeira-do-diretor></app-cadeira-do-diretor>
+
     <!-- Séries com episódio novo -->
     <app-content-shelf
       [type]="shelfEpisodiosDaSemana.type"
@@ -221,6 +233,15 @@
       [params]="shelfEpisodiosDaSemana.params"
       [large]="true">
     </app-content-shelf>
+
+    <!-- Uma década por cor -->
+    <app-decadas></app-decadas>
+
+    <!-- Onde assistir -->
+    <app-onde-assistir></app-onde-assistir>
+
+    <!-- Maratonas -->
+    <app-maratonas></app-maratonas>
 
     <!-- Convite para cadastro: só para quem ainda não tem conta -->
     @if (!auth.autenticado()) {
@@ -258,6 +279,9 @@
       </div>
     </section>
     }
+
+    <!-- O que estão dizendo -->
+    <app-resenhas-recentes></app-resenhas-recentes>
 
     <!-- Em destaque -->
     <section class="px-gutter py-14 sm:py-20">

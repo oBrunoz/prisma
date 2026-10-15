@@ -1,0 +1,101 @@
+.trilho {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.trilho::-webkit-scrollbar {
+  display: none;
+}
+
+/* no celular e no tablet a fileira desliza; a partir de lg as sete cabem lado a lado */
+.decada {
+  position: relative;
+  display: block;
+  flex: none;
+  width: min(44vw, 11rem);
+  min-height: 17rem;
+  scroll-snap-align: start;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+@media (min-width: 1024px) {
+  .decada {
+    width: auto;
+    flex: 1 1 0;
+  }
+}
+
+/* a cor a 45% sobre o preto, como o stripes-backdrop */
+.decada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cor);
+  opacity: 0.45;
+  z-index: -1;
+  transition: opacity 300ms;
+}
+
+.decada:hover::before,
+.decada:focus-visible::before {
+  opacity: 0.7;
+}
+
+.leque {
+  position: relative;
+  height: 11rem;
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 1280px) {
+  .leque {
+    height: 13rem;
+  }
+}
+
+.leque img {
+  position: absolute;
+  bottom: 0;
+  width: 56%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 0.375rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: transform 400ms;
+}
+
+.leque img:nth-child(1) {
+  left: 4%;
+  transform: rotate(-9deg);
+}
+
+.leque img:nth-child(2) {
+  left: 22%;
+  transform: translateY(-6%);
+  z-index: 2;
+}
+
+.leque img:nth-child(3) {
+  left: 40%;
+  transform: rotate(9deg);
+}
+
+/* o leque abre com o mouse; no toque fica como está */
+@media (hover: hover) and (pointer: fine) {
+  .decada:hover .leque img:nth-child(1) {
+    transform: rotate(-13deg) translateX(-6%);
+  }
+
+  .decada:hover .leque img:nth-child(3) {
+    transform: rotate(13deg) translateX(6%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decada::before,
+  .leque img {
+    transition: none;
+  }
+}

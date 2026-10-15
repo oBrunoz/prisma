@@ -35,6 +35,15 @@
         }
       }
 
+      @if (mostrarAutor() && avaliacao().user; as autor) {
+        <a
+          [routerLink]="['/username', autor.username]"
+          class="mt-auto pt-4 flex items-center gap-2.5 min-w-0 text-sm text-gray-400 hover:text-white transition duration-300">
+          <app-user-avatar [nome]="autor.name" [avatarUrl]="autor.avatarUrl" tamanho="sm"></app-user-avatar>
+          <span class="truncate">{{ autor.name }}</span>
+        </a>
+      }
+
       @if (!resumido()) {
         <div class="mt-auto pt-3 flex flex-wrap items-center gap-4">
           <p class="text-xs text-gray-500">{{ avaliacao().createdAt | date: 'dd/MM/yyyy' }}</p>

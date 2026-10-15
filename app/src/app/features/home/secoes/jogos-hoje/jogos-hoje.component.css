@@ -1,0 +1,28 @@
+.imagem {
+  transition: transform 500ms;
+}
+
+a:hover .imagem {
+  transform: scale(1.05);
+}
+
+/* os sete fios da partida: gasto apaga, sem jogar ficam a meia luz */
+.fio {
+  display: block;
+  width: 12px;
+  height: 3px;
+}
+
+.fio.gasto {
+  opacity: 0.18;
+}
+
+.fio.vazio {
+  opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imagem {
+    transition: none;
+  }
+}

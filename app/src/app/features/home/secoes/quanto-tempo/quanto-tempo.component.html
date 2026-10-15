@@ -1,0 +1,42 @@
+<section class="px-gutter mb-12 sm:mb-16" (appAparecer)="carregar()">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-5 sm:mb-8">
+    <h2 class="titulo-secao min-w-0">Quanto tempo você tem hoje?</h2>
+    <div class="flex gap-2 flex-wrap" role="group" aria-label="Duração do filme">
+      @for (f of faixas; track f.id) {
+        <button
+          type="button"
+          (click)="escolher(f.id)"
+          [attr.aria-pressed]="faixa() === f.id"
+          class="px-4 h-11 rounded-full text-sm transition duration-300 cursor-pointer"
+          [class]="faixa() === f.id ? 'bg-white text-[#111111] font-medium' : 'bg-white/10 hover:bg-white/20 text-white'">
+          {{ f.rotulo }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (carregando()) {
+    <div class="flex gap-4 overflow-hidden trilho-sangria">
+      @for (item of esqueleto; track $index) {
+        <div class="card-trilho aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
+      }
+    </div>
+  } @else if (filmes().length) {
+    <app-carousel-row>
+      @for (filme of filmes(); track filme.id) {
+        <div class="card-trilho">
+          <app-movie-card
+            [id]="filme.id"
+            [title]="filme.title"
+            [posterPath]="filme.poster_path"
+            [year]="ano(filme)"
+            [rating]="filme.vote_average"
+            mediaType="movies">
+          </app-movie-card>
+        </div>
+      }
+    </app-carousel-row>
+  } @else {
+    <p class="text-gray-400">Não conseguimos carregar esses filmes agora.</p>
+  }
+</section>

@@ -367,6 +367,17 @@ export class MovieService {
   }
 
   // Lista de gêneros
+  // logos dos streamings disponíveis numa região
+  getStreamingsDaRegiao(regiao = 'BR'): Observable<{ provider_id: number; provider_name: string; logo_path: string }[]> {
+    return this.get<{ results: { provider_id: number; provider_name: string; logo_path: string }[] }>(
+      '/watch/providers/movie',
+      { watch_region: regiao },
+    ).pipe(
+      map((data) => data.results ?? []),
+      catchError(() => of([]))
+    );
+  }
+
   getGenres(type: 'movie' | 'tv'): Observable<Genre[]> {
     return this.get<{ genres: Genre[] }>(`/genre/${type}/list`).pipe(
       map((data) => data.genres ?? []),

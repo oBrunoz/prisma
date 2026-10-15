@@ -10,6 +10,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { EstrelasComponent } from '../../../shared/components/estrelas/estrelas.component';
 import { MediaFallbackComponent } from '../../../shared/components/media-fallback/media-fallback.component';
 import { TextoRecolhivelComponent } from '../../../shared/components/texto-recolhivel/texto-recolhivel.component';
+import { UserAvatarComponent } from '../../../shared/components/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-cartao-avaliacao',
@@ -20,6 +21,7 @@ import { TextoRecolhivelComponent } from '../../../shared/components/texto-recol
     EstrelasComponent,
     MediaFallbackComponent,
     TextoRecolhivelComponent,
+    UserAvatarComponent,
     LucideHeart,
     LucideTrash2,
   ],
@@ -34,6 +36,8 @@ export class CartaoAvaliacaoComponent {
   // resumido: texto cortado em três linhas, como na visão geral
   readonly resumido = input(false);
   readonly podeExcluir = input(false);
+  // fora do perfil (na home), o cartão diz quem escreveu
+  readonly mostrarAutor = input(false);
   readonly excluida = output<void>();
 
   readonly confirmando = signal(false);

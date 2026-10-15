@@ -1,0 +1,38 @@
+<section (appAparecer)="carregar()">
+  @if (maratonas() === null || maratonas()!.length) {
+    <div class="px-gutter mb-14 sm:mb-20">
+      <h2 class="titulo-secao mb-1">Maratonas</h2>
+      <p class="text-gray-400 mb-5 sm:mb-8">Sagas inteiras, na ordem, com o tempo que levam.</p>
+
+      @if (maratonas(); as lista) {
+        <app-carousel-row>
+          @for (m of lista; track m.id) {
+            <a [routerLink]="['/search', 'movies', m.firstTmdbId]" class="card-trilho-largo group block" [attr.aria-label]="m.name + ', ' + m.films + ' filmes'">
+              <div class="relative aspect-video rounded-lg overflow-hidden bg-[#1a1a1a]">
+                @if (m.backdropPath) {
+                  <img [src]="imagens + '/w780' + m.backdropPath" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-40 transition duration-300" />
+                }
+                <div class="pilha" aria-hidden="true">
+                  @for (p of pilha(m); track p.src; let i = $index) {
+                    <img [src]="p.src" alt="" loading="lazy" [style.left.%]="p.esquerda" [style.z-index]="i" [style.transform]="'rotate(' + p.giro + 'deg)'" />
+                  }
+                </div>
+              </div>
+              <div class="flex items-baseline justify-between gap-3 mt-3">
+                <h3 class="font-semibold text-white truncate min-w-0">{{ m.name }}</h3>
+                <span class="text-white font-semibold tabular-nums flex-none">{{ horas(m.minutes) }}</span>
+              </div>
+              <p class="text-gray-400 text-sm tabular-nums mt-0.5">{{ m.films }} filmes · {{ m.from }}–{{ m.to }}</p>
+            </a>
+          }
+        </app-carousel-row>
+      } @else {
+        <div class="flex gap-4 overflow-hidden trilho-sangria">
+          @for (item of esqueleto; track $index) {
+            <div class="card-trilho-largo aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>

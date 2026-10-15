@@ -1,0 +1,52 @@
+<section class="px-gutter mb-14 sm:mb-20" (appAparecer)="carregar()">
+  <div class="flex justify-between items-baseline gap-4 mb-5">
+    <h2 class="titulo-secao min-w-0">Onde assistir</h2>
+    <a routerLink="/movies" [queryParams]="{ streaming: escolhido() }"
+      class="shrink-0 text-sm sm:text-base text-gray-400 hover:text-white flex items-center gap-1 transition duration-300 group whitespace-nowrap">
+      Ver todos <svg lucideArrowRight [size]="16" strokeWidth="2" class="group-hover:text-red-500 transition duration-300"></svg>
+    </a>
+  </div>
+
+  <div class="flex gap-2 sm:gap-3 overflow-x-auto trilho-sangria pb-1 mb-5 sm:mb-8 [scrollbar-width:none]" role="group" aria-label="Streaming" data-lenis-prevent-horizontal>
+    @for (s of streamings; track s.id) {
+      <button
+        type="button"
+        (click)="escolher(s.id)"
+        [attr.aria-pressed]="escolhido() === s.id"
+        class="flex items-center gap-2.5 pl-1.5 pr-4 h-12 rounded-full flex-none transition duration-300 cursor-pointer"
+        [class]="escolhido() === s.id ? 'bg-white text-[#111111]' : 'bg-white/10 hover:bg-white/20 text-white'">
+        @if (logos()[s.id]) {
+          <img [src]="logos()[s.id]" alt="" class="w-9 h-9 rounded-full" />
+        } @else {
+          <span class="w-9 h-9 rounded-full bg-white/10"></span>
+        }
+        <span class="text-sm font-medium whitespace-nowrap">{{ s.nome }}</span>
+      </button>
+    }
+  </div>
+
+  @if (carregando()) {
+    <div class="flex gap-4 overflow-hidden trilho-sangria">
+      @for (item of esqueleto; track $index) {
+        <div class="card-trilho aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
+      }
+    </div>
+  } @else if (filmes().length) {
+    <app-carousel-row>
+      @for (filme of filmes(); track filme.id) {
+        <div class="card-trilho">
+          <app-movie-card
+            [id]="filme.id"
+            [title]="filme.title"
+            [posterPath]="filme.poster_path"
+            [year]="ano(filme)"
+            [rating]="filme.vote_average"
+            mediaType="movies">
+          </app-movie-card>
+        </div>
+      }
+    </app-carousel-row>
+  } @else {
+    <p class="text-gray-400">Não conseguimos carregar esse catálogo agora.</p>
+  }
+</section>

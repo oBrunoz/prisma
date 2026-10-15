@@ -11,6 +11,14 @@ import { CarouselRowComponent } from '../../shared/components/carousel-row/carou
 import { ContentShelfComponent } from '../../shared/components/content-shelf/content-shelf.component';
 import { EstanteListrasComponent } from '../../shared/components/estante-listras/estante-listras.component';
 import { AuthService } from '../../core/services/auth.service';
+import { JogosHojeComponent } from './secoes/jogos-hoje/jogos-hoje.component';
+import { QuantoTempoComponent } from './secoes/quanto-tempo/quanto-tempo.component';
+import { NesteDiaComponent } from './secoes/neste-dia/neste-dia.component';
+import { CadeiraDoDiretorComponent } from './secoes/cadeira-do-diretor/cadeira-do-diretor.component';
+import { DecadasComponent } from './secoes/decadas/decadas.component';
+import { OndeAssistirComponent } from './secoes/onde-assistir/onde-assistir.component';
+import { MaratonasComponent } from './secoes/maratonas/maratonas.component';
+import { ResenhasRecentesComponent } from './secoes/resenhas-recentes/resenhas-recentes.component';
 import { HOME_SHELVES, HomeShelfConfig } from '../../core/config/shelves';
 import { Movie, TvShow, SpotlightData } from '../../core/models/tmdb.models';
 import {
@@ -34,6 +42,14 @@ import {
     CarouselRowComponent,
     ContentShelfComponent,
     EstanteListrasComponent,
+    JogosHojeComponent,
+    QuantoTempoComponent,
+    NesteDiaComponent,
+    CadeiraDoDiretorComponent,
+    DecadasComponent,
+    OndeAssistirComponent,
+    MaratonasComponent,
+    ResenhasRecentesComponent,
     LucideArrowRight,
     LucideChevronLeft,
     LucideChevronRight,
