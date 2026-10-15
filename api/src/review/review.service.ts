@@ -10,7 +10,9 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { UpdateReviewDto } from './dto/update-review.dto.js';
 import { UpsertReviewDto } from './dto/upsert-review.dto.js';
 
-const AUTOR = { select: { id: true, name: true, avatarUrl: true } };
+const AUTOR = {
+  select: { id: true, username: true, name: true, avatarUrl: true },
+};
 
 @Injectable()
 export class ReviewService {
