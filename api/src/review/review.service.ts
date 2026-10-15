@@ -95,6 +95,20 @@ export class ReviewService {
     });
   }
 
+  // busca o triplo e corta a repeticao: uma pessoa prolifica nao toma a fileira inteira
+  async recentes(pagina: PaginationDto) {
+    const lista = await this.prisma.review.findMany({
+      where: { content: { not: null } },
+      include: { media: true, user: AUTOR },
+      orderBy: { createdAt: 'desc' },
+      take: pagina.take * 3,
+    });
+    const vistos = new Set<string>();
+    return lista
+      .filter((r) => !vistos.has(r.userId) && vistos.add(r.userId))
+      .slice(0, pagina.take);
+  }
+
   // agregacao no banco: somar no cliente daria numero errado, a lista e paginada
   async estatisticasDaMidia(tmdbId: number, type: MediaType) {
     const vazio = {

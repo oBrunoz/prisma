@@ -16,6 +16,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { ReviewModule } from './review/review.module.js';
 import { TmdbModule } from './tmdb/tmdb.module.js';
 import { UserModule } from './user/user.module.js';
+import { VitrineModule } from './vitrine/vitrine.module.js';
 import { WatchlistModule } from './watchlist/watchlist.module.js';
 
 @Module({
@@ -34,6 +35,7 @@ import { WatchlistModule } from './watchlist/watchlist.module.js';
     MarksModule,
     FollowModule,
     GamesModule,
+    VitrineModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
