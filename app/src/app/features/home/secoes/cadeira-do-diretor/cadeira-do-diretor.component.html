@@ -1,5 +1,29 @@
 <section (appAparecer)="carregar()">
-  @if (pessoa(); as p) {
+  @if (!carregado()) {
+    <!-- mesmo desenho da seção pronta: a altura da página não muda quando o diretor chega -->
+    <div class="py-14 sm:py-20 mb-14 sm:mb-20 px-gutter" aria-hidden="true">
+      <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 sm:items-end">
+        <div class="w-28 sm:w-36 lg:w-44 aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a] flex-none"></div>
+        <div class="flex-1">
+          <div class="h-6 w-40 rounded skeleton bg-[#1a1a1a]"></div>
+          <div class="h-10 sm:h-12 md:h-16 w-3/4 mt-2 rounded-lg skeleton bg-[#1a1a1a]"></div>
+          <!-- "nasceu em…" quebra em duas linhas no celular -->
+          <div class="h-12 sm:h-6 w-2/3 mt-4 rounded skeleton bg-[#1a1a1a]"></div>
+          <div class="h-12 w-56 mt-6 rounded-full skeleton bg-[#1a1a1a]"></div>
+        </div>
+      </div>
+      <div class="flex gap-4 overflow-hidden trilho-sangria mt-10 sm:mt-12 pb-2">
+        @for (item of esqueleto; track $index) {
+          <div class="card-trilho">
+            <div class="aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
+            <div class="h-px mt-4 bg-white/10"></div>
+            <div class="h-5 w-12 mt-2 rounded skeleton bg-[#1a1a1a]"></div>
+          </div>
+        }
+      </div>
+      <div class="hidden mouse:block h-2 mt-3"></div>
+    </div>
+  } @else if (pessoa(); as p) {
     @if (filmes().length >= 3) {
       <div class="relative py-14 sm:py-20 mb-14 sm:mb-20 overflow-hidden">
         @if (fundo()) {

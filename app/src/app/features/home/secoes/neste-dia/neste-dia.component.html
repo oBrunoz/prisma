@@ -1,5 +1,27 @@
-<section (appAparecer)="carregar()">
-  @if (dados()?.highlight; as filme) {
+<section>
+  @if (!carregado()) {
+    <!-- mesmo desenho da seção pronta: a altura da página não muda quando o dia chega -->
+    <div class="bg-[#0d0d0d] border-y border-white/5 py-14 sm:py-20 px-gutter mb-14 sm:mb-20" aria-hidden="true">
+      <div class="grid lg:grid-cols-[1.35fr_1fr] gap-8 lg:gap-14 items-center">
+        <div class="aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
+        <div>
+          <div class="h-6 w-32 rounded skeleton bg-[#1a1a1a]"></div>
+          <div class="h-[6.6rem] sm:h-[7.5rem] xl:h-[9.9rem] mt-3 rounded-lg skeleton bg-[#1a1a1a]"></div>
+          <div class="h-6 w-56 mt-4 rounded skeleton bg-[#1a1a1a]"></div>
+          <div class="h-12 w-40 mt-7 rounded-full skeleton bg-[#1a1a1a]"></div>
+        </div>
+      </div>
+      <div class="h-5 w-64 mt-12 sm:mt-14 rounded skeleton bg-[#1a1a1a]"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        @for (item of esqueleto; track $index) {
+          <div class="flex items-center gap-4">
+            <div class="w-12 aspect-[2/3] rounded skeleton bg-[#1a1a1a] flex-none"></div>
+            <div class="h-9 flex-1 rounded skeleton bg-[#1a1a1a]"></div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else if (dados()?.highlight; as filme) {
     <div class="bg-[#0d0d0d] border-y border-white/5 py-14 sm:py-20 px-gutter mb-14 sm:mb-20">
       <div class="grid lg:grid-cols-[1.35fr_1fr] gap-8 lg:gap-14 items-center">
         <a [routerLink]="['/search', 'movies', filme.tmdbId]" class="group relative block aspect-video rounded-lg overflow-hidden bg-[#1a1a1a]">

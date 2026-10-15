@@ -81,11 +81,13 @@
 
       <div>
         @if (trendingMovies().length === 0) {
-          <div class="flex gap-4 overflow-hidden trilho-sangria">
+          <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
             @for (item of skeletonItems; track $index) {
               <div class="card-trilho-largo aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           </div>
+          <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+          <div class="hidden mouse:block h-2 mt-3"></div>
         } @else {
           <app-carousel-row>
             @for (movie of trendingMovies(); track movie.id) {
@@ -132,11 +134,13 @@
 
       <div>
         @if (popularMovies().length === 0) {
-          <div class="flex gap-4 overflow-hidden trilho-sangria">
+          <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
             @for (item of skeletonItems; track $index) {
               <div class="card-trilho aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           </div>
+          <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+          <div class="hidden mouse:block h-2 mt-3"></div>
         } @else {
           <app-carousel-row>
             @for (movie of popularMovies(); track movie.id) {
@@ -199,11 +203,13 @@
 
       <div>
         @if (trendingSeries().length === 0) {
-          <div class="flex gap-4 overflow-hidden trilho-sangria">
+          <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
             @for (item of skeletonItems; track $index) {
               <div class="card-trilho-largo aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           </div>
+          <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+          <div class="hidden mouse:block h-2 mt-3"></div>
         } @else {
           <app-carousel-row>
             @for (serie of trendingSeries(); track serie.id) {

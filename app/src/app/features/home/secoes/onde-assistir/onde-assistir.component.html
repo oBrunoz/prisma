@@ -26,11 +26,13 @@
   </div>
 
   @if (carregando()) {
-    <div class="flex gap-4 overflow-hidden trilho-sangria">
+    <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
       @for (item of esqueleto; track $index) {
         <div class="card-trilho aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
       }
     </div>
+    <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+    <div class="hidden mouse:block h-2 mt-3"></div>
   } @else if (filmes().length) {
     <app-carousel-row>
       @for (filme of filmes(); track filme.id) {

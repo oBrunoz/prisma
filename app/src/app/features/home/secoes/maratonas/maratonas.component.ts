@@ -5,7 +5,6 @@ import { environment } from '../../../../../environments/environment';
 import { Maratona } from '../../../../core/models/vitrine.models';
 import { VitrineService } from '../../../../core/services/vitrine.service';
 import { CarouselRowComponent } from '../../../../shared/components/carousel-row/carousel-row.component';
-import { AparecerDirective } from '../../../../shared/directives/aparecer.directive';
 
 const NA_PILHA = 5;
 
@@ -13,7 +12,7 @@ const NA_PILHA = 5;
 @Component({
   selector: 'app-maratonas',
   standalone: true,
-  imports: [RouterLink, CarouselRowComponent, AparecerDirective],
+  imports: [RouterLink, CarouselRowComponent],
   templateUrl: './maratonas.component.html',
   styleUrls: ['./maratonas.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,7 +25,8 @@ export class MaratonasComponent implements OnDestroy {
   readonly maratonas = signal<Maratona[] | null>(null);
   readonly esqueleto = Array(5).fill(0);
 
-  carregar(): void {
+  // guardada na API e pequena: vem logo na abertura, antes da pessoa chegar aqui
+  constructor() {
     this.vitrine
       .maratonas()
       .pipe(takeUntil(this.destroy$))

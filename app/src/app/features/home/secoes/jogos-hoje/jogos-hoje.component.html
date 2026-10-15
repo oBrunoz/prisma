@@ -1,5 +1,4 @@
-<!-- sem margem enquanto vazia: a seção só ocupa espaço quando tem o que mostrar -->
-<section (appAparecer)="carregar()">
+<section>
   @if (cards().length) {
   <div class="px-gutter mb-14 sm:mb-20">
     <div class="flex justify-between items-baseline gap-4 mb-5 sm:mb-8">
@@ -13,7 +12,9 @@
       @for (card of cards(); track card.info.tipo) {
         <a [routerLink]="['/jogos', card.info.slug]" class="group flex flex-col rounded-lg overflow-hidden bg-[#1a1a1a]">
           <div class="relative aspect-video overflow-hidden bg-[#0d0d0d]">
-            @if (card.info.tipo === 'FRAMES') {
+            @if (!card.partida) {
+              <div class="absolute inset-0 skeleton bg-[#1a1a1a]"></div>
+            } @else if (card.info.tipo === 'FRAMES') {
               <img
                 [src]="imagens + '/w780' + card.partida.images[0]"
                 alt=""
@@ -58,9 +59,7 @@
       <p class="text-gray-400 text-sm mt-4">
         Sem conta, sua sequência fica só neste aparelho.
         <a routerLink="/register" class="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white transition duration-300">Criar conta</a>
-        @if (jogouAlgum()) {
-          para não perder.
-        }
+        para não perder.
       </p>
     }
   </div>

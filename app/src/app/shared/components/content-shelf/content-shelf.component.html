@@ -4,12 +4,13 @@
     <h2 class="font-bold text-white" [ngClass]="large ? 'text-2xl sm:text-3xl mb-5 sm:mb-8' : 'text-xl sm:text-2xl mb-4 sm:mb-6'">{{ title }}</h2>
 
     @if (isLoading()) {
-      <div class="flex gap-4 overflow-hidden trilho-sangria">
+      <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
         @for (item of skeletonItems; track $index) {
           <div class="card-trilho aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
         }
       </div>
-      <div class="h-2 mt-3"></div>
+      <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+      <div class="hidden mouse:block h-2 mt-3"></div>
     } @else {
       <app-carousel-row>
         @for (item of items(); track item.id) {

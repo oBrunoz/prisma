@@ -4,17 +4,27 @@ import { LucideArrowRight, LucidePlay } from '@lucide/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ESPECTRO } from '../../../../core/models/espectro';
-import { DesafiosDoDia, JOGOS } from '../../../../core/models/jogos.models';
+import { DesafiosDoDia, InfoJogo, JOGOS, Partida } from '../../../../core/models/jogos.models';
 import { AuthService } from '../../../../core/services/auth.service';
 import { JogosService } from '../../../../core/services/jogos.service';
 import { PosterListrasComponent } from '../../../../shared/components/poster-listras/poster-listras.component';
-import { AparecerDirective } from '../../../../shared/directives/aparecer.directive';
 
-// os dois jogos do dia na home, com o andamento de cada um; some se não houver desafio
+interface CardJogo {
+  info: InfoJogo;
+  // null enquanto o dia não chega
+  partida: Partida | null;
+  fim: boolean;
+  fios: { cor: string; gasto: boolean; vazio: boolean }[];
+  status: string;
+  botao: string;
+}
+
+// os dois jogos do dia na home, com o andamento de cada um; some se não houver desafio.
+// Nasce com os cards (nome e regra já se sabem) para a altura não mudar quando o dia chega
 @Component({
   selector: 'app-jogos-hoje',
   standalone: true,
-  imports: [RouterLink, LucideArrowRight, LucidePlay, PosterListrasComponent, AparecerDirective],
+  imports: [RouterLink, LucideArrowRight, LucidePlay, PosterListrasComponent],
   templateUrl: './jogos-hoje.component.html',
   styleUrls: ['./jogos-hoje.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,9 +36,14 @@ export class JogosHojeComponent implements OnDestroy {
 
   readonly imagens = environment.tmdbImageUrl;
   readonly dia = signal<DesafiosDoDia | null>(null);
+  readonly carregado = signal(false);
 
   readonly cards = computed(() =>
-    JOGOS.flatMap((info) => {
+    JOGOS.flatMap((info): CardJogo[] => {
+      if (!this.carregado()) {
+        const fios = ESPECTRO.map((cor) => ({ cor, gasto: false, vazio: true }));
+        return [{ info, partida: null, fim: false, fios, status: info.regra, botao: 'Jogar' }];
+      }
       const partida = this.dia()?.challenges.find((c) => c.kind === info.tipo);
       if (!partida) return [];
       const usados = partida.guesses.length;
@@ -54,14 +69,20 @@ export class JogosHojeComponent implements OnDestroy {
     }),
   );
 
-  readonly jogouAlgum = computed(() => (this.dia()?.challenges ?? []).some((c) => c.guesses.length));
-
-  carregar(): void {
+  // o dia é pequeno e decide se a seção existe: vem logo na abertura, com a pessoa ainda no destaque
+  constructor() {
     this.jogos
       .hoje()
       .pipe(takeUntil(this.destroy$))
       // sem o dia, a seção só não aparece
-      .subscribe({ next: (dia) => this.dia.set(dia), error: () => this.dia.set(null) });
+      .subscribe({
+        next: (dia) => this.dia.set(dia),
+        error: () => {
+          this.dia.set(null);
+          this.carregado.set(true);
+        },
+        complete: () => this.carregado.set(true),
+      });
   }
 
   ngOnDestroy(): void {

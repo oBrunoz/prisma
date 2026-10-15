@@ -20,7 +20,8 @@ export class AparecerDirective implements AfterViewInit, OnDestroy {
           this.observador?.disconnect();
           this.zona.run(() => this.appAparecer.emit());
         },
-        { rootMargin: '300px 0px' },
+        // com folga: o dado chega antes da seção entrar na tela e nada muda de altura à vista
+        { rootMargin: '800px 0px' },
       );
       this.observador.observe(this.host.nativeElement);
     });

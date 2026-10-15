@@ -27,6 +27,13 @@
   }
 }
 
+/* a altura é a do conteúdo pronto (número + leque maiores no xl): o esqueleto ocupa o mesmo */
+@media (min-width: 1280px) {
+  .decada {
+    min-height: 19rem;
+  }
+}
+
 /* a cor a 45% sobre o preto, como o stripes-backdrop */
 .decada::before {
   content: '';

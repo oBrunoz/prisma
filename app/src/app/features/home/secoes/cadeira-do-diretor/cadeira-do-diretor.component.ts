@@ -27,6 +27,8 @@ export class CadeiraDoDiretorComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   readonly pessoa = signal<PersonDetails | null>(null);
+  readonly carregado = signal(false);
+  readonly esqueleto = Array(6).fill(0);
 
   // longas dirigidos, sem repetir e em ordem de lançamento
   readonly filmes = computed(() => {
@@ -65,7 +67,13 @@ export class CadeiraDoDiretorComponent implements OnDestroy {
     this.movies
       .getPersonDetails(id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({ next: (p) => this.pessoa.set(p), error: () => this.pessoa.set(null) });
+      .subscribe({
+        next: (p) => {
+          this.pessoa.set(p);
+          this.carregado.set(true);
+        },
+        error: () => this.carregado.set(true),
+      });
   }
 
   ano(filme: PersonCredit): string {

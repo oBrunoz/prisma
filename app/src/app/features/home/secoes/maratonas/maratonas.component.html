@@ -1,4 +1,4 @@
-<section (appAparecer)="carregar()">
+<section>
   @if (maratonas() === null || maratonas()!.length) {
     <div class="px-gutter mb-14 sm:mb-20">
       <h2 class="titulo-secao mb-1">Maratonas</h2>
@@ -27,11 +27,17 @@
           }
         </app-carousel-row>
       } @else {
-        <div class="flex gap-4 overflow-hidden trilho-sangria">
+        <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
           @for (item of esqueleto; track $index) {
-            <div class="card-trilho-largo aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
+            <div class="card-trilho-largo">
+              <div class="aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
+              <div class="h-5 w-2/3 mt-3.5 rounded skeleton bg-[#1a1a1a]"></div>
+              <div class="h-4 w-1/3 mt-1.5 rounded skeleton bg-[#1a1a1a]"></div>
+            </div>
           }
         </div>
+        <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+        <div class="hidden mouse:block h-2 mt-3"></div>
       }
     </div>
   }
