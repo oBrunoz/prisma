@@ -1,57 +1,111 @@
 <div class="pt-32 pb-20">
-  <section class="relative bg-[#0d0d0d] border-b border-white/5 -mt-32 pt-32 sm:pt-40 pb-10 sm:pb-12 overflow-hidden">
-    <app-stripes-banner></app-stripes-banner>
+  <section
+    class="relative -mt-32 pt-32 sm:pt-40 overflow-hidden"
+    [ngClass]="capaPath() ? 'min-h-[30rem] sm:min-h-[34rem] flex flex-col justify-end pb-8 sm:pb-10' : 'bg-[#0d0d0d] border-b border-white/5 pb-10 sm:pb-12'">
 
-    <div class="relative px-gutter flex flex-wrap items-center gap-5 sm:gap-8">
+    <!-- a capa é o primeiro favorito; sem ele, as listras de sempre -->
+    @if (capaPath(); as capa) {
+      <img
+        [src]="capaSrc(capa)"
+        [srcset]="capaSrcset(capa)"
+        sizes="100vw"
+        alt=""
+        fetchpriority="high"
+        class="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
+      <div class="absolute inset-0 bg-gradient-to-r from-[#111111] from-10% via-[#111111]/70 to-[#111111]/10"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent"></div>
+      <!-- a navbar fica transparente no topo: sem isto, some sobre capa clara -->
+      <div class="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#111111]/85 to-transparent"></div>
       @if (perfil(); as perfil) {
-        <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+        @if (perfil.capa.media; as midia) {
+          <p class="hidden sm:block absolute top-24 right-[var(--gutter)] z-[1] text-xs text-gray-400">
+            Capa: <span class="text-gray-300">{{ midia.title }}</span>{{ perfil.capa.tipo === 'favorito' ? ', favorito de ' + perfil.username : '' }}
+          </p>
+        }
+      }
+    } @else {
+      <app-stripes-banner></app-stripes-banner>
+    }
 
-        <div class="flex-1 min-w-0">
-          <h1 class="text-3xl sm:text-4xl font-bold text-white">{{ perfil.username }}</h1>
-          <p class="mt-2 text-gray-400">desde {{ perfil.createdAt | date: "MMMM 'de' yyyy" }}</p>
-          @if (perfil.bio) {
-            <p class="mt-3 max-w-xl text-gray-300">{{ perfil.bio }}</p>
-          }
-          <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm sm:text-base text-gray-400">
-            <span>{{ plural(perfil.contagem.avaliacoes, 'avaliação', 'avaliações') }}</span>
-            <button type="button" (click)="listaAberta.set('seguidores')" class="hover:text-white transition duration-300 cursor-pointer">
-              {{ plural(perfil.contagem.seguidores, 'seguidor', 'seguidores') }}
-            </button>
-            <button type="button" (click)="listaAberta.set('seguindo')" class="hover:text-white transition duration-300 cursor-pointer">
-              {{ perfil.contagem.seguindo }} seguindo
-            </button>
-            @if (notaMedia(); as media) {
-              <span class="text-yellow-400">{{ media | number: '1.1-1' }} de nota média</span>
+    <div class="relative px-gutter">
+      @if (perfil(); as perfil) {
+        <div class="flex flex-wrap items-end gap-5 sm:gap-8">
+          <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+
+          <div class="flex-1 min-w-[14rem]">
+            <h1 class="text-3xl sm:text-5xl font-bold text-white">{{ perfil.username }}</h1>
+            <p class="mt-2 text-gray-400">desde {{ perfil.createdAt | date: "MMMM 'de' yyyy" }}</p>
+            @if (perfil.bio) {
+              <p class="mt-3 max-w-xl text-gray-300">{{ perfil.bio }}</p>
             }
           </div>
+
+          @if (souEu()) {
+            <a
+              routerLink="/configuracoes/perfil"
+              class="px-6 py-3 rounded-full transition duration-300 flex items-center gap-2 text-sm font-medium bg-white/10 hover:bg-white/20 text-white">
+              <svg lucidePencil [size]="15" strokeWidth="2"></svg>
+              Editar perfil
+            </a>
+          } @else {
+            <button
+              type="button"
+              (click)="alternarFollow()"
+              [disabled]="alternandoFollow()"
+              [attr.aria-pressed]="seguindo()"
+              class="px-6 py-3 rounded-full transition duration-300 flex items-center gap-2 text-sm font-medium text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              [class]="seguindo() ? 'bg-white/10 hover:bg-white/20' : 'bg-red-600 hover:bg-red-700'">
+              @if (seguindo()) {
+                <svg lucideUserCheck [size]="16" strokeWidth="2"></svg>
+                Seguindo
+              } @else {
+                <svg lucideUserPlus [size]="16" strokeWidth="2"></svg>
+                Seguir
+              }
+            </button>
+          }
         </div>
 
-        <button
-          type="button"
-          (click)="alternarFollow()"
-          [disabled]="alternandoFollow()"
-          [attr.aria-pressed]="seguindo()"
-          class="px-6 py-3 rounded-full transition duration-300 flex items-center gap-2 text-sm font-medium text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-          [class]="seguindo() ? 'bg-white/10 hover:bg-white/20' : 'bg-red-600 hover:bg-red-700'">
-          @if (seguindo()) {
-            <svg lucideUserCheck [size]="16" strokeWidth="2"></svg>
-            Seguindo
-          } @else {
-            <svg lucideUserPlus [size]="16" strokeWidth="2"></svg>
-            Seguir
+        @let c = perfil.contagem;
+        <div class="mt-6 sm:mt-8 flex flex-wrap gap-x-7 sm:gap-x-9 gap-y-4">
+          <div>
+            <p class="text-xl sm:text-2xl font-semibold text-white tabular-nums">{{ c.filmes }}</p>
+            <p class="text-xs sm:text-sm text-gray-400">{{ plural(c.filmes, 'filme', 'filmes') }}</p>
+          </div>
+          <div>
+            <p class="text-xl sm:text-2xl font-semibold text-white tabular-nums">{{ c.series }}</p>
+            <p class="text-xs sm:text-sm text-gray-400">{{ plural(c.series, 'série', 'séries') }}</p>
+          </div>
+          <div>
+            <p class="text-xl sm:text-2xl font-semibold text-white tabular-nums">{{ c.avaliacoes }}</p>
+            <p class="text-xs sm:text-sm text-gray-400">{{ plural(c.avaliacoes, 'avaliação', 'avaliações') }}</p>
+          </div>
+          <button type="button" (click)="abrirLista('seguidores')" class="group text-left cursor-pointer">
+            <p class="text-xl sm:text-2xl font-semibold text-white tabular-nums">{{ c.seguidores }}</p>
+            <p class="text-xs sm:text-sm text-gray-400 group-hover:text-white transition duration-300">{{ plural(c.seguidores, 'seguidor', 'seguidores') }}</p>
+          </button>
+          <button type="button" (click)="abrirLista('seguindo')" class="group text-left cursor-pointer">
+            <p class="text-xl sm:text-2xl font-semibold text-white tabular-nums">{{ c.seguindo }}</p>
+            <p class="text-xs sm:text-sm text-gray-400 group-hover:text-white transition duration-300">seguindo</p>
+          </button>
+          @if (c.notaMedia !== null) {
+            <div>
+              <p class="text-xl sm:text-2xl font-semibold text-yellow-400 tabular-nums">{{ c.notaMedia | number: '1.1-1' }}</p>
+              <p class="text-xs sm:text-sm text-gray-400">nota média</p>
+            </div>
           }
-        </button>
+        </div>
       } @else if (carregando()) {
-        <div class="w-24 h-24 rounded-full bg-[#1a1a1a]"></div>
-        <div class="flex-1 space-y-3">
-          <div class="h-9 w-64 max-w-full rounded-lg bg-[#1a1a1a]"></div>
-          <div class="h-5 w-40 rounded-lg bg-[#1a1a1a]"></div>
+        <div class="flex flex-wrap items-end gap-5 sm:gap-8">
+          <div class="w-24 h-24 rounded-full bg-[#1a1a1a]"></div>
+          <div class="flex-1 space-y-3">
+            <div class="h-10 w-64 max-w-full rounded-lg bg-[#1a1a1a]"></div>
+            <div class="h-5 w-40 rounded-lg bg-[#1a1a1a]"></div>
+          </div>
         </div>
       } @else if (naoEncontrado()) {
-        <div>
-          <h1 class="text-3xl sm:text-4xl font-bold text-white">Perfil não encontrado</h1>
-          <p class="mt-3 text-gray-400">Ninguém por aqui usa esse nome de usuário. Ele pode ter sido trocado.</p>
-        </div>
+        <h1 class="text-3xl sm:text-4xl font-bold text-white">Perfil não encontrado</h1>
+        <p class="mt-3 text-gray-400">Ninguém por aqui usa esse nome de usuário.</p>
       } @else if (erroPerfil()) {
         <p class="text-red-400" role="alert">{{ erroPerfil() }}</p>
       }
@@ -59,85 +113,75 @@
   </section>
 
   @if (perfil(); as perfil) {
-    <section class="px-gutter mt-12 sm:mt-16">
-      <h2 class="titulo-secao mb-5 sm:mb-8">Assistiu</h2>
-
-      @if (erroAvaliacoes()) {
-        <p class="text-sm text-red-400" role="alert">{{ erroAvaliacoes() }}</p>
-      } @else if (carregandoAvaliacoes()) {
-        <div class="grade-posters">
-          @for (vazio of [1, 2, 3, 4, 5]; track vazio) {
-            <div class="aspect-[2/3] rounded-xl bg-[#1a1a1a]"></div>
-          }
-        </div>
-      } @else if (assistidos().length === 0) {
-        <p class="text-gray-400">{{ perfil.username }} ainda não marcou nenhum título como assistido.</p>
-      } @else {
-        <div class="grade-posters">
-          @for (avaliacao of assistidos(); track avaliacao.id) {
-            @if (avaliacao.media; as midia) {
-              <app-movie-card
-                [id]="midia.tmdbId"
-                [title]="midia.title"
-                [posterPath]="midia.posterPath"
-                [year]="ano(midia)"
-                [mediaType]="tipoDeCard(midia)">
-              </app-movie-card>
+    <div class="px-gutter">
+      <div class="flex gap-6 sm:gap-8 border-b border-white/5 overflow-x-auto hide-scrollbar" role="tablist">
+        @for (item of abas(); track item.aba) {
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="abaVisivel() === item.aba"
+            (click)="trocarAba(item.aba)"
+            class="relative shrink-0 py-4 text-sm sm:text-base whitespace-nowrap transition duration-300 cursor-pointer"
+            [class]="abaVisivel() === item.aba ? 'text-white' : 'text-gray-400 hover:text-white'">
+            {{ item.rotulo }}
+            @if (item.total !== null) {
+              <span class="ml-1 text-sm text-gray-500 tabular-nums">{{ item.total }}</span>
             }
-          }
-        </div>
-      }
-    </section>
+            @if (abaVisivel() === item.aba) {
+              <span class="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"></span>
+            }
+          </button>
+        }
+      </div>
 
-    <section class="px-gutter mt-14 sm:mt-20">
-      <h2 class="titulo-secao mb-5 sm:mb-8">Avaliações</h2>
-
-      @if (erroAvaliacoes()) {
-        <p class="text-sm text-red-400" role="alert">{{ erroAvaliacoes() }}</p>
-      } @else if (carregandoAvaliacoes()) {
-        <div class="space-y-6 max-w-4xl">
-          @for (vazio of [1, 2]; track vazio) {
-            <div class="h-28 rounded-xl bg-[#1a1a1a]"></div>
+      <div class="pt-8 sm:pt-10">
+        @switch (abaVisivel()) {
+          @case ('geral') {
+            <app-aba-geral
+              [userId]="perfil.id"
+              [username]="perfil.username"
+              [souEu]="souEu()"
+              [favoritos]="perfil.favoritos"
+              (escolherFavoritos)="favoritosAbertos.set(true)"
+              (verAba)="trocarAba($event)">
+            </app-aba-geral>
           }
-        </div>
-      } @else if (avaliacoesEscritas().length === 0) {
-        <p class="text-gray-400">{{ perfil.username }} ainda não avaliou nenhum título.</p>
-      } @else {
-        <div class="space-y-6 max-w-4xl">
-          @for (avaliacao of avaliacoesEscritas(); track avaliacao.id) {
-            <article class="bg-[#1a1a1a] rounded-xl p-5 sm:p-6 min-w-0">
-              <div class="flex flex-wrap items-baseline justify-between gap-3">
-                @if (avaliacao.media; as midia) {
-                  <a
-                    [routerLink]="['/search', tipoDeCard(midia), midia.tmdbId]"
-                    class="min-w-0 text-lg font-semibold text-white hover:text-red-500 transition duration-300">
-                    {{ midia.title }}
-                  </a>
-                }
-                @if (avaliacao.rating) {
-                  <span class="text-sm text-yellow-400">{{ avaliacao.rating }}/10</span>
-                }
-              </div>
-              @if (avaliacao.content) {
-                <p class="mt-3 text-gray-300 whitespace-pre-line">{{ avaliacao.content }}</p>
-              }
-              <p class="mt-3 text-xs text-gray-500">{{ avaliacao.createdAt | date: 'dd/MM/yyyy' }}</p>
-            </article>
+          @case ('diario') {
+            <app-aba-diario [userId]="perfil.id" [username]="perfil.username"></app-aba-diario>
           }
-        </div>
-      }
-    </section>
+          @case ('avaliacoes') {
+            <app-aba-avaliacoes
+              [userId]="perfil.id"
+              [username]="perfil.username"
+              [souEu]="souEu()"
+              (excluiu)="aoExcluirAvaliacao()">
+            </app-aba-avaliacoes>
+          }
+          @case ('watchlist') {
+            <app-aba-watchlist></app-aba-watchlist>
+          }
+        }
+      </div>
+    </div>
   }
 </div>
 
 @if (perfil(); as perfil) {
-  @if (listaAberta(); as aba) {
+  @if (listaAberta(); as lista) {
     <app-seguidores-modal
       [usuarioId]="perfil.id"
       [username]="perfil.username"
       [contagem]="perfil.contagem"
-      [aba]="aba"
-      (fechou)="listaAberta.set(null)">
+      [aba]="lista"
+      (fechou)="fecharLista()">
     </app-seguidores-modal>
+  }
+
+  @if (favoritosAbertos()) {
+    <app-favoritos-modal
+      [atuais]="perfil.favoritos"
+      (fechou)="favoritosAbertos.set(false)"
+      (salvou)="aoSalvarFavoritos($event)">
+    </app-favoritos-modal>
   }
 }

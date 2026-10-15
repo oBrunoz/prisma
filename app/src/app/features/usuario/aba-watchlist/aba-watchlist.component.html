@@ -1,0 +1,36 @@
+@if (erro()) {
+  <p class="text-sm text-red-400" role="alert">{{ erro() }}</p>
+} @else if (carregando()) {
+  <div class="grade-posters">
+    @for (vazio of [1, 2, 3, 4, 5]; track vazio) {
+      <div class="aspect-[2/3] rounded-xl bg-[#1a1a1a]"></div>
+    }
+  </div>
+} @else if (itens().length === 0) {
+  <p class="text-gray-400">
+    Ainda não há nada aqui. Abra um filme ou série e toque em
+    <span class="text-white">Adicionar à watchlist</span>.
+  </p>
+} @else {
+  <div class="grade-posters">
+    @for (item of itens(); track item.id) {
+      <div class="relative group">
+        <app-movie-card
+          [id]="item.media.tmdbId"
+          [title]="item.media.title"
+          [posterPath]="item.media.posterPath"
+          [year]="ano(item.media)"
+          [mediaType]="tipoDeCard(item.media)">
+        </app-movie-card>
+        <button
+          type="button"
+          (click)="remover(item)"
+          [disabled]="removendo() === item.id"
+          [attr.aria-label]="'Remover ' + item.media.title + ' da watchlist'"
+          class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/70 text-gray-300 hover:text-white hover:bg-black/90 transition duration-300 cursor-pointer mouse:opacity-0 mouse:group-hover:opacity-100 focus:opacity-100 disabled:opacity-60 disabled:cursor-not-allowed">
+          <svg lucideX [size]="14" strokeWidth="2"></svg>
+        </button>
+      </div>
+    }
+  </div>
+}

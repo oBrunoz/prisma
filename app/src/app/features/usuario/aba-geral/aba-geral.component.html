@@ -1,0 +1,108 @@
+<div class="space-y-14 sm:space-y-16">
+  <!-- quem não escolheu favoritos vê as vagas no próprio perfil; os outros não veem nada -->
+  @if (favoritos().length > 0 || souEu()) {
+    <section>
+      <div class="mb-5 sm:mb-6 flex items-baseline justify-between gap-4">
+        <h2 class="titulo-secao">Favoritos</h2>
+        @if (souEu()) {
+          <button
+            type="button"
+            (click)="escolherFavoritos.emit()"
+            class="group shrink-0 inline-flex items-center gap-2 whitespace-nowrap text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+            {{ favoritos().length > 0 ? 'Trocar' : 'Escolher' }}
+            <svg lucideArrowRight [size]="15" strokeWidth="2" class="transition duration-300 group-hover:text-red-500"></svg>
+          </button>
+        }
+      </div>
+
+      <div class="grid grid-cols-4 gap-3 sm:gap-6 max-w-4xl">
+        @for (midia of favoritos(); track midia.id) {
+          <app-movie-card
+            [id]="midia.tmdbId"
+            [title]="midia.title"
+            [posterPath]="midia.posterPath"
+            [year]="ano(midia)"
+            [mediaType]="tipoDeCard(midia)">
+          </app-movie-card>
+        }
+        @if (souEu()) {
+          @for (vaga of vagas(); track vaga) {
+            <button
+              type="button"
+              (click)="escolherFavoritos.emit()"
+              aria-label="Escolher favorito"
+              class="aspect-[2/3] rounded-xl border-[1.5px] border-dashed border-white/15 text-gray-500 hover:text-white hover:border-white/30 transition duration-300 flex items-center justify-center cursor-pointer">
+              <svg lucidePlus [size]="22" strokeWidth="1.75"></svg>
+            </button>
+          }
+        }
+      </div>
+    </section>
+  }
+
+  @if (erro()) {
+    <p class="text-sm text-red-400" role="alert">{{ erro() }}</p>
+  } @else if (carregando()) {
+    <div class="grade-posters">
+      @for (vazio of [1, 2, 3, 4, 5]; track vazio) {
+        <div class="aspect-[2/3] rounded-xl bg-[#1a1a1a]"></div>
+      }
+    </div>
+  } @else {
+    @if (assistidos().length > 0) {
+      <section>
+        <div class="mb-5 sm:mb-6 flex items-baseline justify-between gap-4">
+          <h2 class="titulo-secao">Assistidos recentemente</h2>
+          <button
+            type="button"
+            (click)="verAba.emit('diario')"
+            class="group shrink-0 inline-flex items-center gap-2 whitespace-nowrap text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+            Ver diário
+            <svg lucideArrowRight [size]="15" strokeWidth="2" class="transition duration-300 group-hover:text-red-500"></svg>
+          </button>
+        </div>
+        <app-carousel-row class="block">
+          @for (item of assistidos(); track item.id) {
+            @if (item.media; as midia) {
+              <div class="card-trilho">
+                <app-movie-card
+                  [id]="midia.tmdbId"
+                  [title]="midia.title"
+                  [posterPath]="midia.posterPath"
+                  [year]="ano(midia)"
+                  [mediaType]="tipoDeCard(midia)">
+                </app-movie-card>
+              </div>
+            }
+          }
+        </app-carousel-row>
+      </section>
+    }
+
+    @if (escritas().length > 0) {
+      <section>
+        <div class="mb-5 sm:mb-6 flex items-baseline justify-between gap-4">
+          <h2 class="titulo-secao">Avaliações recentes</h2>
+          <button
+            type="button"
+            (click)="verAba.emit('avaliacoes')"
+            class="group shrink-0 inline-flex items-center gap-2 whitespace-nowrap text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+            Ver todas
+            <svg lucideArrowRight [size]="15" strokeWidth="2" class="transition duration-300 group-hover:text-red-500"></svg>
+          </button>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          @for (avaliacao of escritas(); track avaliacao.id) {
+            <app-cartao-avaliacao [avaliacao]="avaliacao" [resumido]="true"></app-cartao-avaliacao>
+          }
+        </div>
+      </section>
+    }
+
+    @if (vazio()) {
+      <p class="text-gray-400">
+        {{ souEu() ? 'Seu perfil ainda está vazio. Marque um título como assistido ou escreva uma avaliação para começar.' : username() + ' ainda não marcou nem avaliou nenhum título.' }}
+      </p>
+    }
+  }
+</div>

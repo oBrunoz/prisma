@@ -22,8 +22,16 @@ export class AvaliacaoService {
     return this.http.get<AvaliacaoUsuario[]>(`${this.base}/media/${tipo}/${tmdbId}?limit=${limite}`);
   }
 
-  porUsuario(userId: string, limite = 50): Observable<AvaliacaoUsuario[]> {
-    return this.http.get<AvaliacaoUsuario[]>(`${this.base}/user/${userId}?limit=${limite}`);
+  // diario: o que foi assistido, pela data; escritas: só as com nota ou texto
+  porUsuario(
+    userId: string,
+    limite = 50,
+    filtro?: 'diario' | 'escritas',
+    pagina = 1,
+  ): Observable<AvaliacaoUsuario[]> {
+    return this.http.get<AvaliacaoUsuario[]>(`${this.base}/user/${userId}`, {
+      params: { limit: limite, page: pagina, ...(filtro && { filtro }) },
+    });
   }
 
   estatisticas(tmdbId: number, tipo: TipoMidia): Observable<EstatisticasMidia> {

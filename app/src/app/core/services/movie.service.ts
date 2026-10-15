@@ -128,6 +128,20 @@ export class MovieService {
     });
   }
 
+  // só os dados básicos, sem créditos nem vídeos: serve para a capa do perfil
+  getBackdrop(id: number, type: 'movie' | 'tv'): Observable<string | null> {
+    return this.get<{ backdrop_path: string | null }>(`/${type}/${id}`).pipe(
+      map((res) => res.backdrop_path),
+    );
+  }
+
+  // as cenas sem texto por cima primeiro: são as que servem de capa
+  getBackdrops(id: number, type: 'movie' | 'tv'): Observable<string[]> {
+    return this.get<{ backdrops?: { file_path: string }[] }>(`/${type}/${id}/images`, {
+      include_image_language: 'null,pt,en',
+    }).pipe(map((res) => (res.backdrops ?? []).map((b) => b.file_path)));
+  }
+
   getContentDetails(id: number, type: 'movie' | 'tv'): Observable<ContentDetails> {
     return type === 'movie' ? this.getMovieDetails(id) : this.getTvDetails(id);
   }

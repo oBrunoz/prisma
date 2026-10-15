@@ -1,5 +1,7 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { AuthService } from './core/services/auth.service';
 import { visitanteGuard } from './core/guards/visitante.guard';
 
 export const routes: Routes = [
@@ -31,10 +33,16 @@ export const routes: Routes = [
       import('./features/register/register.component').then((m) => m.RegisterComponent),
   },
   {
+    // o perfil é um só: o seu é o mesmo que os outros veem, com o que dá para editar
     path: 'perfil',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+    pathMatch: 'full',
+    redirectTo: ({ queryParams }) => {
+      const router = inject(Router);
+      const usuario = inject(AuthService).usuario();
+      return usuario
+        ? router.createUrlTree(['/username', usuario.username], { queryParams })
+        : router.createUrlTree(['/login'], { queryParams: { redirect: '/perfil' } });
+    },
   },
   {
     path: 'configuracoes',

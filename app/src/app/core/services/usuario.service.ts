@@ -2,7 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { BuscaUsuarios, PerfilPublico, UsuarioResumo } from '../models/auth.models';
+import {
+  BuscaUsuarios,
+  Capa,
+  EnvioCapa,
+  NovosSeguidores,
+  PerfilPublico,
+  PublicUser,
+  UsuarioResumo,
+} from '../models/auth.models';
+import { Midia, TipoMidia } from '../models/catalogo.models';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -29,6 +38,33 @@ export class UsuarioService {
     return this.http.get<UsuarioResumo[]>(`${this.base}/follow/${userId}/following`, {
       params: { page: pagina, limit: limite },
     });
+  }
+
+  // a lista inteira, na ordem; vazia limpa
+  definirFavoritos(itens: { tmdbId: number; mediaType: TipoMidia }[]): Observable<Midia[]> {
+    return this.http.put<Midia[]>(`${this.base}/user/me/favorites`, { itens });
+  }
+
+  enviarFoto(arquivo: File): Observable<PublicUser> {
+    const corpo = new FormData();
+    corpo.append('foto', arquivo);
+    return this.http.post<PublicUser>(`${this.base}/user/me/avatar`, corpo);
+  }
+
+  tirarFoto(): Observable<PublicUser> {
+    return this.http.delete<PublicUser>(`${this.base}/user/me/avatar`);
+  }
+
+  definirCapa(capa: EnvioCapa): Observable<Capa> {
+    return this.http.put<Capa>(`${this.base}/user/me/cover`, capa);
+  }
+
+  novosSeguidores(): Observable<NovosSeguidores> {
+    return this.http.get<NovosSeguidores>(`${this.base}/follow/me/new`);
+  }
+
+  marcarSeguidoresVistos(ate: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/follow/me/new/seen`, { ate });
   }
 
   estaSeguindo(userId: string): Observable<boolean> {

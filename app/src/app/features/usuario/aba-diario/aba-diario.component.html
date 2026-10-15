@@ -1,0 +1,77 @@
+@for (mes of meses(); track mes.rotulo) {
+  <section class="mb-8">
+    <h3 class="pb-3 border-b border-white/5 text-sm font-medium text-gray-400 first-letter:uppercase">{{ mes.rotulo }}</h3>
+
+    @for (item of mes.itens; track item.id) {
+      @if (item.media; as midia) {
+        <a
+          [routerLink]="['/search', tipoDeCard(midia), midia.tmdbId]"
+          class="group grid grid-cols-[2.25rem_2.5rem_minmax(0,1fr)_auto] sm:grid-cols-[3rem_2.5rem_minmax(0,1fr)_auto_1.25rem_1.25rem] items-center gap-3 sm:gap-4 py-3 border-b border-white/5">
+          <span class="text-right text-xl sm:text-2xl font-semibold text-gray-300 tabular-nums">{{ dia(item) }}</span>
+
+          <span class="block aspect-[2/3] rounded overflow-hidden bg-[#1a1a1a]">
+            @if (midia.posterPath) {
+              <img [src]="posterUrl(midia)" [alt]="midia.title" loading="lazy" class="w-full h-full object-cover" />
+            } @else {
+              <app-media-fallback kind="poster" [compact]="true"></app-media-fallback>
+            }
+          </span>
+
+          <span class="min-w-0">
+            <span class="block truncate font-semibold text-white group-hover:text-red-500 transition duration-300">{{ midia.title }}</span>
+            <span class="block text-xs text-gray-500">
+              {{ ano(midia) }}{{ midia.type === 'TV' ? (ano(midia) ? ' · série' : 'série') : '' }}
+            </span>
+          </span>
+
+          <span class="text-sm">
+            @if (item.rating) {
+              <app-estrelas [nota]="item.rating"></app-estrelas>
+            }
+          </span>
+
+          <span class="hidden sm:flex justify-center text-red-500">
+            @if (item.liked) {
+              <svg lucideHeart [size]="15" strokeWidth="2" fill="currentColor" aria-label="Curtiu"></svg>
+            }
+          </span>
+
+          <span class="hidden sm:flex justify-center text-gray-500">
+            @if (item.content) {
+              <svg lucideTextAlignStart [size]="15" strokeWidth="2" aria-label="Tem avaliação escrita"></svg>
+            }
+          </span>
+        </a>
+      }
+    }
+  </section>
+} @empty {
+  @if (!carregando() && !erro()) {
+    <p class="text-gray-400">{{ username() }} ainda não marcou nenhum título como assistido.</p>
+  }
+}
+
+@if (carregando()) {
+  @for (vazio of [1, 2, 3, 4]; track vazio) {
+    <div class="flex items-center gap-4 py-3 border-b border-white/5">
+      <div class="w-9 h-6 rounded bg-[#1a1a1a]"></div>
+      <div class="w-10 aspect-[2/3] rounded bg-[#1a1a1a]"></div>
+      <div class="h-4 w-1/3 rounded bg-[#1a1a1a]"></div>
+    </div>
+  }
+}
+
+@if (erro()) {
+  <p class="mt-4 text-sm text-red-400" role="alert">{{ erro() }}</p>
+}
+
+@if (!fim() && !carregando() && (pagina() > 0 || erro())) {
+  <div class="mt-8 flex justify-center">
+    <button
+      type="button"
+      (click)="carregar()"
+      class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer">
+      {{ erro() ? 'Tentar de novo' : 'Carregar mais' }}
+    </button>
+  </div>
+}

@@ -1,0 +1,64 @@
+<article class="h-full bg-[#1a1a1a] rounded-xl p-4 sm:p-5 grid grid-cols-[3.5rem_minmax(0,1fr)] gap-4">
+  @if (avaliacao().media; as midia) {
+    <a [routerLink]="['/search', tipoDeCard(midia), midia.tmdbId]" class="block aspect-[2/3] rounded-md overflow-hidden bg-[#111111]">
+      @if (midia.posterPath) {
+        <img [src]="posterUrl(midia)" [alt]="midia.title" loading="lazy" class="w-full h-full object-cover" />
+      } @else {
+        <app-media-fallback kind="poster" [compact]="true"></app-media-fallback>
+      }
+    </a>
+
+    <div class="min-w-0 flex flex-col">
+      <a
+        [routerLink]="['/search', tipoDeCard(midia), midia.tmdbId]"
+        class="font-semibold text-white hover:text-red-500 transition duration-300 line-clamp-2">
+        {{ midia.title }}
+        @if (ano(midia)) {
+          <span class="ml-1 text-sm font-normal text-gray-500">{{ ano(midia) }}</span>
+        }
+      </a>
+
+      <div class="mt-1 flex items-center gap-3 text-sm">
+        @if (avaliacao().rating; as nota) {
+          <app-estrelas [nota]="nota"></app-estrelas>
+        }
+        @if (avaliacao().liked) {
+          <svg lucideHeart [size]="14" strokeWidth="2" fill="currentColor" class="text-red-500" aria-label="Curtiu"></svg>
+        }
+      </div>
+
+      @if (avaliacao().content; as texto) {
+        @if (resumido()) {
+          <p class="mt-2 text-sm text-gray-300 line-clamp-3 whitespace-pre-line">{{ texto }}</p>
+        } @else {
+          <app-texto-recolhivel class="block mt-2 text-sm" [texto]="texto"></app-texto-recolhivel>
+        }
+      }
+
+      @if (!resumido()) {
+        <div class="mt-auto pt-3 flex flex-wrap items-center gap-4">
+          <p class="text-xs text-gray-500">{{ avaliacao().createdAt | date: 'dd/MM/yyyy' }}</p>
+          @if (podeExcluir()) {
+            <button
+              type="button"
+              (click)="excluir()"
+              [disabled]="excluindo()"
+              class="ml-auto text-sm transition duration-300 flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              [class]="confirmando() ? 'text-red-400 hover:text-red-300' : 'text-gray-400 hover:text-white'">
+              <svg lucideTrash2 [size]="14" strokeWidth="2"></svg>
+              {{ confirmando() ? 'Confirmar exclusão' : 'Excluir' }}
+            </button>
+            @if (confirmando()) {
+              <button
+                type="button"
+                (click)="confirmando.set(false)"
+                class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+                Cancelar
+              </button>
+            }
+          }
+        </div>
+      }
+    </div>
+  }
+</article>

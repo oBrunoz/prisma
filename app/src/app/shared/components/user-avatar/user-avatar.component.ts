@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 
 type Tamanho = 'sm' | 'md' | 'lg';
 
@@ -21,6 +22,12 @@ export class UserAvatarComponent {
   @Input() nome = '';
   @Input() avatarUrl: string | null = null;
   @Input() tamanho: Tamanho = 'md';
+
+  // a foto enviada é servida pela API: o endereço vem relativo a ela
+  get src(): string | null {
+    if (!this.avatarUrl) return null;
+    return this.avatarUrl.startsWith('/') ? `${environment.apiUrl}${this.avatarUrl}` : this.avatarUrl;
+  }
 
   get medidas() {
     return MEDIDAS[this.tamanho];
