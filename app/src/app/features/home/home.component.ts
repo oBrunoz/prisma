@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MovieService } from '../../core/services/movie.service';
+import { MovieService, srcsetDeFundo } from '../../core/services/movie.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { BackdropCardComponent } from '../../shared/components/backdrop-card/backdrop-card.component';
 import { HeroSectionComponent } from '../../shared/components/hero-section/hero-section.component';
@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   highlightPair = computed(() => this.spotlights().slice(-2));
 
   readonly auth = inject(AuthService);
+  readonly srcsetDeFundo = srcsetDeFundo;
 
   // a estante do convite se enche com os filmes que já carregaram nas fileiras
   postersDaEstante = computed(() => {

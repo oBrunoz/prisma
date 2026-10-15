@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject, switchMap, forkJoin, of } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
-import { MovieService } from '../../core/services/movie.service';
+import { MovieService, srcsetDeFundo, srcsetDeLogo } from '../../core/services/movie.service';
 import { HeroSectionComponent } from '../../shared/components/hero-section/hero-section.component';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { CastCard, MappedCastMember } from '../../shared/components/cast-card/cast-card';
@@ -102,7 +102,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
   contentType = signal<'movies' | 'series' | 'people'>('movies');
   trailerUrl = signal<string>('#');
   backgroundUrl = signal<string>('');
+  backgroundSrcset = signal<string>('');
   logoUrl = signal<string>('');
+  logoSrcset = signal<string>('');
   isLoading = signal(true);
 
   skeletonCast = Array(6).fill(0);
@@ -175,14 +177,17 @@ export class DetailsComponent implements OnInit, OnDestroy {
           this.reviews.set(reviews.results ?? []);
           this.trailerUrl.set(this.pickTrailerUrl(details));
 
-          const backdrop =
-            details?.images?.backdrops?.[0]?.file_path ?? details?.backdrop_path;
-          this.backgroundUrl.set(
-            backdrop ? `${environment.tmdbImageUrl}/original${backdrop}` : ''
-          );
+          // a largura da original vem com a imagem; o backdrop_path solto não traz, e aí supõe 1920
+          const fundo = details?.images?.backdrops?.[0];
+          const backdrop = fundo?.file_path ?? details?.backdrop_path;
+          const fundoUrl = backdrop ? `${environment.tmdbImageUrl}/w1280${backdrop}` : '';
+          this.backgroundUrl.set(fundoUrl);
+          this.backgroundSrcset.set(fundoUrl ? (srcsetDeFundo(fundoUrl, fundo?.width) ?? '') : '');
 
           const logo = this.pickLogo(details);
-          this.logoUrl.set(logo ? `${environment.tmdbImageUrl}/original${logo}` : '');
+          const logoUrl = logo ? `${environment.tmdbImageUrl}/w500${logo.file_path}` : '';
+          this.logoUrl.set(logoUrl);
+          this.logoSrcset.set(logo ? (srcsetDeLogo(logoUrl, logo.width) ?? '') : '');
 
           this.isLoading.set(false);
 
@@ -236,13 +241,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   /** Prioriza logo em português, depois inglês. */
-  private pickLogo(details: ContentDetails | null): string | null {
+  private pickLogo(details: ContentDetails | null): ImageBackdrop | null {
     const logos = details?.images?.logos ?? [];
     const escolhido =
       logos.find((l) => l.iso_639_1 === 'pt') ??
       logos.find((l) => l.iso_639_1 === 'en') ??
       logos[0];
-    return escolhido?.file_path ?? null;
+    return escolhido ?? null;
   }
 
   /** Trailer em pt quando existir; senão qualquer trailer, senão teaser. */

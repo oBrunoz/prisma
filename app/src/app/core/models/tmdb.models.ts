@@ -145,8 +145,11 @@ export interface SpotlightData {
   movie: Movie;
   details: ContentDetails;
   backgroundUrl: string;
+  // os tamanhos que cada tela pode pedir (vazio se não houver)
+  backgroundSrcset: string;
   trailerUrl: string;
   logoUrl: string;
+  logoSrcset: string;
 }
 export interface CrewMember {
   id: number;
@@ -289,7 +292,9 @@ export interface Spotlight {
   runtime: number | null;
   details: ContentDetails;
   backgroundUrl: string;
+  backgroundSrcset: string;
   logoUrl: string;
+  logoSrcset: string;
   trailerUrl: string;
 }
 

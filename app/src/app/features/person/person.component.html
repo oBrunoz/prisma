@@ -8,6 +8,8 @@
         @if (backdropUrl()) {
           <img
             [src]="backdropUrl()"
+            [attr.srcset]="srcsetDeFundo(backdropUrl())"
+            sizes="100vw"
             alt=""
             class="h-full w-full object-cover opacity-20"
           />

@@ -1,6 +1,8 @@
 import {
   Component,
   Input,
+  OnChanges,
+  SimpleChanges,
   Output,
   EventEmitter,
   ViewChild,
@@ -20,6 +22,7 @@ import {
   LucidePause,
   LucideInfo,
 } from '@lucide/angular';
+import { noTamanho, srcsetDeFundo } from '../../../core/services/movie.service';
 
 @Component({
   selector: 'app-hero-section',
@@ -28,11 +31,17 @@ import {
   templateUrl: './hero-section.component.html',
   styleUrl: './hero-section.component.css'
 })
-export class HeroSectionComponent {
+export class HeroSectionComponent implements OnChanges {
+  readonly srcsetDeFundo = srcsetDeFundo;
+  readonly noTamanho = noTamanho;
+
   @Input() label = '';
   @Input() title = '';
   @Input() logoUrl = '';
   @Input() backgroundUrl = '';
+  // os tamanhos que a tela pode pedir, com a original na largura real; sem ele, supõe 1920
+  @Input() backgroundSrcset = '';
+  @Input() logoSrcset = '';
   @Input() isLoading = false;
   @Input() hasError = false;
   @Input() rating?: number;
@@ -65,6 +74,11 @@ export class HeroSectionComponent {
   // controle do hint para fechar trailer
   isCloseHintVisible = signal(false);
   private closeHintTimer?: ReturnType<typeof setTimeout>;
+
+  // destaque novo: volta à prévia até a imagem boa chegar
+  ngOnChanges(mudancas: SimpleChanges): void {
+    if (mudancas['backgroundUrl']) this.isBgLoaded.set(false);
+  }
 
   onBackgroundLoad(): void {
     this.isBgLoaded.set(true);

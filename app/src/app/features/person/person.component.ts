@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { catchError, switchMap, takeUntil } from 'rxjs/operators';
-import { MovieService } from '../../core/services/movie.service';
+import { MovieService, srcsetDeFundo } from '../../core/services/movie.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { CarouselRowComponent } from '../../shared/components/carousel-row/carousel-row.component';
 import { PersonCredit, PersonDetails } from '../../core/models/tmdb.models';
@@ -61,13 +61,15 @@ export class PersonComponent implements OnInit, OnDestroy {
   // atuação e ofício técnico no mesmo balaio, já ordenados
   credits = computed<PersonCredit[]>(() => this.movieService.getPersonCredits(this.person()));
 
+  readonly srcsetDeFundo = srcsetDeFundo;
+
   knownFor = computed(() => this.credits().slice(0, 20));
 
   // o fundo do hero vem do título mais conhecido da pessoa
   backdropUrl = computed(() => {
     const comBackdrop = this.credits().find((c) => c.backdrop_path);
     return comBackdrop
-      ? `${environment.tmdbImageUrl}/original${comBackdrop.backdrop_path}`
+      ? `${environment.tmdbImageUrl}/w1280${comBackdrop.backdrop_path}`
       : '';
   });
 

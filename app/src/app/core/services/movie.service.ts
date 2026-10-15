@@ -9,6 +9,7 @@ import {
   TmdbListResponse,
   VideoResponse,
   ImagesResponse,
+  ImageBackdrop,
   ContentDetails,
   MediaResult,
   SpotlightData,
@@ -24,6 +25,29 @@ import {
 
 // talk show, jornalismo e reality: aparição, não trabalho
 const GENEROS_SEM_PAPEL = new Set([10767, 10763, 10764]);
+
+const IMAGEM_TMDB = /^(.*\/t\/p\/)(?:w\d+|h\d+|original)(\/.+)$/;
+
+// a mesma imagem da TMDB em outro tamanho
+export function noTamanho(url: string, tamanho: string): string {
+  const partes = url.match(IMAGEM_TMDB);
+  return partes ? `${partes[1]}${tamanho}${partes[2]}` : url;
+}
+
+// fundo de destaque: cada tela baixa só o que precisa. O celular fica na w780/w1280;
+// tela grande ou retina leva a original, com a largura real que a TMDB informa
+export function srcsetDeFundo(url: string, larguraOriginal = 1920): string | null {
+  if (!IMAGEM_TMDB.test(url)) return null;
+  const lista = [`${noTamanho(url, 'w780')} 780w`, `${noTamanho(url, 'w1280')} 1280w`];
+  if (larguraOriginal > 1280) lista.push(`${noTamanho(url, 'original')} ${larguraOriginal}w`);
+  return lista.join(', ');
+}
+
+// logo de destaque: w500 na tela comum, a original na retina
+export function srcsetDeLogo(url: string, larguraOriginal: number): string | null {
+  if (!IMAGEM_TMDB.test(url) || larguraOriginal <= 500) return null;
+  return `${noTamanho(url, 'w500')} 500w, ${noTamanho(url, 'original')} ${larguraOriginal}w`;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -280,12 +304,28 @@ export class MovieService {
     );
   }
 
-  private pickLogoUrl(images: ImagesResponse, tamanho = 'original'): string {
-    const logos = images?.logos ?? [];
-    const ptLogo = logos.find((l) => l.iso_639_1 === 'pt');
-    const enLogo = logos.find((l) => l.iso_639_1 === 'en');
-    const logo = ptLogo ?? enLogo ?? logos[0];
+  private pickLogoUrl(images: ImagesResponse, tamanho = 'w500'): string {
+    const logo = this.escolherLogo(images);
     return logo ? `${environment.tmdbImageUrl}/${tamanho}${logo.file_path}` : '';
+  }
+
+  private escolherLogo(images: ImagesResponse): ImageBackdrop | undefined {
+    const logos = images?.logos ?? [];
+    return logos.find((l) => l.iso_639_1 === 'pt') ?? logos.find((l) => l.iso_639_1 === 'en') ?? logos[0];
+  }
+
+  // fundo e logo do destaque com os tamanhos que cada tela pode pedir
+  private imagensDoDestaque(images: ImagesResponse) {
+    const fundo = images.backdrops?.[0];
+    const logo = this.escolherLogo(images);
+    const backgroundUrl = fundo ? `${environment.tmdbImageUrl}/w1280${fundo.file_path}` : '';
+    const logoUrl = logo ? `${environment.tmdbImageUrl}/w500${logo.file_path}` : '';
+    return {
+      backgroundUrl,
+      backgroundSrcset: fundo ? (srcsetDeFundo(backgroundUrl, fundo.width) ?? '') : '',
+      logoUrl,
+      logoSrcset: logo ? (srcsetDeLogo(logoUrl, logo.width) ?? '') : '',
+    };
   }
 
   getContentImages(id: number, type: 'movie' | 'tv'): Observable<ImagesResponse> {
@@ -333,10 +373,7 @@ export class MovieService {
     return {
       movie,
       details,
-      backgroundUrl: images.backdrops?.[0]
-        ? `${environment.tmdbImageUrl}/original${images.backdrops[0].file_path}`
-        : '',
-      logoUrl: this.pickLogoUrl(images),
+      ...this.imagensDoDestaque(images),
       trailerUrl: trailer ? `https://www.youtube-nocookie.com/embed/${trailer.key}` : '#',
     };
   }
@@ -441,10 +478,7 @@ export class MovieService {
       year: date ? String(new Date(date).getFullYear()) : '',
       runtime: details.runtime ?? details.episode_run_time?.[0] ?? null,
       details,
-      backgroundUrl: images.backdrops?.[0]
-        ? `${environment.tmdbImageUrl}/original${images.backdrops[0].file_path}`
-        : '',
-      logoUrl: this.pickLogoUrl(images),
+      ...this.imagensDoDestaque(images),
       trailerUrl: trailer ? `https://www.youtube-nocookie.com/embed/${trailer.key}` : '#',
     };
   }
