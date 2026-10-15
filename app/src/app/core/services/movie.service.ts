@@ -341,11 +341,21 @@ export class MovieService {
     };
   }
 
+  // o destaque da home só usa os dados básicos, as imagens e o trailer: sem elenco,
+  // similares e recomendações, cada filme pesa uma fração do getMovieDetails
+  private getSpotlightDetails(id: number): Observable<ContentDetails> {
+    return this.get<ContentDetails>(`/movie/${id}`, {
+      append_to_response: 'images,videos',
+      include_image_language: 'pt,en,null',
+      include_video_language: 'pt,en',
+    });
+  }
+
   getSpotlightMovie(): Observable<SpotlightData> {
     return this.getPopularMovies().pipe(
       switchMap((data) => {
         const movie = data.results[0];
-        return this.getMovieDetails(movie.id).pipe(
+        return this.getSpotlightDetails(movie.id).pipe(
           map((details) => this.toSpotlight(movie, details))
         );
       })
@@ -357,7 +367,7 @@ export class MovieService {
       switchMap((data) =>
         forkJoin(
           data.results.slice(0, count).map((movie) =>
-            this.getMovieDetails(movie.id).pipe(
+            this.getSpotlightDetails(movie.id).pipe(
               map((details) => this.toSpotlight(movie, details))
             )
           )
