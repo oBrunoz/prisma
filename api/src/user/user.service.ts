@@ -1,9 +1,7 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import argon2 from 'argon2';
 import type { User } from '../generated/prisma/client.js';
@@ -62,55 +60,18 @@ export class UserService {
   }
 
   async updateMe(id: string, dto: UpdateUserDto): Promise<PublicUserDto> {
-    const atual = await this.prisma.user.findUnique({ where: { id } });
-    if (!atual) {
-      throw new NotFoundException('Usuario nao encontrado');
-    }
-
-    const email = dto.email?.toLowerCase();
-    const trocaEmail = email !== undefined && email !== atual.email;
-
-    if (trocaEmail) {
-      if (!dto.currentPassword) {
-        throw new BadRequestException(
-          'Informe a senha atual para trocar o e-mail',
-        );
-      }
-      const confere = await argon2.verify(
-        atual.passwordHash,
-        dto.currentPassword,
-      );
-      if (!confere) {
-        throw new UnauthorizedException('Senha atual incorreta');
-      }
-    }
-
-    try {
-      const user = await this.prisma.user.update({
-        where: { id },
-        data: {
-          ...(dto.name !== undefined && { name: dto.name }),
-          ...(dto.username !== undefined && {
-            username: dto.username.toLowerCase(),
-          }),
-          ...(trocaEmail && { email }),
-          ...(dto.bio !== undefined && { bio: dto.bio.trim() || null }),
-          // string vazia e o jeito de tirar a foto
-          ...(dto.avatarUrl !== undefined && {
-            avatarUrl: dto.avatarUrl || null,
-          }),
-        },
-      });
-      return UserService.toPublic(user);
-    } catch (error) {
-      if (this.isUniqueViolation(error, 'username')) {
-        throw new ConflictException('Esse nome de usuario ja esta em uso');
-      }
-      if (this.isUniqueViolation(error)) {
-        throw new ConflictException('E-mail ja cadastrado');
-      }
-      throw error;
-    }
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.bio !== undefined && { bio: dto.bio.trim() || null }),
+        // string vazia e o jeito de tirar a foto
+        ...(dto.avatarUrl !== undefined && {
+          avatarUrl: dto.avatarUrl || null,
+        }),
+      },
+    });
+    return UserService.toPublic(user);
   }
 
   findByEmail(email: string): Promise<User | null> {

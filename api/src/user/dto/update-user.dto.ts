@@ -1,39 +1,20 @@
-import { Transform } from 'class-transformer';
 import {
-  IsEmail,
   IsOptional,
   IsString,
   IsUrl,
-  Matches,
   MaxLength,
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { FORMATO_USERNAME } from './create-user.dto.js';
 
+// so o que aparece no perfil. O username e fixo (vira URL e e como acham a
+// pessoa); e-mail e senha mudam por /account, com confirmacao
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @MinLength(2)
   @MaxLength(80)
   name?: string;
-
-  @IsOptional()
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
-  @IsString()
-  @MinLength(3)
-  @MaxLength(20)
-  @Matches(FORMATO_USERNAME, {
-    message: 'username aceita apenas letras minusculas, numeros e underscore',
-  })
-  username?: string;
-
-  @IsOptional()
-  @IsEmail()
-  @MaxLength(180)
-  email?: string;
 
   @IsOptional()
   @IsString()
@@ -46,10 +27,4 @@ export class UpdateUserDto {
   @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
   @MaxLength(500)
   avatarUrl?: string;
-
-  // trocar o e-mail e trocar a credencial de login: exige provar quem esta ali
-  @IsOptional()
-  @IsString()
-  @MaxLength(128)
-  currentPassword?: string;
 }

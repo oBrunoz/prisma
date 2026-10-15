@@ -79,46 +79,16 @@ describe('User (e2e)', () => {
     await patch().send({ avatarUrl: 'javascript:alert(1)' }).expect(400);
   });
 
-  it('troca o username e mantem o formato', async () => {
-    // o username tem teto de 20 caracteres: sufixo curto
-    const novo = `renom_${Date.now().toString().slice(-8)}`;
-    const res = await patch().send({ username: novo.toUpperCase() }).expect(200);
-    expect(res.body.username).toBe(novo.toLowerCase());
-
-    await patch().send({ username: 'com espaco' }).expect(400);
-  });
-
-  it('recusa username ja usado por outra pessoa', async () => {
-    const carimbo = Date.now();
-    const outro = `ocup_${carimbo.toString().slice(-8)}`;
-    await server()
-      .post('/auth/register')
-      .send({
-        name: 'Outro',
-        username: outro,
-        email: `outro-${carimbo}@teste.com`,
-        password: SENHA,
-      })
-      .expect(201);
-
-    await patch().send({ username: outro }).expect(409);
-  });
-
-  it('nao troca o e-mail sem a senha atual', async () => {
-    await patch().send({ email: `novo-${Date.now()}@teste.com` }).expect(400);
-
+  // o username vira URL e o e-mail e a chave da conta: nenhum dos dois muda por aqui
+  it('nao troca username nem e-mail pelo perfil', async () => {
+    await patch().send({ username: `renom_${Date.now().toString().slice(-8)}` }).expect(400);
     await patch()
-      .send({ email: `novo-${Date.now()}@teste.com`, currentPassword: 'senhaerrada123' })
-      .expect(401);
-  });
+      .send({ email: `novo-${Date.now()}@teste.com`, currentPassword: SENHA })
+      .expect(400);
 
-  it('troca o e-mail com a senha atual e o login passa a valer', async () => {
-    const novoEmail = `trocado-${Date.now()}@teste.com`;
-
-    await patch().send({ email: novoEmail, currentPassword: SENHA }).expect(200);
-
-    await server().post('/auth/login').send({ email: novoEmail, password: SENHA }).expect(200);
-    await server().post('/auth/login').send({ email, password: SENHA }).expect(401);
+    const eu = await server().get('/auth/me').set('Authorization', `Bearer ${token}`).expect(200);
+    expect(eu.body.username).toBe(username);
+    await server().post('/auth/login').send({ email, password: SENHA }).expect(200);
   });
 
   it('recusa campo desconhecido', async () => {
