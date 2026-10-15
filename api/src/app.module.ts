@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AccountModule } from './account/account.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter.js';
 import { LIMITE_GERAL } from './common/rate-limit.js';
@@ -23,6 +24,7 @@ import { WatchlistModule } from './watchlist/watchlist.module.js';
     HealthModule,
     UserModule,
     AuthModule,
+    AccountModule,
     TmdbModule,
     MediaModule,
     WatchlistModule,

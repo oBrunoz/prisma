@@ -13,11 +13,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { LIMITE_LOGIN } from '../common/rate-limit.js';
-import type { CookieOptions, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { CreateUserDto } from '../user/dto/create-user.dto.js';
 import { PublicUserDto } from '../user/dto/public-user.dto.js';
 import { REFRESH_COOKIE, REFRESH_COOKIE_PATH } from './auth.constants.js';
 import { AuthResult, AuthService } from './auth.service.js';
+import { gravarRefreshCookie } from './refresh-cookie.js';
 import { LoginDto } from './dto/login.dto.js';
 import type { AccessTokenPayload } from './token.service.js';
 import { TokenPair } from './token.service.js';
@@ -102,15 +103,6 @@ export class AuthController {
   }
 
   private setRefreshCookie(res: Response, tokens: TokenPair): void {
-    const producao =
-      this.config.getOrThrow<string>('NODE_ENV') === 'production';
-    const options: CookieOptions = {
-      httpOnly: true,
-      secure: producao,
-      sameSite: 'lax',
-      path: REFRESH_COOKIE_PATH,
-      expires: tokens.refreshExpiresAt,
-    };
-    res.cookie(REFRESH_COOKIE, tokens.refreshToken, options);
+    gravarRefreshCookie(res, tokens, this.config);
   }
 }

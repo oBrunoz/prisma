@@ -85,6 +85,19 @@ export class TokenService {
     });
   }
 
+  // apaga em vez de revogar: um token revogado que volta e lido como roubo e
+  // derrubaria a sessao nova junto. Os access tokens ja emitidos vivem ate expirar.
+  async restart(userId: string): Promise<TokenPair> {
+    await this.prisma.refreshToken.deleteMany({ where: { userId } });
+    return this.issue(userId);
+  }
+
+  countActive(userId: string): Promise<number> {
+    return this.prisma.refreshToken.count({
+      where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },
+    });
+  }
+
   private static hash(token: string): string {
     return createHash('sha256').update(token).digest('hex');
   }

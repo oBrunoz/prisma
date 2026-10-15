@@ -29,6 +29,7 @@ model User {
   following     Follow[]        @relation("UserFollowing")
   followers     Follow[]        @relation("UserFollowers")
   refreshTokens RefreshToken[]
+  emailChange   EmailChange?
 
   @@map("users")
 }
@@ -107,4 +108,20 @@ model RefreshToken {
 
   @@index([userId])
   @@map("refresh_tokens")
+}
+
+// pedido de troca de e-mail: o endereco so muda quando o codigo enviado a ele volta
+model EmailChange {
+  id        String   @id @default(uuid(7))
+  userId    String   @unique
+  newEmail  String
+  codeHash  String
+  attempts  Int      @default(0)
+  sentAt    DateTime @default(now())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_changes")
 }
