@@ -10,3 +10,6 @@ export const LIMITE_LOGIN = { ttl: 60_000, limit: 5 };
 // cada pedido manda um e-mail de verdade: o teto protege a caixa de quem
 // recebe e a cota do provedor
 export const LIMITE_ENVIO_EMAIL = { ttl: 60_000, limit: 3 };
+
+// cada envio passa a imagem pelo sharp: o teto evita usar o servidor de conversor
+export const LIMITE_FOTO = { ttl: 60_000, limit: 10 };

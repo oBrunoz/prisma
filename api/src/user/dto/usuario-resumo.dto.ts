@@ -1,10 +1,20 @@
+import type { Prisma } from '../../generated/prisma/client.js';
+
 export const SELECT_RESUMO = {
   id: true,
   username: true,
   avatarUrl: true,
   bio: true,
-  _count: { select: { reviews: true, followers: true } },
-} as const;
+  _count: {
+    select: {
+      // igual ao perfil: marcar assistido nao conta como avaliacao
+      reviews: {
+        where: { OR: [{ rating: { not: null } }, { content: { not: null } }] },
+      },
+      followers: true,
+    },
+  },
+} satisfies Prisma.UserSelect;
 
 export interface UsuarioResumoDto {
   id: string;

@@ -95,6 +95,52 @@ export class FollowService {
     );
   }
 
+  // derivado dos follows: quem seguiu e desistiu antes de ser visto some sozinho
+  async novos(userId: string, limite = 3) {
+    const dono = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { followersSeenAt: true },
+    });
+    const where = {
+      followingId: userId,
+      ...(dono?.followersSeenAt && {
+        createdAt: { gt: dono.followersSeenAt },
+      }),
+    };
+
+    const [total, vinculos] = await Promise.all([
+      this.prisma.follow.count({ where }),
+      this.prisma.follow.findMany({
+        where,
+        include: { follower: PERFIL },
+        orderBy: { createdAt: 'desc' },
+        take: limite,
+      }),
+    ]);
+
+    return {
+      total,
+      // o front devolve esse instante ao marcar como visto
+      ate: vinculos[0]?.createdAt ?? null,
+      recentes: await this.users.marcarSeguindo(
+        vinculos.map((v) => paraResumo(v.follower)),
+        userId,
+      ),
+    };
+  }
+
+  async marcarVistos(userId: string, ate: Date): Promise<void> {
+    // nunca volta no tempo, e nunca passa do agora
+    const limite = new Date(Math.min(ate.getTime(), Date.now()));
+    await this.prisma.user.updateMany({
+      where: {
+        id: userId,
+        OR: [{ followersSeenAt: null }, { followersSeenAt: { lt: limite } }],
+      },
+      data: { followersSeenAt: limite },
+    });
+  }
+
   async counts(userId: string) {
     const [seguidores, seguindo] = await Promise.all([
       this.prisma.follow.count({ where: { followingId: userId } }),

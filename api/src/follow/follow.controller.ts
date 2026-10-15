@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Body,
   Param,
   ParseUUIDPipe,
   Post,
@@ -15,11 +16,29 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard.js';
 import type { AccessTokenPayload } from '../auth/token.service.js';
+import { VistosDto } from './dto/vistos.dto.js';
 import { FollowService } from './follow.service.js';
 
 @Controller('follow')
 export class FollowController {
   constructor(private readonly follows: FollowService) {}
+
+  // antes das rotas com :userId; so a propria pessoa ve quem chegou
+  @Get('me/new')
+  @UseGuards(JwtAuthGuard)
+  novos(@CurrentUser() user: AccessTokenPayload) {
+    return this.follows.novos(user.sub);
+  }
+
+  @Post('me/new/seen')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  vistos(
+    @CurrentUser() user: AccessTokenPayload,
+    @Body() dto: VistosDto,
+  ): Promise<void> {
+    return this.follows.marcarVistos(user.sub, new Date(dto.ate));
+  }
 
   @Get(':userId/followers')
   @UseGuards(OptionalJwtAuthGuard)

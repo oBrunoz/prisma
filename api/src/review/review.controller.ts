@@ -17,6 +17,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import type { AccessTokenPayload } from '../auth/token.service.js';
 import { MediaRefDto } from '../media/dto/media-ref.dto.js';
+import { ListaDoUsuarioDto } from './dto/lista-do-usuario.dto.js';
 import { UpdateReviewDto } from './dto/update-review.dto.js';
 import { UpsertReviewDto } from './dto/upsert-review.dto.js';
 import { ReviewService } from './review.service.js';
@@ -44,9 +45,9 @@ export class ReviewController {
   @Get('user/:userId')
   listByUser(
     @Param('userId', ParseUUIDPipe) userId: string,
-    @Query() pagina: PaginationDto,
+    @Query() query: ListaDoUsuarioDto,
   ) {
-    return this.reviews.listByUser(userId, pagina);
+    return this.reviews.listByUser(userId, query);
   }
 
   @Post()

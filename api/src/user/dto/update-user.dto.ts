@@ -1,10 +1,9 @@
 import {
+  IsIn,
   IsOptional,
   IsString,
-  IsUrl,
   MaxLength,
   MinLength,
-  ValidateIf,
 } from 'class-validator';
 
 // so o que aparece no perfil. O username e fixo (vira URL e e como acham a
@@ -21,10 +20,9 @@ export class UpdateUserDto {
   @MaxLength(300)
   bio?: string;
 
-  // string vazia limpa a foto; qualquer outra coisa precisa ser uma URL
+  // so serve para tirar a foto. Foto nova vem por upload: um endereco de fora
+  // deixaria aquele site ver quem abre cada perfil
   @IsOptional()
-  @ValidateIf((_objeto, valor) => valor !== '')
-  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
-  @MaxLength(500)
+  @IsIn([''])
   avatarUrl?: string;
 }

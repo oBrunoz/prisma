@@ -53,18 +53,16 @@ describe('User (e2e)', () => {
     await server().patch('/user/me').send({ name: 'Invasor' }).expect(401);
   });
 
-  it('atualiza nome, bio e foto', async () => {
+  it('atualiza nome e bio', async () => {
     const res = await patch()
       .send({
         name: 'Nome Novo',
         bio: '  gosto de filmes  ',
-        avatarUrl: 'https://exemplo.com/foto.jpg',
       })
       .expect(200);
 
     expect(res.body.name).toBe('Nome Novo');
     expect(res.body.bio).toBe('gosto de filmes');
-    expect(res.body.avatarUrl).toBe('https://exemplo.com/foto.jpg');
     // o e-mail nunca sai na resposta publica
     expect(res.body.email).toBeUndefined();
   });
@@ -74,7 +72,9 @@ describe('User (e2e)', () => {
     expect(res.body.avatarUrl).toBeNull();
   });
 
-  it('recusa avatarUrl que nao e URL', async () => {
+  // foto nova so por upload: endereco de fora deixaria aquele site ver quem abre o perfil
+  it('recusa foto por endereco', async () => {
+    await patch().send({ avatarUrl: 'https://exemplo.com/foto.jpg' }).expect(400);
     await patch().send({ avatarUrl: 'nao-e-url' }).expect(400);
     await patch().send({ avatarUrl: 'javascript:alert(1)' }).expect(400);
   });

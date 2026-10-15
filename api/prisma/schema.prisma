@@ -8,23 +8,39 @@ datasource db {
   provider = "postgresql"
 }
 
+// de onde vem a capa do perfil: o primeiro favorito, uma cena escolhida ou nada
+enum CoverKind {
+  FAVORITE
+  TITLE
+  NONE
+}
+
 enum MediaType {
   MOVIE
   TV
 }
 
 model User {
-  id           String   @id @default(uuid(7))
-  email        String   @unique
-  username     String   @unique
-  passwordHash String
-  name         String
-  avatarUrl    String?
-  bio          String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String    @id @default(uuid(7))
+  email           String    @unique
+  username        String    @unique
+  passwordHash    String
+  name            String
+  avatarUrl       String?
+  bio             String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  // ate quando a pessoa ja foi avisada dos seguidores novos
+  followersSeenAt DateTime?
+  coverKind       CoverKind @default(FAVORITE)
+  coverMediaId    String?
+  // caminho da imagem na TMDB, conferido contra as cenas do titulo
+  coverPath       String?
 
   watchlist     WatchlistItem[]
+  favorites     Favorite[]
+  coverMedia    Media?          @relation("UserCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  avatar        Avatar?
   reviews       Review[]
   following     Follow[]        @relation("UserFollowing")
   followers     Follow[]        @relation("UserFollowers")
@@ -45,6 +61,8 @@ model Media {
 
   watchlistItems WatchlistItem[]
   reviews        Review[]
+  favorites      Favorite[]
+  coverOf        User[]          @relation("UserCover")
 
   @@unique([tmdbId, type])
   @@map("medias")
@@ -81,6 +99,31 @@ model Review {
   @@unique([userId, mediaId])
   @@index([mediaId, createdAt])
   @@map("reviews")
+}
+
+// ate quatro titulos que a pessoa escolhe para o perfil, na ordem dela
+model Favorite {
+  userId   String
+  mediaId  String
+  position Int
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([userId, position])
+  @@unique([userId, mediaId])
+  @@map("favorites")
+}
+
+// a foto enviada, ja regravada pelo servidor (webp quadrado, sem metadados)
+model Avatar {
+  userId    String   @id
+  data      Bytes
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("avatars")
 }
 
 model Follow {

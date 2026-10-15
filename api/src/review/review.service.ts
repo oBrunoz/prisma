@@ -6,6 +6,7 @@ import {
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { MediaType } from '../generated/prisma/enums.js';
 import { MediaService } from '../media/media.service.js';
+import { ListaDoUsuarioDto } from './dto/lista-do-usuario.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { UpdateReviewDto } from './dto/update-review.dto.js';
 import { UpsertReviewDto } from './dto/upsert-review.dto.js';
@@ -140,13 +141,26 @@ export class ReviewService {
     };
   }
 
-  listByUser(userId: string, pagina: PaginationDto) {
+  listByUser(userId: string, query: ListaDoUsuarioDto) {
+    const where =
+      query.filtro === 'diario'
+        ? { userId, watchedAt: { not: null } }
+        : query.filtro === 'escritas'
+          ? {
+              userId,
+              OR: [{ rating: { not: null } }, { content: { not: null } }],
+            }
+          : { userId };
+
     return this.prisma.review.findMany({
-      where: { userId },
+      where,
       include: { media: true },
-      orderBy: { createdAt: 'desc' },
-      take: pagina.take,
-      skip: pagina.skip,
+      orderBy:
+        query.filtro === 'diario'
+          ? [{ watchedAt: 'desc' }, { createdAt: 'desc' }]
+          : { createdAt: 'desc' },
+      take: query.take,
+      skip: query.skip,
     });
   }
 
