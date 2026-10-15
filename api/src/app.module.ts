@@ -10,6 +10,7 @@ import { validate } from './config/env.validation.js';
 import { FollowModule } from './follow/follow.module.js';
 import { GamesModule } from './games/games.module.js';
 import { HealthModule } from './health/health.module.js';
+import { MarksModule } from './marks/marks.module.js';
 import { MediaModule } from './media/media.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { ReviewModule } from './review/review.module.js';
@@ -30,6 +31,7 @@ import { WatchlistModule } from './watchlist/watchlist.module.js';
     MediaModule,
     WatchlistModule,
     ReviewModule,
+    MarksModule,
     FollowModule,
     GamesModule,
   ],
