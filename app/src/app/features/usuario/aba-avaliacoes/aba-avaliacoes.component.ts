@@ -3,7 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { mensagemDeErro } from '../../../core/errors/mensagens';
 import { AvaliacaoUsuario } from '../../../core/models/catalogo.models';
 import { AvaliacaoService } from '../../../core/services/avaliacao.service';
-import { CartaoAvaliacaoComponent } from '../cartao-avaliacao/cartao-avaliacao.component';
+import { CartaoAvaliacaoComponent } from '../../../shared/components/cartao-avaliacao/cartao-avaliacao.component';
 
 const POR_PAGINA = 20;
 

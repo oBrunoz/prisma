@@ -6,7 +6,7 @@ import { AvaliacaoUsuario, Midia } from '../../../core/models/catalogo.models';
 import { AvaliacaoService } from '../../../core/services/avaliacao.service';
 import { CarouselRowComponent } from '../../../shared/components/carousel-row/carousel-row.component';
 import { MovieCardComponent } from '../../../shared/components/movie-card/movie-card.component';
-import { CartaoAvaliacaoComponent } from '../cartao-avaliacao/cartao-avaliacao.component';
+import { CartaoAvaliacaoComponent } from '../../../shared/components/cartao-avaliacao/cartao-avaliacao.component';
 
 export type AbaPerfil = 'geral' | 'diario' | 'avaliacoes' | 'watchlist';
 

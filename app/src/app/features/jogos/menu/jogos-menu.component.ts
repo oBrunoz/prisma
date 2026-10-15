@@ -20,7 +20,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { JogosService } from '../../../core/services/jogos.service';
 import { JogosEstado } from '../jogos.estado';
 import { dataPorExtenso, tempoAteAVirada } from '../jogos.util';
-import { PosterListrasComponent } from '../poster-listras/poster-listras.component';
+import { PosterListrasComponent } from '../../../shared/components/poster-listras/poster-listras.component';
 
 // a escolha do dia: os dois jogos lado a lado, com o andamento de cada um
 @Component({

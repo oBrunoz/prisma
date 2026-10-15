@@ -32,7 +32,7 @@ import { MovieService } from '../../../core/services/movie.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { JogosEstado } from '../jogos.estado';
 import { Opcao, PalpiteComponent } from '../palpite/palpite.component';
-import { PosterListrasComponent, ROTULOS_DOS_NIVEIS } from '../poster-listras/poster-listras.component';
+import { PosterListrasComponent, ROTULOS_DOS_NIVEIS } from '../../../shared/components/poster-listras/poster-listras.component';
 import { ResultadoComponent } from '../resultado/resultado.component';
 
 type Evento = 'erro' | 'pulou' | 'acerto' | 'perdeu';
