@@ -1,0 +1,139 @@
+<h3 class="text-lg font-bold text-white">Capa</h3>
+<p class="mt-1 text-sm text-gray-400">A imagem no topo do seu perfil, atrás do seu nome.</p>
+
+<!-- prévia: o que o perfil mostra depois de salvar -->
+<div class="relative mt-5 aspect-[16/7] rounded-xl overflow-hidden bg-[#0d0d0d] border border-white/5">
+  @if (previaUrl(); as url) {
+    <img [src]="url" alt="" class="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
+    <div class="absolute inset-0 bg-gradient-to-r from-[#111111]/80 via-[#111111]/30 to-transparent"></div>
+  } @else if (!carregando()) {
+    <app-stripes-banner></app-stripes-banner>
+  }
+</div>
+
+<div class="mt-5 flex flex-wrap gap-2" role="radiogroup" aria-label="De onde vem a capa">
+  @for (opcao of opcoes; track opcao.tipo) {
+    <button
+      type="button"
+      role="radio"
+      [attr.aria-checked]="tipo() === opcao.tipo"
+      (click)="escolherTipo(opcao.tipo)"
+      class="px-4 py-2 rounded-full text-sm transition duration-300 cursor-pointer border"
+      [class]="tipo() === opcao.tipo ? 'bg-white/10 border-white/30 text-white' : 'border-white/10 text-gray-400 hover:text-white hover:border-white/20'">
+      {{ opcao.rotulo }}
+    </button>
+  }
+</div>
+
+<p class="mt-3 text-xs text-gray-500">
+  @switch (tipo()) {
+    @case ('favorito') {
+      @if (primeiroFavorito(); as favorito) {
+        Uma cena de {{ favorito.title }}. Se você trocar seus favoritos, a capa muda junto.
+      } @else {
+        Você ainda não escolheu favoritos: até lá, ficam as listras.
+      }
+    }
+    @case ('titulo') {
+      @if (cena(); as cena) {
+        Cena de {{ cena.titulo.titulo }}. Busque outro título para trocar.
+      } @else {
+        Busque um filme ou série e escolha uma das cenas.
+      }
+    }
+    @case ('nenhuma') {
+      As listras do Prisma, sem imagem.
+    }
+  }
+</p>
+
+@if (tipo() === 'titulo') {
+  <div class="mt-5">
+    <label for="busca-capa" class="sr-only">Buscar filme ou série</label>
+    <div class="flex items-center gap-2 h-11 px-4 rounded-full bg-white/5 border border-white/10 focus-within:border-white/20 transition-colors duration-300">
+      <svg lucideSearch [size]="16" strokeWidth="2" class="shrink-0 text-gray-400"></svg>
+      <input
+        id="busca-capa"
+        type="text"
+        maxlength="100"
+        [value]="termo()"
+        (input)="digitar($any($event.target).value)"
+        placeholder="Buscar filme ou série"
+        class="min-w-0 flex-1 h-full bg-transparent text-base sm:text-sm text-white placeholder-gray-500 outline-none"
+      />
+    </div>
+
+    @if (tituloAberto(); as titulo) {
+      <div class="mt-4">
+        <div class="flex items-baseline justify-between gap-4">
+          <p class="text-sm text-white truncate">Cenas de {{ titulo.titulo }}</p>
+          <button
+            type="button"
+            (click)="tituloAberto.set(null)"
+            class="shrink-0 text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+            Outro título
+          </button>
+        </div>
+
+        @if (carregandoCenas()) {
+          <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            @for (vazio of [1, 2, 3]; track vazio) {
+              <div class="aspect-video rounded-lg bg-white/5 animate-pulse"></div>
+            }
+          </div>
+        } @else if (cenas().length === 0) {
+          <p class="mt-3 text-sm text-gray-400">Esse título não tem cenas disponíveis. Tente outro.</p>
+        } @else {
+          <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            @for (caminho of cenas(); track caminho) {
+              <button
+                type="button"
+                (click)="escolherCena(caminho)"
+                [attr.aria-pressed]="ehCenaEscolhida(caminho)"
+                [attr.aria-label]="'Usar esta cena de ' + titulo.titulo"
+                class="aspect-video rounded-lg overflow-hidden bg-[#111111] cursor-pointer ring-offset-2 ring-offset-[#111111] transition duration-300"
+                [class]="ehCenaEscolhida(caminho) ? 'ring-2 ring-white' : 'opacity-80 hover:opacity-100'">
+                <img [src]="cenaUrl(caminho)" alt="" loading="lazy" class="w-full h-full object-cover" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+    } @else if (termo().trim()) {
+      <div class="mt-2 -mx-2">
+        @if (buscando()) {
+          <p class="px-2 py-3 text-sm text-gray-400">Buscando...</p>
+        } @else if (resultados().length === 0) {
+          <p class="px-2 py-3 text-sm text-gray-400">Nada encontrado para <span class="text-white">“{{ termo() }}”</span>.</p>
+        } @else {
+          @for (titulo of resultados(); track titulo.tipo + titulo.id) {
+            <button
+              type="button"
+              (click)="abrirTitulo(titulo)"
+              class="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-white/10 transition duration-300 cursor-pointer">
+              <span class="w-8 shrink-0 aspect-[2/3] rounded overflow-hidden bg-[#111111]">
+                @if (titulo.posterPath) {
+                  <img [src]="posterUrl(titulo.posterPath)" [alt]="titulo.titulo" class="w-full h-full object-cover" />
+                } @else {
+                  <app-media-fallback kind="poster" [compact]="true"></app-media-fallback>
+                }
+              </span>
+              <span class="min-w-0">
+                <span class="block truncate text-sm text-white">{{ titulo.titulo }}</span>
+                <span class="block text-xs text-gray-500">{{ titulo.tipo === 'movies' ? 'Filme' : 'Série' }}{{ titulo.ano ? ' · ' + titulo.ano : '' }}</span>
+              </span>
+            </button>
+          }
+        }
+      </div>
+    }
+  </div>
+}
+
+<button
+  type="button"
+  (click)="salvar()"
+  [disabled]="!mudou() || salvando()"
+  class="mt-6 px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-600">
+  {{ salvando() ? 'Salvando...' : 'Salvar capa' }}
+</button>

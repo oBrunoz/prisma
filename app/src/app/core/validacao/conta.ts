@@ -35,9 +35,3 @@ export function validarSenhaDigitada(valor: string): string {
 }
 
 // mesma regra da API: vazio tira a foto; fora isso, endereço http(s)
-export function validarFoto(valor: string): string {
-  const foto = valor.trim();
-  if (!foto) return '';
-  if (!/^https?:\/\/\S+\.\S+$/i.test(foto)) return 'Use um endereço que comece com http:// ou https://.';
-  return '';
-}

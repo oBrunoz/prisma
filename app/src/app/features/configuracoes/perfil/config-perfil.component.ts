@@ -7,15 +7,16 @@ import { AtualizacaoPerfil } from '../../../core/models/auth.models';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { Campos } from '../../../core/validacao/campos';
-import { validarFoto, validarNome } from '../../../core/validacao/conta';
-import { UserAvatarComponent } from '../../../shared/components/user-avatar/user-avatar.component';
+import { validarNome } from '../../../core/validacao/conta';
+import { CampoFotoComponent } from './campo-foto/campo-foto.component';
+import { EscolherCapaComponent } from './escolher-capa/escolher-capa.component';
 
-type Campo = 'avatarUrl' | 'name' | 'bio';
+type Campo = 'name' | 'bio';
 
 @Component({
   selector: 'app-config-perfil',
   standalone: true,
-  imports: [FormsModule, UserAvatarComponent],
+  imports: [FormsModule, CampoFotoComponent, EscolherCapaComponent],
   templateUrl: './config-perfil.component.html',
 })
 export class ConfigPerfilComponent implements OnDestroy {
@@ -24,18 +25,16 @@ export class ConfigPerfilComponent implements OnDestroy {
 
   private readonly salvo = computed(() => {
     const u = this.auth.usuario();
-    return { avatarUrl: u?.avatarUrl ?? '', name: u?.name ?? '', bio: u?.bio ?? '' };
+    return { name: u?.name ?? '', bio: u?.bio ?? '' };
   });
 
   readonly valores = {
-    avatarUrl: signal(this.salvo().avatarUrl),
     name: signal(this.salvo().name),
     bio: signal(this.salvo().bio),
   };
   salvando = signal(false);
 
   readonly campos = new Campos<Campo>(() => ({
-    avatarUrl: validarFoto(this.valores.avatarUrl()),
     name: validarNome(this.valores.name()),
     bio: '',
   }));
@@ -44,7 +43,6 @@ export class ConfigPerfilComponent implements OnDestroy {
   readonly mudancas = computed<AtualizacaoPerfil>(() => {
     const salvo = this.salvo();
     const atual: Record<Campo, string> = {
-      avatarUrl: this.valores.avatarUrl().trim(),
       name: this.valores.name().trim(),
       bio: this.valores.bio().trim(),
     };
@@ -77,8 +75,7 @@ export class ConfigPerfilComponent implements OnDestroy {
       .subscribe({
         next: (usuario) => {
           this.salvando.set(false);
-          // o que a API guardou (bio aparada, foto vazia) volta para os campos
-          this.valores.avatarUrl.set(usuario.avatarUrl ?? '');
+          // o que a API guardou (bio aparada) volta para os campos
           this.valores.name.set(usuario.name);
           this.valores.bio.set(usuario.bio ?? '');
           this.toast.sucesso('Perfil atualizado', { chave: 'perfil' });
@@ -95,7 +92,6 @@ export class ConfigPerfilComponent implements OnDestroy {
     if (status === 400) {
       const recusados = camposRecusados(falha);
       const mensagens: Record<Campo, string> = {
-        avatarUrl: 'Use um endereço que comece com http:// ou https://.',
         name: 'Use de 2 a 80 caracteres.',
         bio: 'Use até 300 caracteres.',
       };

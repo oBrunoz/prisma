@@ -1,0 +1,56 @@
+<span class="block text-sm text-gray-300 mb-2">Foto</span>
+
+<div class="flex items-center gap-4 sm:gap-5">
+  <app-user-avatar
+    [nome]="auth.usuario()?.username ?? ''"
+    [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
+    tamanho="lg">
+  </app-user-avatar>
+
+  <!-- o rótulo inteiro abre o seletor; arrastar uma imagem para cá envia direto -->
+  <label
+    for="perfil-foto"
+    (dragenter)="aoEntrar($event)"
+    (dragover)="aoPassar($event)"
+    (dragleave)="aoSair()"
+    (drop)="aoSoltar($event)"
+    class="flex-1 min-w-0 flex items-center gap-3 px-4 py-4 rounded-xl border-[1.5px] border-dashed cursor-pointer transition duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-red-500"
+    [class]="arrastando() ? 'border-white/50 bg-white/10' : 'border-white/15 hover:border-white/30 bg-white/[0.03]'"
+    [attr.aria-busy]="enviando()">
+    <input
+      #entrada
+      id="perfil-foto"
+      type="file"
+      class="sr-only"
+      [accept]="tiposAceitos"
+      [disabled]="enviando()"
+      (change)="aoEscolher(entrada)"
+      aria-describedby="ajuda-foto" />
+    <svg lucideImageUp [size]="22" strokeWidth="1.75" class="shrink-0 text-gray-400"></svg>
+    <span class="min-w-0">
+      <span class="block text-sm text-white">
+        @if (enviando()) {
+          Enviando...
+        } @else if (arrastando()) {
+          Solte para enviar
+        } @else {
+          Arraste uma foto ou <span class="underline underline-offset-2">escolha do computador</span>
+        }
+      </span>
+      <span id="ajuda-foto" class="block text-xs text-gray-500">JPG, PNG ou WebP, até 5 MB</span>
+    </span>
+  </label>
+</div>
+
+@if (erro()) {
+  <p class="mt-2 text-xs text-coral" role="alert">{{ erro() }}</p>
+}
+
+@if (auth.usuario()?.avatarUrl && !enviando()) {
+  <button
+    type="button"
+    (click)="tirar()"
+    class="mt-3 text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+    Tirar foto e voltar para a inicial
+  </button>
+}
