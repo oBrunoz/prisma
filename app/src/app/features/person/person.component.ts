@@ -9,17 +9,7 @@ import { CarouselRowComponent } from '../../shared/components/carousel-row/carou
 import { PersonCredit, PersonDetails } from '../../core/models/tmdb.models';
 import { environment } from '../../../environments/environment';
 import { MediaFallbackComponent } from '../../shared/components/media-fallback/media-fallback.component';
-
-const DEPARTAMENTOS: Record<string, string> = {
-  Acting: 'Atuação',
-  Directing: 'Direção',
-  Writing: 'Roteiro',
-  Production: 'Produção',
-  Sound: 'Som',
-  Camera: 'Fotografia',
-  Editing: 'Montagem',
-  Art: 'Direção de arte',
-};
+import { DEPARTAMENTOS } from '../../core/busca/busca';
 
 @Component({
   selector: 'app-person',

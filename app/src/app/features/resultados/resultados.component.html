@@ -1,0 +1,227 @@
+<div class="pt-32 pb-20 px-gutter">
+  <h1 class="text-3xl sm:text-4xl font-bold text-white">
+    @if (termo()) {
+      <span class="font-normal text-gray-400">Resultados para</span> “{{ termo() }}”
+    } @else {
+      Busca
+    }
+  </h1>
+
+  @if (!termo()) {
+    <p class="mt-4 text-gray-400">Digite na busca, no topo da página, o filme, a série, a pessoa ou o &#64;usuário que você procura.</p>
+  } @else {
+    <div class="mt-8 flex gap-6 sm:gap-8 border-b border-white/5 overflow-x-auto" role="tablist">
+      @for (aba of abas; track aba.tipo) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="tipo() === aba.tipo"
+          (click)="trocarAba(aba.tipo)"
+          class="relative shrink-0 py-3 text-sm sm:text-base whitespace-nowrap transition duration-300 cursor-pointer"
+          [class]="tipo() === aba.tipo ? 'text-white' : 'text-gray-400 hover:text-white'">
+          {{ aba.rotulo }}
+          @if (total(aba.tipo); as quantidade) {
+            <span class="ml-1 text-sm text-gray-500 tabular-nums">{{ quantidade }}</span>
+          }
+          @if (tipo() === aba.tipo) {
+            <span class="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"></span>
+          }
+        </button>
+      }
+    </div>
+
+    @if (nadaEncontrado()) {
+      <p class="mt-10 text-gray-400">
+        Nada encontrado para <span class="text-white">“{{ termo() }}”</span>. Confira a grafia ou tente um trecho menor.
+      </p>
+    } @else {
+      @switch (tipo()) {
+        @case ('tudo') {
+          @if (filmes().carregando || filmes().total > 0 || filmes().erro) {
+            <section class="mt-10">
+              <ng-container *ngTemplateOutlet="cabecalho; context: { $implicit: 'Filmes', lista: filmes(), aba: 'filmes', limite: 20 }"></ng-container>
+              <ng-container *ngTemplateOutlet="titulos; context: { $implicit: filmes(), trilho: true }"></ng-container>
+            </section>
+          }
+          @if (series().carregando || series().total > 0 || series().erro) {
+            <section class="mt-14">
+              <ng-container *ngTemplateOutlet="cabecalho; context: { $implicit: 'Séries', lista: series(), aba: 'series', limite: 20 }"></ng-container>
+              <ng-container *ngTemplateOutlet="titulos; context: { $implicit: series(), trilho: true }"></ng-container>
+            </section>
+          }
+          @if (elenco().carregando || elenco().total > 0 || elenco().erro) {
+            <section class="mt-14">
+              <ng-container *ngTemplateOutlet="cabecalho; context: { $implicit: 'Elenco e equipe', lista: elenco(), aba: 'elenco', limite: 20 }"></ng-container>
+              <ng-container *ngTemplateOutlet="pessoas; context: { $implicit: elenco(), trilho: true }"></ng-container>
+            </section>
+          }
+          @if (usuarios().carregando || usuarios().total > 0 || usuarios().erro) {
+            <section class="mt-14 max-w-3xl">
+              <ng-container *ngTemplateOutlet="cabecalho; context: { $implicit: 'Usuários', lista: usuarios(), aba: 'usuarios', limite: 3 }"></ng-container>
+              <ng-container *ngTemplateOutlet="gente; context: { $implicit: usuarios(), limite: 3 }"></ng-container>
+            </section>
+          }
+        }
+        @case ('filmes') {
+          <section class="mt-10">
+            <ng-container *ngTemplateOutlet="titulos; context: { $implicit: filmes(), trilho: false }"></ng-container>
+            <ng-container *ngTemplateOutlet="mais; context: { $implicit: filmes(), aba: 'filmes', vazio: 'Nenhum filme encontrado.' }"></ng-container>
+          </section>
+        }
+        @case ('series') {
+          <section class="mt-10">
+            <ng-container *ngTemplateOutlet="titulos; context: { $implicit: series(), trilho: false }"></ng-container>
+            <ng-container *ngTemplateOutlet="mais; context: { $implicit: series(), aba: 'series', vazio: 'Nenhuma série encontrada.' }"></ng-container>
+          </section>
+        }
+        @case ('elenco') {
+          <section class="mt-10">
+            <ng-container *ngTemplateOutlet="pessoas; context: { $implicit: elenco(), trilho: false }"></ng-container>
+            <ng-container *ngTemplateOutlet="mais; context: { $implicit: elenco(), aba: 'elenco', vazio: 'Ninguém do elenco ou da equipe com esse nome.' }"></ng-container>
+          </section>
+        }
+        @case ('usuarios') {
+          <section class="mt-6 max-w-3xl">
+            <ng-container *ngTemplateOutlet="gente; context: { $implicit: usuarios(), limite: null }"></ng-container>
+            <ng-container *ngTemplateOutlet="mais; context: { $implicit: usuarios(), aba: 'usuarios', vazio: 'Nenhum usuário com esse nome.' }"></ng-container>
+          </section>
+        }
+      }
+    }
+  }
+</div>
+
+<ng-template #cabecalho let-titulo let-lista="lista" let-aba="aba" let-limite="limite">
+  <div class="mb-6 flex items-baseline justify-between gap-4">
+    <h2 class="titulo-secao">{{ titulo }}</h2>
+    @if (lista.total > limite) {
+      <button
+        type="button"
+        (click)="trocarAba(aba)"
+        class="group shrink-0 inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+        Ver todos os {{ lista.total }}
+        <svg lucideArrowRight [size]="15" strokeWidth="2" class="transition duration-300 group-hover:text-red-500"></svg>
+      </button>
+    }
+  </div>
+</ng-template>
+
+<ng-template #titulos let-lista let-trilho="trilho">
+  @if (lista.erro && lista.itens.length === 0) {
+    <p class="text-sm text-red-400" role="alert">{{ lista.erro }}</p>
+  } @else if (lista.pagina === 0) {
+    <div class="grade-posters">
+      @for (vazio of [1, 2, 3, 4, 5]; track vazio) {
+        <div class="aspect-[2/3] rounded-xl bg-[#1a1a1a]"></div>
+      }
+    </div>
+  } @else if (trilho) {
+    <app-carousel-row class="block">
+      @for (titulo of lista.itens; track titulo.tipo + titulo.id) {
+        <div class="card-trilho">
+          <ng-container *ngTemplateOutlet="cartao; context: { $implicit: titulo }"></ng-container>
+        </div>
+      }
+    </app-carousel-row>
+  } @else {
+    <div class="grade-posters">
+      @for (titulo of lista.itens; track titulo.tipo + titulo.id) {
+        <ng-container *ngTemplateOutlet="cartao; context: { $implicit: titulo }"></ng-container>
+      }
+    </div>
+  }
+</ng-template>
+
+<ng-template #cartao let-titulo>
+  <app-movie-card
+    [id]="titulo.id"
+    [title]="titulo.titulo"
+    [posterPath]="titulo.posterPath"
+    [year]="titulo.ano"
+    [mediaType]="titulo.tipo">
+  </app-movie-card>
+</ng-template>
+
+<ng-template #pessoas let-lista let-trilho="trilho">
+  @if (lista.erro && lista.itens.length === 0) {
+    <p class="text-sm text-red-400" role="alert">{{ lista.erro }}</p>
+  } @else if (lista.pagina === 0) {
+    <div class="flex gap-6 overflow-hidden">
+      @for (vazio of [1, 2, 3, 4, 5, 6]; track vazio) {
+        <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#1a1a1a] shrink-0"></div>
+      }
+    </div>
+  } @else if (trilho) {
+    <app-carousel-row class="block">
+      @for (pessoa of lista.itens; track pessoa.id) {
+        <div class="flex-none snap-start w-24 sm:w-32">
+          <ng-container *ngTemplateOutlet="rosto; context: { $implicit: pessoa }"></ng-container>
+        </div>
+      }
+    </app-carousel-row>
+  } @else {
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 2xl:grid-cols-8 gap-x-4 gap-y-8 sm:gap-x-6">
+      @for (pessoa of lista.itens; track pessoa.id) {
+        <ng-container *ngTemplateOutlet="rosto; context: { $implicit: pessoa }"></ng-container>
+      }
+    </div>
+  }
+</ng-template>
+
+<ng-template #rosto let-pessoa>
+  <a [routerLink]="['/search', 'people', pessoa.id]" class="group flex flex-col items-center gap-3 text-center min-w-0">
+    <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-full overflow-hidden bg-[#1a1a1a] shrink-0 transition duration-300 group-hover:opacity-80">
+      @if (pessoa.fotoPath) {
+        <img [src]="posterUrl(pessoa.fotoPath)" [alt]="pessoa.nome" loading="lazy" class="w-full h-full object-cover" />
+      } @else {
+        <app-media-fallback kind="person" [compact]="true"></app-media-fallback>
+      }
+    </div>
+    <div class="min-w-0 max-w-full">
+      <p class="text-sm text-white line-clamp-2 group-hover:text-red-500 transition duration-300">{{ pessoa.nome }}</p>
+      @if (pessoa.oficio) {
+        <p class="text-xs text-gray-500">{{ pessoa.oficio }}</p>
+      }
+    </div>
+  </a>
+</ng-template>
+
+<ng-template #gente let-lista let-limite="limite">
+  @if (lista.erro && lista.itens.length === 0) {
+    <p class="text-sm text-red-400" role="alert">{{ lista.erro }}</p>
+  } @else if (lista.pagina === 0) {
+    @for (vazio of [1, 2, 3]; track vazio) {
+      <div class="flex items-center gap-4 py-4 border-b border-white/5">
+        <div class="w-12 h-12 rounded-full bg-[#1a1a1a] shrink-0"></div>
+        <div class="flex-1 space-y-2">
+          <div class="h-3 w-1/4 rounded bg-[#1a1a1a]"></div>
+          <div class="h-2.5 w-1/2 rounded bg-[#1a1a1a]"></div>
+        </div>
+      </div>
+    }
+  } @else {
+    @for (usuario of limite ? lista.itens.slice(0, limite) : lista.itens; track usuario.id) {
+      <app-linha-usuario [usuario]="usuario"></app-linha-usuario>
+    }
+  }
+</ng-template>
+
+<ng-template #mais let-lista let-aba="aba" let-vazio="vazio">
+  @if (lista.pagina > 0 && lista.itens.length === 0) {
+    <p class="text-gray-400">{{ vazio }}</p>
+  }
+  @if (lista.erro && lista.itens.length > 0) {
+    <p class="mt-6 text-sm text-red-400" role="alert">{{ lista.erro }}</p>
+  }
+  @if (lista.temMais || lista.erro) {
+    <div class="mt-10 flex justify-center">
+      <button
+        type="button"
+        (click)="carregarMais(aba)"
+        [disabled]="lista.carregando"
+        class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+        {{ lista.carregando ? 'Carregando...' : lista.erro ? 'Tentar de novo' : 'Carregar mais' }}
+      </button>
+    </div>
+  }
+</ng-template>

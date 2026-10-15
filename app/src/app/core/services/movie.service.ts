@@ -18,7 +18,8 @@ import {
   SeasonDetails,
   WatchProviderCountry,
   PersonDetails,
-  PersonCredit
+  PersonCredit,
+  Person
 } from '../models/tmdb.models';
 
 // talk show, jornalismo e reality: aparição, não trabalho
@@ -95,6 +96,18 @@ export class MovieService {
 
   searchMulti(query: string, page = 1): Observable<TmdbListResponse<MediaResult>> {
     return this.get<TmdbListResponse<MediaResult>>('/search/multi', { query, page });
+  }
+
+  searchMovies(query: string, page = 1): Observable<TmdbListResponse<Movie>> {
+    return this.get<TmdbListResponse<Movie>>('/search/movie', { query, page });
+  }
+
+  searchTv(query: string, page = 1): Observable<TmdbListResponse<TvShow>> {
+    return this.get<TmdbListResponse<TvShow>>('/search/tv', { query, page });
+  }
+
+  searchPeople(query: string, page = 1): Observable<TmdbListResponse<Person>> {
+    return this.get<TmdbListResponse<Person>>('/search/person', { query, page });
   }
 
   getMovieDetails(id: number): Observable<ContentDetails> {
