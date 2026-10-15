@@ -62,6 +62,8 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
   @Input() recorte: 'inteiro' | 'topo' = 'inteiro';
   // tempo da passagem entre níveis, em ms
   @Input() duracao = 700;
+  // teto de quadros por segundo da passagem; várias telas animando juntas pedem menos
+  @Input() fps = 60;
 
   @ViewChild('tela', { static: true }) private tela!: ElementRef<HTMLCanvasElement>;
 
@@ -133,9 +135,17 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
     const nb = nitidez(alvo);
     const inicio = performance.now();
     const duracao = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : this.duracao;
+    const intervalo = 1000 / this.fps;
+    let ultimo = -Infinity;
 
     const passo = (agora: number) => {
       const t = duracao ? Math.min(1, (agora - inicio) / duracao) : 1;
+      // o último quadro sempre pinta, para a passagem terminar no nível certo
+      if (t < 1 && agora - ultimo < intervalo - 1) {
+        this.quadro = requestAnimationFrame(passo);
+        return;
+      }
+      ultimo = agora;
       const e = 1 - Math.pow(1 - t, 3);
       this.pintar(
         {

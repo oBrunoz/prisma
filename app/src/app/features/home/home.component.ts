@@ -101,7 +101,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const caminhos = [...this.popularMovies(), ...this.trendingMovies()]
       .map((m) => m.poster_path)
       .filter((p): p is string => !!p);
-    return [...new Set(caminhos)].map((p) => `https://image.tmdb.org/t/p/w342${p}`);
+    // w185: a vaga é pequena e fica sob o véu, e o canvas baixa a imagem à parte (CORS)
+    return [...new Set(caminhos)].map((p) => `https://image.tmdb.org/t/p/w185${p}`);
   });
   
   carouselCurrentIndex = signal(0);

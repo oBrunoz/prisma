@@ -25,8 +25,12 @@ const NITIDO = 6;
 // a cortina que abre a vaga e a passagem das listras ao pôster
 const CORTINA = 900;
 const REVELA = 1600;
-const INTERVALO = 750;
-const MAX_ANIMANDO = 6;
+// cada vaga animando redesenha o canvas inteiro a cada quadro: poucas por vez, a 30 quadros
+const INTERVALO = 1100;
+const MAX_ANIMANDO = 3;
+const FPS = 30;
+// logo depois de rolar, nenhuma vaga nova começa: é quando um engasgo mais aparece
+const FOLGA_DA_ROLAGEM = 400;
 // a estante não passa disso cheia: daí em diante um filme dá lugar a outro
 const CHEIA = 0.7;
 const INICIAL = 0.5;
@@ -48,11 +52,17 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
 
   readonly nitido = NITIDO;
   readonly revela = REVELA;
+  readonly fps = FPS;
   readonly vagas = signal<Vaga[]>(Array.from({ length: TOTAL }, () => ({ src: null, nivel: 0, aberta: false })));
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zona = inject(NgZone);
-  private readonly semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // anima só em tela grande de aparelho capaz; no resto (e com movimento reduzido) aparece cheia e parada.
+  // no celular ela fica atrás do texto, sob o véu: a animação mal apareceria e custaria caro
+  private readonly parada =
+    matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(min-width: 1024px)').matches || aparelhoModesto();
+  private rolouEm = 0;
+  private readonly aoRolar = () => (this.rolouEm = performance.now());
   private readonly ocupadas = new Set<number>();
   private readonly timers = new Set<ReturnType<typeof setTimeout>>();
   private observador?: IntersectionObserver;
@@ -62,11 +72,16 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
 
   ngAfterViewInit(): void {
     this.zona.runOutsideAngular(() => {
-      this.observador = new IntersectionObserver(([e]) => {
-        this.naTela = e.isIntersecting;
-        this.acompanhar();
-      });
+      // avisa de novo com um terço à vista: só encostando na tela, ainda não há vaga visível para montar
+      this.observador = new IntersectionObserver(
+        ([e]) => {
+          this.naTela = e.isIntersecting;
+          this.acompanhar();
+        },
+        { threshold: [0, 0.35] },
+      );
       this.observador.observe(this.host.nativeElement);
+      addEventListener('scroll', this.aoRolar, { passive: true });
     });
   }
 
@@ -76,6 +91,7 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
 
   ngOnDestroy(): void {
     this.observador?.disconnect();
+    removeEventListener('scroll', this.aoRolar);
     this.parar();
     this.timers.forEach(clearTimeout);
   }
@@ -87,7 +103,7 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
       return;
     }
     if (!this.montada) this.montar();
-    if (!this.semMovimento && !this.relogio) this.relogio = setInterval(() => this.passo(), INTERVALO);
+    if (!this.parada && !this.relogio) this.relogio = setInterval(() => this.passo(), INTERVALO);
   }
 
   private parar(): void {
@@ -100,13 +116,13 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
     const visiveis = this.visiveis();
     if (!visiveis.length) return;
     this.montada = true;
-    const escolhidas = embaralhar(visiveis).slice(0, Math.ceil(visiveis.length * INICIAL));
+    const escolhidas = embaralhar(visiveis).slice(0, Math.ceil(visiveis.length * (this.parada ? CHEIA : INICIAL)));
     for (const i of escolhidas) this.alterar(i, { src: this.sortear(), nivel: NITIDO, aberta: true });
   }
 
   private passo(): void {
     if (!this.montada) return this.montar();
-    if (this.ocupadas.size >= MAX_ANIMANDO) return;
+    if (this.ocupadas.size >= MAX_ANIMANDO || performance.now() - this.rolouEm < FOLGA_DA_ROLAGEM) return;
     const visiveis = this.visiveis();
     const vagas = this.vagas();
     const livres = visiveis.filter((i) => !this.ocupadas.has(i));
@@ -173,6 +189,12 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
       this.timers.add(t);
     });
   }
+}
+
+// poucos núcleos, pouca memória ou economia de dados ligada (deviceMemory e saveData só existem no Chromium)
+function aparelhoModesto(): boolean {
+  const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+  return (nav.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4 || !!nav.connection?.saveData;
 }
 
 function embaralhar<T>(lista: T[]): T[] {
