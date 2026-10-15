@@ -4,7 +4,7 @@
 
 <p align="center">
   <b>Acompanhe, avalie e organize tudo que você assiste.</b><br>
-  Catálogo de filmes e séries com diário, notas, watchlist, perfil social e dois jogos diários.
+  Catálogo de filmes e séries com diário, notas, watchlist, perfil social e jogos diários.
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@
 
 ## Sobre
 
-O **Prisma** (antigo Boxd) é um diário de cinema e TV inspirado no Letterboxd. Os dados de
+O **Prisma** é um diário de cinema e TV. Os dados de
 filmes, séries e pessoas vêm da [TMDB](https://www.themoviedb.org/); em cima deles o Prisma
 guarda o que é seu: o que você assistiu, a nota que deu, o que quer ver, quem você segue.
 
