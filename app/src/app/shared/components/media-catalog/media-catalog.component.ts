@@ -21,7 +21,8 @@ import { Genre, Movie, TvShow, Spotlight } from '../../../core/models/tmdb.model
 import { ShelfConfig, MOVIE_SHELVES, TV_SHELVES } from '../../../core/config/shelves';
 import { ContentShelfComponent } from '../content-shelf/content-shelf.component';
 import { NavigationStateService } from '../../../core/services/navigation-state.service';
-import { LucideChevronDown, LucideCheck } from '@lucide/angular';
+import { LucideChevronDown, LucideCheck, LucideX } from '@lucide/angular';
+import { STREAMINGS } from '../../../core/config/vitrine';
 
 type CatalogItem = Movie & TvShow;
 
@@ -37,6 +38,7 @@ type CatalogItem = Movie & TvShow;
     ContentShelfComponent,
     LucideChevronDown,
     LucideCheck,
+    LucideX,
   ],
   templateUrl: './media-catalog.component.html',
 })
@@ -47,6 +49,9 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
 
   genres = signal<Genre[]>([]);
   selectedGenreId = signal<number | null>(null);
+  // recorte que vem das seções da home: ?decada=1990 e ?streaming=8
+  decada = signal<number | null>(null);
+  streaming = signal<number | null>(null);
   items = signal<CatalogItem[]>([]);
   spotlight = signal<Spotlight | null>(null);
 
@@ -143,7 +148,31 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
     this.genres().find((g) => g.id === this.selectedGenreId()) ?? null
   );
 
-  sectionTitle = computed(() => this.selectedGenre()?.name ?? this.heading);
+  recorte = computed(() => {
+    const decada = this.decada();
+    const streaming = STREAMINGS.find((s) => s.id === this.streaming());
+    const campo = this.type === 'movie' ? 'primary_release_date' : 'first_air_date';
+    const params: Record<string, string | number> = {};
+    const rotulos: string[] = [];
+    if (decada) {
+      params[`${campo}.gte`] = `${decada}-01-01`;
+      params[`${campo}.lte`] = `${decada + 9}-12-31`;
+      rotulos.push(`Anos ${String(decada).slice(2)}`);
+    }
+    if (streaming) {
+      params['with_watch_providers'] = streaming.id;
+      params['watch_region'] = 'BR';
+      rotulos.push(`${streaming.em} ${streaming.nome}`);
+    }
+    return rotulos.length ? { params, rotulo: rotulos.join(' · ') } : null;
+  });
+
+  sectionTitle = computed(() => {
+    const genero = this.selectedGenre()?.name;
+    const recorte = this.recorte()?.rotulo;
+    if (recorte) return genero ? `${genero} · ${recorte}` : recorte;
+    return genero ?? this.heading;
+  });
 
   canLoadMore = computed(() => this.page() < this.totalPages());
 
@@ -159,6 +188,8 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
       const raw = params.get('genero');
       const genreId = raw ? Number(raw) : null;
       this.selectedGenreId.set(Number.isFinite(genreId) && genreId ? genreId : null);
+      this.decada.set(numeroDaUrl(params.get('decada')));
+      this.streaming.set(numeroDaUrl(params.get('streaming')));
       this.syncScrollState();
       this.loadFirstPage();
     });
@@ -184,6 +215,14 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
     });
   }
 
+  limparRecorte(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { decada: null, streaming: null },
+      queryParamsHandling: 'merge',
+    });
+  }
+
   loadMore(): void {
     if (!this.canLoadMore() || this.isLoadingMore()) return;
 
@@ -191,7 +230,7 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
     this.isLoadingMore.set(true);
 
     this.movieService
-      .discover<CatalogItem>(this.type, { genreId: this.selectedGenreId(), page: next })
+      .discover<CatalogItem>(this.type, { genreId: this.selectedGenreId(), page: next, params: this.recorte()?.params })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -222,6 +261,7 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
       this.movieService.discover<CatalogItem>(this.type, {
         genreId: this.selectedGenreId(),
         page: i + 1,
+        params: this.recorte()?.params,
       })
     );
 
@@ -279,4 +319,9 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
     const date = this.type === 'movie' ? item.release_date : item.first_air_date;
     return date ? String(new Date(date).getFullYear()) : '';
   }
+}
+
+function numeroDaUrl(valor: string | null): number | null {
+  const n = valor ? Number(valor) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : null;
 }

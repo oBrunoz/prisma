@@ -7,7 +7,18 @@
     [class.opacity-0]="!isBarVisible()"
     [class.pointer-events-none]="!isBarVisible()">
     <div class="px-gutter h-14 sm:h-16 flex justify-between items-center gap-4 sm:gap-6">
-      <h2 class="min-w-0 truncate text-lg sm:text-xl font-bold text-white">{{ sectionTitle() }}</h2>
+      <div class="min-w-0 flex items-center gap-1">
+        <h2 class="min-w-0 truncate text-lg sm:text-xl font-bold text-white">{{ sectionTitle() }}</h2>
+        @if (recorte(); as r) {
+          <button
+            type="button"
+            (click)="limparRecorte()"
+            [attr.aria-label]="'Tirar o filtro ' + r.rotulo"
+            class="shrink-0 w-11 h-11 flex items-center justify-center rounded-full text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+            <svg lucideX [size]="18" strokeWidth="2"></svg>
+          </button>
+        }
+      </div>
 
       <!-- Filtro de gênero -->
       <div class="relative shrink-0">
@@ -85,14 +96,16 @@
     (retryClicked)="retry()">
   </app-hero-section>
   <main id="content" class="pt-12 sm:pt-16 pb-16 sm:pb-24">
-    <!-- Prateleiras -->
-    @for (shelf of shelves; track shelf.id) {
-      <app-content-shelf
-        [type]="type"
-        [title]="shelf.title"
-        [params]="shelf.params"
-        [genreId]="selectedGenreId()">
-      </app-content-shelf>
+    <!-- Prateleiras: com recorte da home (década, streaming) contradiriam o filtro -->
+    @if (!recorte()) {
+      @for (shelf of shelves; track shelf.id) {
+        <app-content-shelf
+          [type]="type"
+          [title]="shelf.title"
+          [params]="shelf.params"
+          [genreId]="selectedGenreId()">
+        </app-content-shelf>
+      }
     }
 
     <!-- Lista de itens -->
