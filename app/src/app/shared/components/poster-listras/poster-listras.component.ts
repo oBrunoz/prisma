@@ -40,6 +40,9 @@ const ANGULO = -0.21;
 // o espectro e o #111 do corte
 const TINTAS = [...ESPECTRO, '#111111'].map((h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16)));
 
+// a TMDB só manda o cabeçalho de CORS quando o pedido traz Origin, sem variar o cache por isso:
+// com a mesma URL, o canvas pegaria a cópia sem CORS que um <img> comum deixou no cache
+const comCors = (src: string) => `${src}${src.includes('?') ? '&' : '?'}cors`;
 const nivel = (i: number) => NIVEIS[i] ?? NITIDO;
 const nitidez = (i: number) => (NIVEIS[i] ? 0 : 1);
 
@@ -73,7 +76,7 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
     this.atual = this.nivel;
     this.imagem.crossOrigin = 'anonymous';
     this.imagem.onload = () => this.redesenhar();
-    this.imagem.src = this.src;
+    this.imagem.src = comCors(this.src);
 
     this.zona.runOutsideAngular(() => {
       this.observador = new ResizeObserver(() => this.redesenhar());
@@ -84,9 +87,9 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
 
   ngOnChanges(): void {
     if (!this.iniciado) return;
-    if (this.imagem.src !== this.src) {
+    if (this.imagem.src !== comCors(this.src)) {
       this.atual = this.nivel;
-      this.imagem.src = this.src;
+      this.imagem.src = comCors(this.src);
       return;
     }
     if (this.nivel !== this.atual) this.zona.runOutsideAngular(() => this.animarAte(this.nivel));
