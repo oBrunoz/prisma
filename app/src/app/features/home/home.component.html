@@ -1,6 +1,6 @@
 <div class="app">
   <!-- no toque, deslizar troca o destaque -->
-  <div class="relative group/hero" (touchstart)="aoTocarDestaque($event)" (touchend)="aoSoltarDestaque($event)">
+  <div #destaque class="relative group/hero" (touchstart)="aoTocarDestaque($event)" (touchend)="aoSoltarDestaque($event)">
     <app-hero-section
       label="Em destaque"
       [title]="currentSpotlight?.movie?.title ?? ''"

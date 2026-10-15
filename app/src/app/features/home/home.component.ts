@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, OnDestroy, ViewChild, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -60,7 +60,7 @@ import {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   spotlights = signal<SpotlightData[]>([]);
   trendingMovies = signal<Movie[]>([]);
   popularMovies = signal<Movie[]>([]);
@@ -112,6 +112,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private autoPlayInterval: ReturnType<typeof setInterval> | null = null
 
+  // o destaque só roda à vista: fora da tela cada troca baixaria um fundo que ninguém vê
+  @ViewChild('destaque') private destaque?: ElementRef<HTMLElement>;
+  private observadorDoDestaque?: IntersectionObserver;
+  private destaqueVisivel = true;
+  private segurandoDestaque = false;
+
   constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
@@ -124,7 +130,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  ngAfterViewInit(): void {
+    if (!this.destaque) return;
+    this.observadorDoDestaque = new IntersectionObserver(([e]) => {
+      this.destaqueVisivel = e.isIntersecting;
+      if (e.isIntersecting) this.startAutoPlay();
+      else this.clearInterval();
+    });
+    this.observadorDoDestaque.observe(this.destaque.nativeElement);
+  }
+
+  @HostListener('document:visibilitychange')
+  aoTrocarDeAba(): void {
+    if (document.hidden) this.clearInterval();
+    else this.startAutoPlay();
+  }
+
   ngOnDestroy(): void {
+    this.observadorDoDestaque?.disconnect();
     this.clearInterval();
     this.destroy$.next();
     this.destroy$.complete();
@@ -200,6 +223,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private startAutoPlay() {
     this.clearInterval();
+    const parado = !this.destaqueVisivel || document.hidden || this.segurandoDestaque || !this.shouldDisplayCarouselDots();
+    if (parado || this.spotlights().length < 2) return;
 
     this.autoPlayInterval = setInterval(() => {
       const next = (this.carouselCurrentIndex() + 1) % this.spotlights().length;
@@ -277,6 +302,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // o convite de avaliar some se o destaque trocar no meio da leitura
   segurarDestaque(segurar: boolean): void {
+    this.segurandoDestaque = segurar;
     if (segurar) this.clearInterval();
     else this.startAutoPlay();
   }
