@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -9,6 +9,8 @@ import { BackdropCardComponent } from '../../shared/components/backdrop-card/bac
 import { HeroSectionComponent } from '../../shared/components/hero-section/hero-section.component';
 import { CarouselRowComponent } from '../../shared/components/carousel-row/carousel-row.component';
 import { ContentShelfComponent } from '../../shared/components/content-shelf/content-shelf.component';
+import { EstanteListrasComponent } from '../../shared/components/estante-listras/estante-listras.component';
+import { AuthService } from '../../core/services/auth.service';
 import { HOME_SHELVES, HomeShelfConfig } from '../../core/config/shelves';
 import { Movie, TvShow, SpotlightData } from '../../core/models/tmdb.models';
 import {
@@ -31,6 +33,7 @@ import {
     HeroSectionComponent,
     CarouselRowComponent,
     ContentShelfComponent,
+    EstanteListrasComponent,
     LucideArrowRight,
     LucideChevronLeft,
     LucideChevronRight,
@@ -73,6 +76,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
 
   highlightPair = computed(() => this.spotlights().slice(-2));
+
+  readonly auth = inject(AuthService);
+
+  // a estante do convite se enche com os filmes que já carregaram nas fileiras
+  postersDaEstante = computed(() => {
+    const caminhos = [...this.popularMovies(), ...this.trendingMovies()]
+      .map((m) => m.poster_path)
+      .filter((p): p is string => !!p);
+    return [...new Set(caminhos)].map((p) => `https://image.tmdb.org/t/p/w342${p}`);
+  });
   
   carouselCurrentIndex = signal(0);
   isLoading = signal(true);

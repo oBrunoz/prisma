@@ -222,25 +222,26 @@
       [large]="true">
     </app-content-shelf>
 
-    <!-- Convite para cadastro -->
-    <section class="relative min-h-[520px] sm:min-h-[680px] py-20 flex items-center overflow-hidden bg-[#0d0d0d]">
-      <img
-        src="images/bg-fight-club.png"
-        alt="Clube da Luta"
-        class="absolute inset-0 h-full w-full object-cover opacity-[0.45]">
+    <!-- Convite para cadastro: só para quem ainda não tem conta -->
+    @if (!auth.autenticado()) {
+    <section class="relative min-h-[560px] sm:min-h-[680px] py-20 flex items-center overflow-hidden bg-[#111111]">
+      <app-estante-listras class="absolute inset-0" [posters]="postersDaEstante()"></app-estante-listras>
 
+      <!-- o texto fica sobre o preto; a estante aparece à direita -->
       <div
         class="absolute inset-0 pointer-events-none"
-        style="background: linear-gradient(to bottom, #111111, rgba(17,17,17,0.35) 30%, rgba(17,17,17,0.35) 70%, #111111);">
+        style="background: linear-gradient(to right, #111111 0%, rgba(17,17,17,0.92) 30%, rgba(17,17,17,0.35) 65%, rgba(17,17,17,0.1)), linear-gradient(to bottom, #111111, transparent 18%, transparent 82%, #111111);">
       </div>
+      <!-- abaixo de lg o texto passa por cima da estante -->
+      <div class="absolute inset-0 pointer-events-none bg-[#111111]/60 sm:bg-[#111111]/30 lg:hidden"></div>
 
       <div class="px-gutter relative z-10 w-full">
-        <div class="max-w-3xl">
+        <div class="max-w-xl">
           <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.1]">
-            Todo filme que você assiste<br class="hidden sm:block"> conta uma história.
+            Sua estante começa vazia.
           </h2>
-          <p class="text-lg sm:text-2xl text-gray-300 mt-6 sm:mt-8 font-light">
-            Crie sua conta para guardar os filmes que marcaram você.
+          <p class="text-lg sm:text-xl text-gray-300 mt-6 sm:mt-8 font-light leading-relaxed">
+            Cada filme que você marca ganha um lugar. Daqui a um ano, ela conta a sua história.
           </p>
 
           <div class="flex flex-wrap gap-3 sm:gap-4 mt-8 sm:mt-10">
@@ -256,6 +257,7 @@
         </div>
       </div>
     </section>
+    }
 
     <!-- Em destaque -->
     <section class="px-gutter py-14 sm:py-20">

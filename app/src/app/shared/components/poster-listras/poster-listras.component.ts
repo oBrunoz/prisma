@@ -60,6 +60,8 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
   @Input() nivel = 0;
   // no card da escolha só cabe a parte de cima
   @Input() recorte: 'inteiro' | 'topo' = 'inteiro';
+  // tempo da passagem entre níveis, em ms
+  @Input() duracao = 700;
 
   @ViewChild('tela', { static: true }) private tela!: ElementRef<HTMLCanvasElement>;
 
@@ -130,7 +132,7 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
     const na = nitidez(this.atual);
     const nb = nitidez(alvo);
     const inicio = performance.now();
-    const duracao = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 700;
+    const duracao = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : this.duracao;
 
     const passo = (agora: number) => {
       const t = duracao ? Math.min(1, (agora - inicio) / duracao) : 1;

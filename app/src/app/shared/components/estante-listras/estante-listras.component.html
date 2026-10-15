@@ -1,0 +1,17 @@
+<div class="palco" aria-hidden="true">
+  <div #grade class="estante">
+    @for (vaga of vagas(); track $index) {
+      <div class="vaga">
+        @if (vaga.src) {
+          <app-poster-listras
+            class="cortina"
+            [class.aberta]="vaga.aberta"
+            [src]="vaga.src"
+            [nivel]="vaga.nivel"
+            [duracao]="revela">
+          </app-poster-listras>
+        }
+      </div>
+    }
+  </div>
+</div>
