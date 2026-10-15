@@ -1,0 +1,92 @@
+{
+  "frames": [
+    {
+      "dia": "2026-10-15",
+      "tmdbId": 598,
+      "imagens": [
+        "/6aU9plBQp4ZVdASYwDXD3GjWMqk.jpg",
+        "/bU8gxHcCsYYpDMec2YTFR9e9fiy.jpg",
+        "/hv0ixZeN1yKQhGkp9vuYtT49V8O.jpg",
+        "/axGt87UIWSx1D3xe2mbUl5WpPJF.jpg",
+        "/cNhT3z8zpCegaZN09n3glPuwHEZ.jpg",
+        "/rr0vFvjbAU7zaLjSRtUAxavH2bv.jpg",
+        "/5p3aTxtUtZHCHwYsuycutmxIhND.jpg"
+      ]
+    },
+    {
+      "dia": "2026-10-16",
+      "tmdbId": 496243,
+      "imagens": [
+        "/6LVpyYSTQdyRtJKOv8CtY4RW6us.jpg",
+        "/1dVsHtkf8tNNwSfIQSTLnv741AJ.jpg",
+        "/xOXIXRH6F2CDeEPwVSBe6y2v25V.jpg",
+        "/25tz24hlrqAbjhpHx1FhmfPH8Qf.jpg",
+        "/fjPhDdmJJNK68cx19X0QQuNuHNY.jpg",
+        "/uG3m6jBwU8jUkt0jbUOj8Vb2Y11.jpg",
+        "/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg"
+      ]
+    },
+    {
+      "dia": "2026-10-17",
+      "tmdbId": 7347,
+      "imagens": [
+        "/hdYBWhJLXrWJwPrNH1d34nKR5MU.jpg",
+        "/cPH7yFwu5KPzSnmUjapaZTZlCwA.jpg",
+        "/q9cmkjkK0IOT1d1pAGIU0JxTQEz.jpg",
+        "/tSRgKE6x9iiibhjD3vNiLCBEQ3U.jpg",
+        "/unpEdzjhKyvkN5qaYFFq69dj2RD.jpg",
+        "/978ALxGu5TGwg06ffGnatmJkZ1D.jpg",
+        "/jERxuINN7xlBNu7AfYyjypqjvy2.jpg"
+      ]
+    },
+    {
+      "dia": "2026-10-18",
+      "tmdbId": 238,
+      "imagens": [
+        "/yTEzxGgyI7s65Zfv7x7o8Zbiojr.jpg",
+        "/9EuFl42t6VDO1CMpQgbTyef0U22.jpg",
+        "/xzySXxTxPFvdbE4LCdGtQG4nvWv.jpg",
+        "/6DkOlkOteKN4FTpXr2ssOYEBBJM.jpg",
+        "/htuuuEwAvDVECMpb0ltLLyZyDDt.jpg",
+        "/es402xnlOLE6jhbiisVwwlazrnM.jpg",
+        "/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg"
+      ]
+    },
+    {
+      "dia": "2026-10-19",
+      "tmdbId": 13,
+      "imagens": [
+        "/xNmo08DQ4rlY9EZtKe8jOJyE0X3.jpg",
+        "/xkBv7t18jsJfcO9QWllPjXinz5.jpg",
+        "/nctUUrb3stDMJ9hO33oyaH19JQ1.jpg",
+        "/vZonjM1KzVEKAC3n2nkx71t9YOK.jpg",
+        "/buJOnU5FK6iIXL0iQIRfgbl5dsH.jpg",
+        "/6VcfHAdYmdYgSm6ynqREu0NAAlJ.jpg",
+        "/esIkb7Wkfk016ZNpqX24w0gbgkb.jpg"
+      ]
+    }
+  ],
+  "poster": [
+    {
+      "dia": "2026-10-15",
+      "tmdbId": 680,
+      "imagem": "/AmyQTQsNxITitCM0Ya5l5bpYGpn.jpg"
+    },
+    {
+      "dia": "2026-10-16",
+      "tmdbId": 64690
+    },
+    {
+      "dia": "2026-10-17",
+      "tmdbId": 155
+    },
+    {
+      "dia": "2026-10-18",
+      "tmdbId": 278
+    },
+    {
+      "dia": "2026-10-19",
+      "tmdbId": 666
+    }
+  ]
+}

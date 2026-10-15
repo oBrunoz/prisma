@@ -20,6 +20,16 @@ enum MediaType {
   TV
 }
 
+enum GameKind {
+  FRAMES
+  POSTER
+}
+
+enum GameResult {
+  WON
+  LOST
+}
+
 model User {
   id              String    @id @default(uuid(7))
   email           String    @unique
@@ -46,6 +56,7 @@ model User {
   followers     Follow[]        @relation("UserFollowers")
   refreshTokens RefreshToken[]
   emailChange   EmailChange?
+  gamePlays     GamePlay[]
 
   @@map("users")
 }
@@ -63,9 +74,48 @@ model Media {
   reviews        Review[]
   favorites      Favorite[]
   coverOf        User[]          @relation("UserCover")
+  challenges     GameChallenge[]
 
   @@unique([tmdbId, type])
   @@map("medias")
+}
+
+// o desafio do dia de um jogo: o filme e as imagens na ordem em que aparecem
+model GameChallenge {
+  id        String   @id @default(uuid(7))
+  kind      GameKind
+  day       DateTime @db.Date
+  // Nº do desafio, contado a partir do primeiro dia do jogo
+  number    Int
+  mediaId   String
+  // frames: sete caminhos da TMDB, do mais dificil ao mais facil; poster: um caminho
+  images    String[]
+  createdAt DateTime @default(now())
+
+  media Media      @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  plays GamePlay[]
+
+  @@unique([kind, day])
+  @@unique([kind, number])
+  @@map("game_challenges")
+}
+
+// a partida de quem esta logado; sem resultado, ainda esta em andamento
+model GamePlay {
+  id          String      @id @default(uuid(7))
+  userId      String
+  challengeId String
+  // tmdbId de cada palpite na ordem; 0 e um pulo
+  guesses     Int[]
+  result      GameResult?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge GameChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@map("game_plays")
 }
 
 model WatchlistItem {
