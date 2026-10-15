@@ -3,6 +3,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
   validateSync,
@@ -36,6 +37,26 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   TMDB_API_KEY: string;
+
+  // no desenvolvimento aponta para o Mailpit, que nao pede usuario nem senha
+  @IsString()
+  @IsNotEmpty()
+  SMTP_HOST: string;
+
+  @IsInt()
+  SMTP_PORT: number;
+
+  @IsOptional()
+  @IsString()
+  SMTP_USER?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_PASS?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_FROM: string;
 }
 
 export function validate(raw: Record<string, unknown>): EnvironmentVariables {
