@@ -46,13 +46,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // o renovar já limpa a sessão ao falhar, então é preciso saber antes se havia uma
       const tinhaSessao = auth.autenticado();
 
+      // só a renovação falhando derruba a sessão; o erro da requisição repetida volta para quem pediu
       return auth.renovar().pipe(
-        switchMap((novoToken) => next(comToken(req, novoToken))),
         catchError((falha) => {
           auth.limparSessao();
           if (tinhaSessao) avisarSessaoExpirada(toast, router);
           return throwError(() => falha);
         }),
+        switchMap((novoToken) => next(comToken(req, novoToken))),
       );
     }),
   );
