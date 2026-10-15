@@ -1,0 +1,31 @@
+@let marca = marcas.marca(tmdbId, tipo);
+<div class="flex gap-2">
+  @for (acao of acoes; track acao.campo) {
+    @let on = !!marca?.[acao.campo];
+    <button
+      type="button"
+      (click)="marcas.alternar(tmdbId, tipo, acao.campo)"
+      [disabled]="marcas.emGravacao(tmdbId, tipo)"
+      [attr.aria-pressed]="on"
+      [attr.aria-label]="acao.rotulo[on ? 1 : 0] + (titulo ? ': ' + titulo : '')"
+      [title]="acao.rotulo[on ? 1 : 0]"
+      class="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm transition duration-300 cursor-pointer disabled:cursor-wait"
+      [class]="on ? 'bg-white ' + (acao.campo === 'curtido' ? 'text-red-600' : 'text-[#111111]') : 'bg-white/15 hover:bg-white/25 text-white'">
+      @switch (acao.campo) {
+        @case ('assistido') {
+          <svg lucideEye [size]="16" strokeWidth="2"></svg>
+        }
+        @case ('curtido') {
+          <svg lucideHeart [size]="16" strokeWidth="2" [attr.fill]="on ? 'currentColor' : 'none'"></svg>
+        }
+        @default {
+          @if (on) {
+            <svg lucideCheck [size]="16" strokeWidth="2"></svg>
+          } @else {
+            <svg lucideBookmark [size]="16" strokeWidth="2"></svg>
+          }
+        }
+      }
+    </button>
+  }
+</div>

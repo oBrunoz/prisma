@@ -55,6 +55,11 @@
     @apply w-[min(36vw,11rem)] flex-none snap-start md:w-48 lg:w-52 xl:w-60;
   }
 
+  /* card horizontal numa fileira: ~1,4 visíveis no celular, ~3,5 no desktop */
+  .card-trilho-largo {
+    @apply w-[min(72vw,18rem)] flex-none snap-start md:w-80 lg:w-[22rem] xl:w-96;
+  }
+
   /* grade de pôsteres (catálogo, watchlist, perfis) */
   .grade-posters {
     @apply grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6;

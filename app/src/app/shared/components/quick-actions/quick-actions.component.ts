@@ -17,27 +17,13 @@ import { LucideBookmark, LucideCheck, LucideEye, LucideHeart } from '@lucide/ang
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { mensagemDeErro } from '../../../core/errors/mensagens';
 import { TipoMidia } from '../../../core/models/catalogo.models';
+import { CONVITES_ASSISTIDO, CONVITES_CURTIDO, sortear } from '../../../core/models/convites';
 import { FICHA_VAZIA, Ficha, envioDaFicha, fichaDaAvaliacao } from '../../../core/models/ficha';
 import { AuthService } from '../../../core/services/auth.service';
 import { AvaliacaoService } from '../../../core/services/avaliacao.service';
 import { FichaSyncService } from '../../../core/services/ficha-sync.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { WatchlistService } from '../../../core/services/watchlist.service';
-
-const CONVITES_ASSISTIDO = [
-  'Assistiu? Então conta aí: valeu a pipoca?',
-  'E aí, amou, odiou ou ficou no meio-termo? Deixa sua nota enquanto tá fresquinho.',
-  'Mais um pra conta! Que tal dizer o que achou?',
-];
-
-const CONVITES_CURTIDO = [
-  'Curtiu, hein? Aproveita e deixa uma nota também.',
-  'Gostou? Conta pro pessoal o que te pegou.',
-];
-
-function sortear(opcoes: string[]): string {
-  return opcoes[Math.floor(Math.random() * opcoes.length)];
-}
 
 // atalhos do banner: assistido, curtido e watchlist gravam na hora
 @Component({

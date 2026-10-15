@@ -81,30 +81,22 @@
         @if (trendingMovies().length === 0) {
           <div class="flex gap-4 overflow-hidden trilho-sangria">
             @for (item of skeletonItems; track $index) {
-              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg card-trilho">
-                <div class="aspect-[2/3] bg-[#242424] animate-pulse"></div>
-                <div class="p-3">
-                  <div class="h-4 bg-[#242424] rounded animate-pulse mb-2"></div>
-                  <div class="h-3 bg-[#242424] rounded animate-pulse w-2/3"></div>
-                </div>
-              </div>
+              <div class="card-trilho-largo aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           </div>
         } @else {
           <app-carousel-row>
             @for (movie of trendingMovies(); track movie.id) {
-              <div class="card-trilho">
-                <app-movie-card
+              <div class="card-trilho-largo">
+                <app-backdrop-card
                   [id]="movie.id"
                   [title]="movie.title"
-                  [posterPath]="movie.poster_path"
                   [backdropPath]="movie.backdrop_path"
+                  [posterPath]="movie.poster_path"
                   [year]="getMovieYear(movie)"
                   [rating]="movie.vote_average"
-                  [overview]="movie.overview"
-                  [genreIds]="movie.genre_ids ?? []"
                   mediaType="movies">
-                </app-movie-card>
+                </app-backdrop-card>
               </div>
             }
           </app-carousel-row>
@@ -134,13 +126,7 @@
         @if (popularMovies().length === 0) {
           <div class="flex gap-4 overflow-hidden trilho-sangria">
             @for (item of skeletonItems; track $index) {
-              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg card-trilho">
-                <div class="aspect-[2/3] bg-[#242424] animate-pulse"></div>
-                <div class="p-3">
-                  <div class="h-4 bg-[#242424] rounded animate-pulse mb-2"></div>
-                  <div class="h-3 bg-[#242424] rounded animate-pulse w-2/3"></div>
-                </div>
-              </div>
+              <div class="card-trilho aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           </div>
         } @else {
@@ -151,11 +137,8 @@
                   [id]="movie.id"
                   [title]="movie.title"
                   [posterPath]="movie.poster_path"
-                  [backdropPath]="movie.backdrop_path"
                   [year]="getMovieYear(movie)"
                   [rating]="movie.vote_average"
-                  [overview]="movie.overview"
-                  [genreIds]="movie.genre_ids ?? []"
                   mediaType="movies">
                 </app-movie-card>
               </div>
@@ -207,30 +190,22 @@
         @if (trendingSeries().length === 0) {
           <div class="flex gap-4 overflow-hidden trilho-sangria">
             @for (item of skeletonItems; track $index) {
-              <div class="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg card-trilho">
-                <div class="aspect-[2/3] bg-[#242424] animate-pulse"></div>
-                <div class="p-3">
-                  <div class="h-4 bg-[#242424] rounded animate-pulse mb-2"></div>
-                  <div class="h-3 bg-[#242424] rounded animate-pulse w-2/3"></div>
-                </div>
-              </div>
+              <div class="card-trilho-largo aspect-video rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           </div>
         } @else {
           <app-carousel-row>
             @for (serie of trendingSeries(); track serie.id) {
-              <div class="card-trilho">
-                <app-movie-card
+              <div class="card-trilho-largo">
+                <app-backdrop-card
                   [id]="serie.id"
                   [title]="serie.name"
-                  [posterPath]="serie.poster_path"
                   [backdropPath]="serie.backdrop_path"
+                  [posterPath]="serie.poster_path"
                   [year]="getSeriesYear(serie)"
                   [rating]="serie.vote_average"
-                  [overview]="serie.overview"
-                  [genreIds]="serie.genre_ids ?? []"
                   mediaType="series">
-                </app-movie-card>
+                </app-backdrop-card>
               </div>
             }
           </app-carousel-row>
@@ -316,7 +291,7 @@
                   @if (item.movie.vote_average) {
                     <span class="flex items-center gap-1">
                       <svg lucideStar [size]="14" strokeWidth="2" class="text-yellow-500" fill="currentColor"></svg>
-                      {{ item.movie.vote_average.toFixed(1) }}
+                      {{ item.movie.vote_average | number: '1.1-1' }}
                     </span>
                   }
                   <span>{{ getMovieYear(item.movie) }}</span>
@@ -377,7 +352,7 @@
             @if (pick.movie.vote_average) {
               <span class="flex items-center gap-1">
                 <svg lucideStar [size]="14" strokeWidth="2" class="text-yellow-500" fill="currentColor"></svg>
-                {{ pick.movie.vote_average.toFixed(1) }}
+                {{ pick.movie.vote_average | number: '1.1-1' }}
               </span>
             }
             <span>{{ getMovieYear(pick.movie) }}</span>

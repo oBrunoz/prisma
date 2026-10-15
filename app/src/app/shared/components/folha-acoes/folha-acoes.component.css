@@ -1,0 +1,40 @@
+/* no celular a folha sobe de baixo; a partir de sm, aparece no centro */
+.fundo {
+  animation: escurece 250ms ease-out both;
+}
+
+.folha {
+  animation: sobe 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (min-width: 640px) {
+  .folha {
+    animation-name: aparece;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundo,
+  .folha {
+    animation: none;
+  }
+}
+
+@keyframes escurece {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sobe {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes aparece {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}

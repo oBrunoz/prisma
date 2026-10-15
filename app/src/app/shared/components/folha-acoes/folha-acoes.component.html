@@ -1,0 +1,83 @@
+@if (folha.aberta(); as t) {
+  <!-- Fundo: fecha ao tocar; z acima da navbar (z-50) -->
+  <div
+    class="fundo fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
+    (click)="folha.fechar()">
+
+    <div
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="'Ações para ' + t.titulo"
+      data-lenis-prevent
+      class="folha w-full sm:max-w-sm max-h-[90svh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-[#1a1a1a] border border-white/10 border-b-0 sm:border-b shadow-2xl px-5 pt-3 sm:pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pb-5"
+      (click)="$event.stopPropagation()">
+
+      <div class="sm:hidden mx-auto mb-4 h-1 w-9 rounded-full bg-white/20" aria-hidden="true"></div>
+
+      <div class="flex items-center gap-3">
+        @if (t.posterUrl) {
+          <img [src]="t.posterUrl" alt="" class="w-12 aspect-[2/3] object-cover rounded shrink-0 bg-[#111111]" />
+        }
+        <div class="flex-1 min-w-0">
+          <h2 class="text-white font-semibold text-base leading-snug line-clamp-2">{{ t.titulo }}</h2>
+          <p class="mt-1 flex items-center gap-2 text-sm text-gray-400 tabular-nums">
+            @if (t.ano) {
+              <span>{{ t.ano }}</span>
+            }
+            @if (t.nota > 0) {
+              <span class="flex items-center gap-1 text-yellow-400 font-medium">
+                <svg lucideStar [size]="12" strokeWidth="2" fill="currentColor"></svg>
+                {{ t.nota | number: '1.1-1' }}
+              </span>
+            }
+          </p>
+        </div>
+        <button
+          #fecharBtn
+          type="button"
+          (click)="folha.fechar()"
+          class="w-11 h-11 shrink-0 flex items-center justify-center rounded-full text-gray-400 hover:text-white transition duration-300 cursor-pointer"
+          aria-label="Fechar">
+          <svg lucideX [size]="20" strokeWidth="2"></svg>
+        </button>
+      </div>
+
+      @let marca = marcas.marca(t.tmdbId, t.tipo);
+      <div class="grid grid-cols-3 gap-2 mt-5">
+        @for (acao of acoes; track acao.campo) {
+          @let on = !!marca?.[acao.campo];
+          <button
+            type="button"
+            (click)="marcas.alternar(t.tmdbId, t.tipo, acao.campo)"
+            [disabled]="marcas.emGravacao(t.tmdbId, t.tipo)"
+            [attr.aria-pressed]="on"
+            class="min-h-16 rounded-xl flex flex-col items-center justify-center gap-1.5 text-xs font-medium transition duration-300 cursor-pointer disabled:cursor-wait"
+            [class]="on ? 'bg-white ' + (acao.campo === 'curtido' ? 'text-red-600' : 'text-[#111111]') : 'bg-white/10 hover:bg-white/20 text-white'">
+            @switch (acao.campo) {
+              @case ('assistido') {
+                <svg lucideEye [size]="20" strokeWidth="2"></svg>
+              }
+              @case ('curtido') {
+                <svg lucideHeart [size]="20" strokeWidth="2" [attr.fill]="on ? 'currentColor' : 'none'"></svg>
+              }
+              @default {
+                @if (on) {
+                  <svg lucideCheck [size]="20" strokeWidth="2"></svg>
+                } @else {
+                  <svg lucideBookmark [size]="20" strokeWidth="2"></svg>
+                }
+              }
+            }
+            {{ acao.rotulo[on ? 1 : 0] }}
+          </button>
+        }
+      </div>
+
+      <a
+        [routerLink]="rota(t.tipo, t.tmdbId)"
+        class="mt-3 w-full px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-medium transition duration-300 flex items-center justify-center">
+        Ver detalhes
+      </a>
+    </div>
+  </div>
+}

@@ -1,0 +1,27 @@
+/* a logo ocupa um canto fixo: logos largas e altas ficam do mesmo peso */
+.marca {
+  width: 48%;
+  height: 38%;
+  opacity: 0;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+  transition: opacity 300ms, transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* entra só quando já se sabe se há logo: sem isso o título em texto piscaria antes dela */
+.marca.pronta {
+  opacity: 1;
+}
+
+/* no hover a logo sobe um pouco junto com a entrada das ações */
+@media (hover: hover) and (pointer: fine) {
+  :host:hover .marca,
+  :host:focus-within .marca {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marca {
+    transition: none;
+  }
+}

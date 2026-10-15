@@ -1,0 +1,56 @@
+<!-- mesma anatomia do movie-card: selo e nota em cima, ações fora do link -->
+<div class="group relative">
+  <a
+    [routerLink]="detailsRoute"
+    (appSegurar)="abrirFolha()"
+    [attr.aria-label]="title + (year ? ', ' + year : '')"
+    class="block relative aspect-video rounded-lg overflow-hidden bg-[#1a1a1a] select-none [-webkit-touch-callout:none]">
+    @if (backdropUrl) {
+      <img [src]="backdropUrl" alt="" class="object-cover w-full h-full" loading="lazy" draggable="false" />
+    } @else {
+      <app-media-fallback></app-media-fallback>
+    }
+
+    <!-- escurece só o canto da logo -->
+    <span class="absolute inset-0 pointer-events-none bg-gradient-to-tr from-black/70 via-black/10 via-45% to-transparent" aria-hidden="true"></span>
+
+    <app-selo-marcas
+      [tmdbId]="id"
+      [tipo]="tipo"
+      class="absolute top-2 left-2 transition duration-300 mouse:group-hover:opacity-0 mouse:group-focus-within:opacity-0">
+    </app-selo-marcas>
+
+    @if (rating > 0) {
+      <span class="absolute top-2 right-2 flex items-center gap-1 rounded bg-[#111111]/80 px-1.5 py-0.5 text-[11px] font-semibold text-yellow-400 tabular-nums">
+        <svg lucideStar [size]="11" strokeWidth="2" fill="currentColor"></svg>
+        {{ rating | number: '1.1-1' }}
+      </span>
+    }
+
+    <span class="marca absolute left-3 bottom-3 sm:left-4 sm:bottom-4 flex items-end" [class.pronta]="logoUrl() !== null" aria-hidden="true">
+      @if (logoUrl()) {
+        <img [src]="logoUrl()" alt="" class="max-h-full max-w-full object-contain object-left-bottom" draggable="false" />
+      } @else if (logoUrl() === '') {
+        <span class="text-white font-bold text-base sm:text-lg leading-tight line-clamp-2">{{ title }}</span>
+      }
+    </span>
+  </a>
+
+  <app-acoes-card
+    [tmdbId]="id"
+    [tipo]="tipo"
+    [titulo]="title"
+    class="absolute right-3 bottom-3 hidden mouse:block opacity-0 translate-y-2 transition duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0">
+  </app-acoes-card>
+
+  <!-- 44px de alvo, 32px de desenho -->
+  <button
+    type="button"
+    (click)="abrirFolha()"
+    [attr.aria-label]="'Ações para ' + title"
+    class="absolute right-1 bottom-1 w-11 h-11 rounded-full flex mouse:hidden items-center justify-center cursor-pointer">
+    <span class="w-8 h-8 rounded-full bg-[#111111]/80 text-white flex items-center justify-center">
+      <svg lucideEllipsis [size]="16" strokeWidth="2.2"></svg>
+    </span>
+  </button>
+</div>

@@ -115,7 +115,7 @@
             @if (rating) {
               <span class="flex items-center gap-1">
                 <svg lucideStar [size]="14" strokeWidth="2" class="text-yellow-500" fill="currentColor"></svg>
-                {{ rating.toFixed(1) }}
+                {{ rating | number: '1.1-1' }}
               </span>
             }
             @if (releaseYear) {

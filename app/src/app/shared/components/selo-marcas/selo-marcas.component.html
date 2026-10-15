@@ -1,0 +1,17 @@
+@let marca = marcas.marca(tmdbId, tipo);
+@if (marca && (marca.assistido || marca.curtido || marca.watchlist)) {
+  <span class="flex items-center gap-1.5 rounded bg-[#111111]/80 px-1.5 py-1 text-white">
+    @if (marca.assistido) {
+      <svg lucideEye [size]="12" strokeWidth="2.2" aria-hidden="true"></svg>
+      <span class="sr-only">Assistido</span>
+    }
+    @if (marca.curtido) {
+      <svg lucideHeart [size]="12" strokeWidth="2.2" fill="currentColor" class="text-red-600" aria-hidden="true"></svg>
+      <span class="sr-only">Curtido</span>
+    }
+    @if (marca.watchlist) {
+      <svg lucideBookmark [size]="12" strokeWidth="2.2" aria-hidden="true"></svg>
+      <span class="sr-only">Na watchlist</span>
+    }
+  </span>
+}

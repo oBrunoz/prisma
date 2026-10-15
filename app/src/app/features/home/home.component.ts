@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MovieService } from '../../core/services/movie.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
+import { BackdropCardComponent } from '../../shared/components/backdrop-card/backdrop-card.component';
 import { HeroSectionComponent } from '../../shared/components/hero-section/hero-section.component';
 import { CarouselRowComponent } from '../../shared/components/carousel-row/carousel-row.component';
 import { ContentShelfComponent } from '../../shared/components/content-shelf/content-shelf.component';
@@ -26,6 +27,7 @@ import {
     CommonModule,
     RouterModule,
     MovieCardComponent,
+    BackdropCardComponent,
     HeroSectionComponent,
     CarouselRowComponent,
     ContentShelfComponent,

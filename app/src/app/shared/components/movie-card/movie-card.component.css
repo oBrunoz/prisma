@@ -1,0 +1,25 @@
+/* no toque o pé fica sempre escuro com o título: sem hover, não haveria outro jeito de ler o nome */
+.veu {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent 40%);
+}
+
+/* com mouse o pé escurece mais alto no hover, para caber título e ações */
+@media (hover: hover) and (pointer: fine) {
+  .veu {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.5) 38%, transparent 64%);
+    opacity: 0;
+  }
+
+  .legenda {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  :host:hover .veu,
+  :host:focus-within .veu,
+  :host:hover .legenda,
+  :host:focus-within .legenda {
+    opacity: 1;
+    transform: none;
+  }
+}

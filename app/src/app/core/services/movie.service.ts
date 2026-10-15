@@ -272,12 +272,20 @@ export class MovieService {
     });
   }
 
-  private pickLogoUrl(images: ImagesResponse): string {
+  // logo do título para card: w300 basta e pesa uma fração da original
+  getLogoUrl(id: number, type: 'movie' | 'tv'): Observable<string> {
+    return this.getContentImages(id, type).pipe(
+      map((images) => this.pickLogoUrl(images, 'w300')),
+      catchError(() => of('')),
+    );
+  }
+
+  private pickLogoUrl(images: ImagesResponse, tamanho = 'original'): string {
     const logos = images?.logos ?? [];
     const ptLogo = logos.find((l) => l.iso_639_1 === 'pt');
     const enLogo = logos.find((l) => l.iso_639_1 === 'en');
     const logo = ptLogo ?? enLogo ?? logos[0];
-    return logo ? `${environment.tmdbImageUrl}/original${logo.file_path}` : '';
+    return logo ? `${environment.tmdbImageUrl}/${tamanho}${logo.file_path}` : '';
   }
 
   getContentImages(id: number, type: 'movie' | 'tv'): Observable<ImagesResponse> {

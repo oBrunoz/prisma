@@ -6,11 +6,12 @@ import { SmoothScrollService } from './core/services/smooth-scroll.service';
 import { SeguidoresNovosService } from './core/services/seguidores-novos.service';
 import { StripesBackdropComponent } from './shared/components/stripes-backdrop/stripes-backdrop.component';
 import { ToastRollComponent } from './shared/components/toast-roll/toast-roll.component';
+import { FolhaAcoesComponent } from './shared/components/folha-acoes/folha-acoes.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, StripesBackdropComponent, ToastRollComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, StripesBackdropComponent, ToastRollComponent, FolhaAcoesComponent],
   templateUrl: './app.html',
   styles: [
     // bloco de referência para a camada de stripes cobrir a altura do documento

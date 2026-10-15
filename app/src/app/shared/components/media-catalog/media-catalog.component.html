@@ -101,13 +101,7 @@
       @if (isLoading()) {
         <div class="grade-posters">
           @for (item of skeletonItems; track $index) {
-            <div class="rounded-xl overflow-hidden shadow-lg">
-              <div class="aspect-[2/3] skeleton bg-[#1a1a1a]"></div>
-              <div class="p-3 bg-[#1a1a1a]">
-                <div class="h-4 skeleton bg-[#242424] rounded mb-2"></div>
-                <div class="h-3 skeleton bg-[#242424] rounded w-2/3"></div>
-              </div>
-            </div>
+            <div class="aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
           }
         </div>
       } @else if (items().length === 0) {
@@ -119,24 +113,15 @@
               [id]="item.id"
               [title]="getTitle(item)"
               [posterPath]="item.poster_path"
-              [backdropPath]="item.backdrop_path"
               [year]="getYear(item)"
               [rating]="item.vote_average"
-              [overview]="item.overview"
-              [genreIds]="item.genre_ids ?? []"
               [mediaType]="mediaType">
             </app-movie-card>
           }
 
           @if (isLoadingMore()) {
             @for (item of moreSkeletonItems; track $index) {
-              <div class="rounded-xl overflow-hidden shadow-lg">
-                <div class="aspect-[2/3] skeleton bg-[#1a1a1a]"></div>
-                <div class="p-3 bg-[#1a1a1a]">
-                  <div class="h-4 skeleton bg-[#242424] rounded mb-2"></div>
-                  <div class="h-3 skeleton bg-[#242424] rounded w-2/3"></div>
-                </div>
-              </div>
+              <div class="aspect-[2/3] rounded-lg skeleton bg-[#1a1a1a]"></div>
             }
           }
         </div>
