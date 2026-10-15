@@ -17,6 +17,7 @@ export interface ItemWatchlist {
 
 export interface AutorResumo {
   id: string;
+  username: string;
   name: string;
   avatarUrl: string | null;
 }

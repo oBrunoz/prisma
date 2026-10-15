@@ -194,10 +194,10 @@
           (click)="alternarMenuConta()"
           [attr.aria-expanded]="menuContaAberto()"
           aria-haspopup="menu"
-          [attr.aria-label]="'Conta de ' + (auth.usuario()?.name ?? '')"
+          [attr.aria-label]="'Conta de ' + (auth.usuario()?.username ?? '')"
           class="flex items-center cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
           <app-user-avatar
-            [nome]="auth.usuario()?.name ?? ''"
+            [nome]="auth.usuario()?.username ?? ''"
             [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
             tamanho="sm">
           </app-user-avatar>
@@ -213,13 +213,12 @@
 
           <div class="flex items-center gap-3 px-4 py-4 border-b border-white/5">
             <app-user-avatar
-              [nome]="auth.usuario()?.name ?? ''"
+              [nome]="auth.usuario()?.username ?? ''"
               [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
               tamanho="md">
             </app-user-avatar>
             <div class="min-w-0">
-              <p class="text-sm font-semibold truncate">{{ auth.usuario()?.name }}</p>
-              <p class="text-xs text-gray-400 truncate">/{{ auth.usuario()?.username }}</p>
+              <p class="text-sm font-semibold truncate">{{ auth.usuario()?.username }}</p>
             </div>
           </div>
 
@@ -302,15 +301,14 @@
       <a routerLink="/perfil" (click)="closeSidebar()"
         class="flex items-center gap-3 px-2 pb-3 transition duration-300 group/conta">
         <app-user-avatar
-          [nome]="auth.usuario()?.name ?? ''"
+          [nome]="auth.usuario()?.username ?? ''"
           [avatarUrl]="auth.usuario()?.avatarUrl ?? null"
           tamanho="sm">
         </app-user-avatar>
         <span class="min-w-0">
           <span class="block text-sm font-medium text-white truncate group-hover/conta:text-red-500 transition duration-300">
-            {{ auth.usuario()?.name }}
+            {{ auth.usuario()?.username }}
           </span>
-          <span class="block text-xs text-gray-400 truncate">/{{ auth.usuario()?.username }}</span>
         </span>
       </a>
       <button type="button" (click)="sair()"

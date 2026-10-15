@@ -6,15 +6,20 @@ import { LucidePencil, LucideTrash2, LucideX } from '@lucide/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { mensagemDeErro } from '../../core/errors/mensagens';
 import { AvaliacaoUsuario, ItemWatchlist, Midia, TipoMidia } from '../../core/models/catalogo.models';
-import { AtualizacaoPerfil } from '../../core/models/auth.models';
+import { AtualizacaoPerfil, PerfilPublico } from '../../core/models/auth.models';
 import { AuthService } from '../../core/services/auth.service';
 import { AvaliacaoService } from '../../core/services/avaliacao.service';
 import { ToastService } from '../../core/services/toast.service';
+import { UsuarioService } from '../../core/services/usuario.service';
 import { WatchlistService } from '../../core/services/watchlist.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { UserAvatarComponent } from '../../shared/components/user-avatar/user-avatar.component';
 import { TextoRecolhivelComponent } from '../../shared/components/texto-recolhivel/texto-recolhivel.component';
 import { StripesBannerComponent } from '../../shared/components/stripes-banner/stripes-banner.component';
+import {
+  AbaSeguidores,
+  SeguidoresModalComponent,
+} from '../../shared/components/seguidores-modal/seguidores-modal.component';
 
 @Component({
   selector: 'app-profile',
@@ -27,6 +32,7 @@ import { StripesBannerComponent } from '../../shared/components/stripes-banner/s
     UserAvatarComponent,
     TextoRecolhivelComponent,
     StripesBannerComponent,
+    SeguidoresModalComponent,
     LucideX,
     LucideTrash2,
     LucidePencil,
@@ -38,6 +44,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private readonly watchlistService = inject(WatchlistService);
   private readonly avaliacaoService = inject(AvaliacaoService);
   private readonly toast = inject(ToastService);
+  private readonly usuarioService = inject(UsuarioService);
 
   watchlist = signal<ItemWatchlist[]>([]);
   avaliacoes = signal<AvaliacaoUsuario[]>([]);
@@ -46,6 +53,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   erroWatchlist = signal('');
   erroAvaliacoes = signal('');
   removendo = signal<string | null>(null);
+  contagem = signal<PerfilPublico['contagem'] | null>(null);
+  listaAberta = signal<AbaSeguidores | null>(null);
 
   editando = signal(false);
   salvandoPerfil = signal(false);
@@ -75,6 +84,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const meuId = this.auth.usuario()?.id;
     if (!meuId) return;
 
+    this.carregarContagem();
+
     this.watchlistService
       .listar()
       .pipe(takeUntil(this.destroy$))
@@ -102,6 +113,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.carregandoAvaliacoes.set(false);
         },
       });
+  }
+
+  // as contagens são enfeite do cabeçalho: se falharem, só não aparecem
+  carregarContagem(): void {
+    const meuUsername = this.auth.usuario()?.username;
+    if (!meuUsername) return;
+
+    this.usuarioService
+      .perfil(meuUsername)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: (perfil) => this.contagem.set(perfil.contagem), error: () => {} });
   }
 
   abrirEdicao(): void {

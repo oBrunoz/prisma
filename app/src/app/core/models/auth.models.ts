@@ -7,6 +7,30 @@ export interface PublicUser {
   createdAt: string;
 }
 
+export interface PerfilPublico extends PublicUser {
+  contagem: {
+    avaliacoes: number;
+    seguidores: number;
+    seguindo: number;
+  };
+}
+
+// o jeito curto de mostrar alguém: busca, seguidores, seguindo
+export interface UsuarioResumo {
+  id: string;
+  username: string;
+  avatarUrl: string | null;
+  bio: string | null;
+  contagem: { avaliacoes: number; seguidores: number };
+  // só vem com sessão
+  seguindo?: boolean;
+}
+
+export interface BuscaUsuarios {
+  total: number;
+  resultados: UsuarioResumo[];
+}
+
 export interface SessionResponse {
   user?: PublicUser;
   accessToken: string;

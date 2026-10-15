@@ -90,7 +90,14 @@
                 @for (avaliacao of avaliacoesPrisma(); track avaliacao.id) {
                   <article class="bg-[#1a1a1a] rounded-xl p-5">
                     <div class="flex flex-wrap items-baseline justify-between gap-3">
-                      <h3 class="text-white font-semibold">{{ avaliacao.user?.name }}</h3>
+                      @if (avaliacao.user; as autor) {
+                        <a
+                          [routerLink]="['/username', autor.username]"
+                          class="min-w-0 flex items-center gap-3 text-white font-semibold hover:text-red-500 transition duration-300">
+                          <app-user-avatar [nome]="autor.username" [avatarUrl]="autor.avatarUrl" tamanho="sm"></app-user-avatar>
+                          <span class="min-w-0">{{ autor.username }}</span>
+                        </a>
+                      }
                       @if (avaliacao.rating) {
                         <span class="text-sm text-yellow-400">{{ avaliacao.rating }}/10</span>
                       }

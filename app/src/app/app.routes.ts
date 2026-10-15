@@ -37,6 +37,11 @@ export const routes: Routes = [
       import('./features/profile/profile.component').then((m) => m.ProfileComponent),
   },
   {
+    path: 'username/:username',
+    loadComponent: () =>
+      import('./features/usuario/usuario.component').then((m) => m.UsuarioComponent),
+  },
+  {
     path: 'search/people/:id',
     loadComponent: () =>
       import('./features/person/person.component').then((m) => m.PersonComponent),

@@ -1,0 +1,41 @@
+<div class="flex items-center gap-4 py-4 border-b border-white/5">
+  <a
+    [routerLink]="['/username', usuario().username]"
+    (click)="abriu.emit()"
+    class="group flex flex-1 items-center gap-4 min-w-0">
+    <app-user-avatar [nome]="usuario().username" [avatarUrl]="usuario().avatarUrl" tamanho="md"></app-user-avatar>
+    <span class="min-w-0">
+      <span class="block font-semibold text-white truncate group-hover:text-red-500 transition duration-300">
+        {{ usuario().username }}
+      </span>
+      @if (usuario().bio) {
+        <span class="block text-sm text-gray-400 truncate">{{ usuario().bio }}</span>
+      }
+      <span class="block text-xs text-gray-500">
+        {{ plural(usuario().contagem.avaliacoes, 'avaliação', 'avaliações') }} ·
+        {{ plural(usuario().contagem.seguidores, 'seguidor', 'seguidores') }}
+      </span>
+    </span>
+  </a>
+
+  @if (souEu()) {
+    <span class="shrink-0 text-sm text-gray-500">você</span>
+  } @else {
+    <button
+      type="button"
+      (click)="alternarFollow()"
+      [disabled]="alternando()"
+      [attr.aria-pressed]="seguindo()"
+      [attr.aria-label]="(seguindo() ? 'Deixar de seguir ' : 'Seguir ') + usuario().username"
+      class="shrink-0 px-4 py-2 rounded-full transition duration-300 flex items-center gap-2 text-sm font-medium text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+      [class]="seguindo() ? 'bg-white/10 hover:bg-white/20' : 'bg-red-600 hover:bg-red-700'">
+      @if (seguindo()) {
+        <svg lucideUserCheck [size]="15" strokeWidth="2"></svg>
+        <span class="hidden sm:inline">Seguindo</span>
+      } @else {
+        <svg lucideUserPlus [size]="15" strokeWidth="2"></svg>
+        <span class="hidden sm:inline">Seguir</span>
+      }
+    </button>
+  }
+</div>

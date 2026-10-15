@@ -1,0 +1,83 @@
+<!-- Fundo: fecha ao clicar; z acima da navbar (z-50) -->
+<div
+  class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 md:p-8"
+  (click)="fechar()">
+
+  <div
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="'Seguidores e seguindo de ' + username()"
+    class="relative w-full max-w-lg max-h-[85svh] flex flex-col rounded-t-2xl sm:rounded-2xl bg-[#1a1a1a] border border-white/10 border-b-0 sm:border-b shadow-2xl pb-[env(safe-area-inset-bottom)]"
+    (click)="$event.stopPropagation()">
+
+    <div class="flex items-end justify-between gap-4 px-6 border-b border-white/5">
+      <div class="flex gap-6" role="tablist">
+        @for (opcao of [['seguidores', 'Seguidores', contagem().seguidores], ['seguindo', 'Seguindo', contagem().seguindo]]; track opcao[0]) {
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="aba() === opcao[0]"
+            (click)="trocar($any(opcao[0]))"
+            class="relative py-4 text-sm transition duration-300 cursor-pointer"
+            [class]="aba() === opcao[0] ? 'text-white' : 'text-gray-400 hover:text-white'">
+            {{ opcao[1] }}
+            <span class="ml-1 text-gray-500 tabular-nums">{{ opcao[2] }}</span>
+            @if (aba() === opcao[0]) {
+              <span class="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"></span>
+            }
+          </button>
+        }
+      </div>
+
+      <button
+        type="button"
+        (click)="fechar()"
+        class="mb-2.5 w-9 h-9 shrink-0 flex items-center justify-center rounded-full bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white transition duration-300 cursor-pointer"
+        aria-label="Fechar">
+        <svg lucideX [size]="16" strokeWidth="2"></svg>
+      </button>
+    </div>
+
+    <!-- sem data-lenis-prevent o smooth scroll global engole a rolagem daqui -->
+    <div data-lenis-prevent class="flex-1 min-h-0 overflow-y-auto px-6 pb-4">
+      @let estado = estados()[aba()];
+
+      @for (usuario of estado.itens; track usuario.id) {
+        <app-linha-usuario [usuario]="usuario" (abriu)="fechar()"></app-linha-usuario>
+      } @empty {
+        @if (!estado.carregando && !estado.erro) {
+          <p class="py-10 text-center text-gray-400">
+            {{ aba() === 'seguidores' ? 'Ninguém segue ' + username() + ' ainda.' : username() + ' ainda não segue ninguém.' }}
+          </p>
+        }
+      }
+
+      @if (estado.carregando) {
+        @for (vazio of [1, 2, 3]; track vazio) {
+          <div class="flex items-center gap-4 py-4 border-b border-white/5">
+            <div class="w-12 h-12 rounded-full bg-white/5 animate-pulse shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3 w-1/3 rounded bg-white/5 animate-pulse"></div>
+              <div class="h-2.5 w-2/3 rounded bg-white/5 animate-pulse"></div>
+            </div>
+          </div>
+        }
+      }
+
+      @if (estado.erro) {
+        <p class="py-6 text-sm text-red-400" role="alert">{{ estado.erro }}</p>
+      }
+
+      @if (!estado.fim && !estado.carregando && (estado.pagina > 0 || estado.erro)) {
+        <div class="pt-4 flex justify-center">
+          <button
+            type="button"
+            (click)="carregar(aba())"
+            class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer">
+            {{ estado.erro ? 'Tentar de novo' : 'Carregar mais' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
