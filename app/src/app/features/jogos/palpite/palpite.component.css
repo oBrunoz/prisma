@@ -1,0 +1,13 @@
+.caixa.errou {
+  animation: errou 700ms ease-out;
+}
+
+@keyframes errou {
+  0% {
+    border-color: #d85057;
+    box-shadow: 0 0 0 3px rgb(216 80 87 / 0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(216 80 87 / 0);
+  }
+}

@@ -21,6 +21,23 @@ export const routes: Routes = [
       import('./features/series/series.component').then((m) => m.SeriesComponent),
   },
   {
+    path: 'jogos',
+    loadComponent: () =>
+      import('./features/jogos/jogos.component').then((m) => m.JogosComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/jogos/menu/jogos-menu.component').then((m) => m.JogosMenuComponent),
+      },
+      {
+        path: ':jogo',
+        loadComponent: () =>
+          import('./features/jogos/partida/partida.component').then((m) => m.PartidaComponent),
+      },
+    ],
+  },
+  {
     path: 'login',
     canActivate: [visitanteGuard],
     loadComponent: () =>

@@ -1,0 +1,101 @@
+<!-- entra quando a câmera termina de atravessar a janela -->
+@if (estado.atravessou()) {
+  <div class="menu min-h-[calc(100svh-4rem)] px-gutter pt-8 pb-10 flex flex-col gap-8">
+    <div class="flex-1 flex flex-col items-center justify-center gap-8">
+      <div class="cabecalho text-center">
+        @if (numero(); as n) {
+          <p class="text-sm text-gray-300 tabular-nums">Nº {{ n }} · {{ data() }}</p>
+        }
+        <h1 class="mt-1.5 text-4xl sm:text-5xl lg:text-6xl font-semibold text-white tracking-tight leading-none text-balance">
+          Qual vai ser hoje?
+        </h1>
+      </div>
+
+      @if (estado.erro(); as erro) {
+        <div class="text-center">
+          <p class="text-sm text-gray-300">{{ erro }}</p>
+          <button
+            type="button"
+            (click)="estado.carregar()"
+            class="mt-4 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 cursor-pointer">
+            Tentar de novo
+          </button>
+        </div>
+      } @else {
+        <div class="escolhas grid grid-cols-1 sm:grid-cols-[repeat(2,minmax(0,340px))] gap-6 w-full max-w-md sm:max-w-none justify-center">
+          @for (card of cards(); track card.info.tipo) {
+            <a
+              [routerLink]="card.partida ? ['/jogos', card.info.slug] : null"
+              [attr.aria-disabled]="!card.partida || null"
+              [attr.aria-keyshortcuts]="card.tecla"
+              class="escolha group relative flex flex-col rounded-[18px] bg-[#1a1a1a] overflow-hidden shadow-2xl shadow-black/50"
+              [class.desligada]="!card.partida">
+              <div class="relative aspect-[4/3] bg-black overflow-hidden">
+                @if (estado.carregando() && !card.partida) {
+                  <div class="skeleton absolute inset-0 bg-white/5"></div>
+                } @else if (card.partida) {
+                  @if (card.info.tipo === 'FRAMES') {
+                    <img
+                      [src]="imagens + '/w780' + card.partida.images[0]"
+                      alt=""
+                      class="imagem w-full h-full object-cover" />
+                  } @else {
+                    <app-poster-listras
+                      class="imagem w-full h-full"
+                      [src]="imagens + '/w780' + card.partida.images[0]"
+                      [nivel]="0"
+                      recorte="topo"></app-poster-listras>
+                  }
+                }
+                <span
+                  class="absolute top-3 left-3 min-w-[26px] h-[26px] px-2 rounded-[7px] grid place-items-center bg-[#111111]/75 backdrop-blur border border-white/20 font-mono text-xs text-gray-300"
+                  aria-hidden="true">
+                  {{ card.tecla }}
+                </span>
+              </div>
+
+              <div class="grid gap-3.5 px-5 pt-[18px] pb-5">
+                <div>
+                  <h2 class="text-[26px] font-semibold text-white tracking-tight leading-tight">{{ card.info.nome }}</h2>
+                  <p class="mt-1 text-[13px] text-gray-400 text-pretty">{{ card.info.regra }}</p>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="grid gap-1.5 text-xs text-gray-400 tabular-nums">
+                    <span class="flex gap-[3px]" aria-hidden="true">
+                      @for (fio of card.fios; track $index) {
+                        <i class="fio" [style.background]="fio.cor" [class.gasto]="fio.gasto" [class.vazio]="fio.vazio"></i>
+                      }
+                    </span>
+                    <span>
+                      {{ card.status }}
+                      @if (card.sequencia > 1) {
+                        · {{ card.sequencia }} dias seguidos
+                      }
+                    </span>
+                  </div>
+                  @if (card.partida) {
+                    <span
+                      class="botao shrink-0 px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition duration-300"
+                      [class]="card.fim ? 'bg-white/10 group-hover:bg-white/20 text-white' : 'bg-red-600 group-hover:bg-red-700 text-white'">
+                      @if (!card.fim) {
+                        <svg lucidePlay [size]="14" strokeWidth="2"></svg>
+                      }
+                      {{ card.botao }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-gray-500 tabular-nums">
+      <span>Novos desafios em {{ proximo() }}</span>
+      @if (!auth.autenticado()) {
+        <span>Sua sequência fica neste aparelho. Entre para levar para a conta.</span>
+      }
+    </div>
+  </div>
+}

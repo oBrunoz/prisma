@@ -43,6 +43,7 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
   private readonly zona = inject(NgZone);
   private quadro = 0;
   private destruido = false;
+  private pulou = false;
 
   protected readonly uid = `travessia-${++seq}`;
   protected readonly cores = ESPECTRO;
@@ -79,11 +80,21 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
     cancelAnimationFrame(this.quadro);
   }
 
+  // corta a entrada e já mostra a cena do outro lado
+  pular(): void {
+    if (this.pulou || jaAtravessou.has(this.variante)) return;
+    this.pulou = true;
+    cancelAnimationFrame(this.quadro);
+    this.aplicar(APROXIMACAO, 1);
+    jaAtravessou.add(this.variante);
+    this.atravessou.emit();
+  }
+
   private async tocar(): Promise<void> {
     await this.esperar(300);
     await this.animar(1000, (e) => this.aplicar(1, e));
     await this.animar(1600, (e) => this.aplicar(1 + (APROXIMACAO - 1) * e, 1));
-    if (this.destruido) return;
+    if (this.destruido || this.pulou) return;
 
     jaAtravessou.add(this.variante);
     this.zona.run(() => this.atravessou.emit());
@@ -112,7 +123,7 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
     return new Promise((pronto) => {
       const inicio = performance.now();
       const quadro = (agora: number) => {
-        if (this.destruido) return pronto();
+        if (this.destruido || this.pulou) return pronto();
         const t = Math.min(1, (agora - inicio) / duracao);
         passo(vaiEVolta(t));
         if (t < 1) this.quadro = requestAnimationFrame(quadro);

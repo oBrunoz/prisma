@@ -1,0 +1,8 @@
+.veu {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.veu.ativo {
+  opacity: 0.9;
+}

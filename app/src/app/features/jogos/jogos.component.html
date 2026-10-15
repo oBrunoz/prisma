@@ -1,0 +1,18 @@
+<section class="relative min-h-svh overflow-hidden">
+  <app-travessia variante="tela" class="absolute inset-0" (atravessou)="estado.atravessou.set(true)"></app-travessia>
+  <!-- na partida as listras recuam para não disputar com a imagem -->
+  <div class="veu absolute inset-0 bg-[#111111] pointer-events-none" [class.ativo]="emPartida()"></div>
+
+  @if (!estado.atravessou()) {
+    <button
+      type="button"
+      (click)="pular()"
+      class="absolute z-20 right-gutter bottom-8 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-sm text-gray-300 hover:text-white transition duration-300 cursor-pointer">
+      Pular abertura
+    </button>
+  }
+
+  <div class="relative z-10 min-h-svh pt-16">
+    <router-outlet></router-outlet>
+  </div>
+</section>

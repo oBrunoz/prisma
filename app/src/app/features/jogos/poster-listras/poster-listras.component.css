@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+/* grão de impressão, o mesmo do stripes-backdrop; some quando o pôster fica nítido */
+canvas.grao {
+  -webkit-mask-image: var(--grao);
+  mask-image: var(--grao);
+  -webkit-mask-size: 240px;
+  mask-size: 240px;
+}
