@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { LucidePencil, LucideTrash2, LucideX } from '@lucide/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { mensagemDeErro } from '../../core/errors/mensagens';
 import { AvaliacaoUsuario, ItemWatchlist, Midia, TipoMidia } from '../../core/models/catalogo.models';
-import { AtualizacaoPerfil, PerfilPublico } from '../../core/models/auth.models';
+import { PerfilPublico } from '../../core/models/auth.models';
 import { AuthService } from '../../core/services/auth.service';
 import { AvaliacaoService } from '../../core/services/avaliacao.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -27,7 +26,6 @@ import {
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
     MovieCardComponent,
     UserAvatarComponent,
     TextoRecolhivelComponent,
@@ -56,16 +54,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   contagem = signal<PerfilPublico['contagem'] | null>(null);
   listaAberta = signal<AbaSeguidores | null>(null);
 
-  editando = signal(false);
-  salvandoPerfil = signal(false);
-  erroPerfil = signal('');
-
-  formNome = signal('');
-  formUsername = signal('');
-  formEmail = signal('');
-  formBio = signal('');
-  formAvatar = signal('');
-  formSenha = signal('');
   removendoAvaliacao = signal<string | null>(null);
   confirmandoAvaliacao = signal<string | null>(null);
 
@@ -124,77 +112,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .perfil(meuUsername)
       .pipe(takeUntil(this.destroy$))
       .subscribe({ next: (perfil) => this.contagem.set(perfil.contagem), error: () => {} });
-  }
-
-  abrirEdicao(): void {
-    const u = this.auth.usuario();
-    this.formNome.set(u?.name ?? '');
-    this.formUsername.set(u?.username ?? '');
-    // o e-mail não vem no perfil público: só é enviado se a pessoa digitar um
-    this.formEmail.set('');
-    this.formBio.set(u?.bio ?? '');
-    this.formAvatar.set(u?.avatarUrl ?? '');
-    this.formSenha.set('');
-    this.erroPerfil.set('');
-    this.editando.set(true);
-  }
-
-  cancelarEdicao(): void {
-    this.editando.set(false);
-    this.erroPerfil.set('');
-  }
-
-  salvarPerfil(): void {
-    if (this.salvandoPerfil()) return;
-
-    const u = this.auth.usuario();
-    const email = this.formEmail().trim();
-
-    const mudancas: AtualizacaoPerfil = {
-      ...(this.formNome().trim() !== u?.name && { name: this.formNome().trim() }),
-      ...(this.formUsername().trim() !== u?.username && {
-        username: this.formUsername().trim(),
-      }),
-      ...(this.formBio().trim() !== (u?.bio ?? '') && { bio: this.formBio().trim() }),
-      ...(this.formAvatar().trim() !== (u?.avatarUrl ?? '') && {
-        avatarUrl: this.formAvatar().trim(),
-      }),
-      ...(email !== '' && { email, currentPassword: this.formSenha() }),
-    };
-
-    if (Object.keys(mudancas).length === 0) {
-      this.editando.set(false);
-      return;
-    }
-
-    if (mudancas.email && !this.formSenha()) {
-      this.erroPerfil.set('Informe sua senha atual para trocar o e-mail.');
-      return;
-    }
-
-    this.salvandoPerfil.set(true);
-    this.erroPerfil.set('');
-
-    this.auth
-      .atualizarPerfil(mudancas)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.salvandoPerfil.set(false);
-          this.editando.set(false);
-          this.toast.sucesso('Perfil atualizado', { chave: 'perfil' });
-        },
-        error: (falha) => {
-          this.salvandoPerfil.set(false);
-          this.erroPerfil.set(
-            mensagemDeErro(falha, {
-              401: 'Senha atual incorreta.',
-              409: 'Esse nome de usuário ou e-mail já está em uso.',
-              400: 'Revise os dados: o nome de usuário aceita de 3 a 20 caracteres (minúsculas, números e underscore) e a foto precisa ser um endereço http(s).',
-            }),
-          );
-        },
-      });
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,86 @@
+<h2 class="text-xl sm:text-2xl font-bold text-white">Perfil</h2>
+<p class="mt-1 text-sm text-gray-400">A foto e a bio aparecem no seu perfil, ao lado do seu nome de usuário.</p>
+
+<form class="mt-8 space-y-6" (ngSubmit)="salvar()" novalidate>
+  <div>
+    <div class="flex items-end gap-4">
+      <app-user-avatar
+        [nome]="auth.usuario()?.username ?? ''"
+        [avatarUrl]="campos.erro('avatarUrl') ? null : valores.avatarUrl().trim() || null"
+        tamanho="md">
+      </app-user-avatar>
+      <div class="flex-1 min-w-0">
+        <label for="perfil-avatarUrl" class="block text-sm text-gray-300 mb-2">Foto</label>
+        <input
+          id="perfil-avatarUrl"
+          type="url"
+          [ngModel]="valores.avatarUrl()"
+          (ngModelChange)="editar('avatarUrl', $event)"
+          (blur)="campos.tocar('avatarUrl')"
+          name="avatarUrl"
+          maxlength="500"
+          placeholder="https://..."
+          aria-describedby="ajuda-avatarUrl"
+          [attr.aria-invalid]="!!campos.erro('avatarUrl')"
+          [class.ring-1]="!!campos.erro('avatarUrl')"
+          [class.ring-coral]="!!campos.erro('avatarUrl')"
+          class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
+      </div>
+    </div>
+    <p id="ajuda-avatarUrl" class="mt-2 text-xs" [class]="campos.erro('avatarUrl') ? 'text-coral' : 'text-gray-500'">
+      {{ campos.erro('avatarUrl') || 'Endereço de uma imagem. Em branco, fica a inicial.' }}
+    </p>
+  </div>
+
+  <div>
+    <label for="perfil-name" class="block text-sm text-gray-300 mb-2">Nome</label>
+    <input
+      id="perfil-name"
+      type="text"
+      [ngModel]="valores.name()"
+      (ngModelChange)="editar('name', $event)"
+      (blur)="campos.tocar('name')"
+      name="name"
+      maxlength="80"
+      autocomplete="name"
+      aria-describedby="ajuda-name"
+      [attr.aria-invalid]="!!campos.erro('name')"
+      [class.ring-1]="!!campos.erro('name')"
+      [class.ring-coral]="!!campos.erro('name')"
+      class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+    />
+    <p id="ajuda-name" class="mt-2 text-xs" [class]="campos.erro('name') ? 'text-coral' : 'text-gray-500'">
+      {{ campos.erro('name') || 'Fica só na sua conta. No site você aparece pelo nome de usuário.' }}
+    </p>
+  </div>
+
+  <div>
+    <div class="flex items-baseline justify-between mb-2">
+      <label for="perfil-bio" class="text-sm text-gray-300">Bio</label>
+      <span class="text-xs text-gray-500 tabular-nums" aria-hidden="true">{{ valores.bio().length }}/300</span>
+    </div>
+    <textarea
+      id="perfil-bio"
+      [ngModel]="valores.bio()"
+      (ngModelChange)="editar('bio', $event)"
+      name="bio"
+      rows="3"
+      maxlength="300"
+      [attr.aria-invalid]="!!campos.erro('bio')"
+      [attr.aria-describedby]="campos.erro('bio') ? 'erro-bio' : null"
+      [class.ring-1]="!!campos.erro('bio')"
+      [class.ring-coral]="!!campos.erro('bio')"
+      class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-y min-h-24 max-h-56"></textarea>
+    @if (campos.erro('bio'); as erro) {
+      <p id="erro-bio" class="mt-2 text-xs text-coral">{{ erro }}</p>
+    }
+  </div>
+
+  <button
+    type="submit"
+    [disabled]="!mudou() || salvando()"
+    class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-600">
+    {{ salvando() ? 'Salvando...' : 'Salvar perfil' }}
+  </button>
+</form>

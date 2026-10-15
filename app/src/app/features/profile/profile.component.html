@@ -34,143 +34,15 @@
         </div>
       </div>
 
-      @if (!editando()) {
-        <button
-          type="button"
-          (click)="abrirEdicao()"
-          class="px-6 py-3 rounded-full transition duration-300 flex items-center gap-2 text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer">
-          <svg lucidePencil [size]="15" strokeWidth="2"></svg>
-          Editar perfil
-        </button>
-      }
+      <a
+        routerLink="/configuracoes/perfil"
+        class="px-6 py-3 rounded-full transition duration-300 flex items-center gap-2 text-sm font-medium bg-white/10 hover:bg-white/20 text-white">
+        <svg lucidePencil [size]="15" strokeWidth="2"></svg>
+        Editar perfil
+      </a>
     </div>
 
   </section>
-
-  @if (editando()) {
-    <section class="px-gutter py-8 sm:py-10 border-b border-white/5">
-      <h2 class="text-xl font-bold text-white mb-6">Editar perfil</h2>
-      <form class="max-w-2xl space-y-5" (ngSubmit)="salvarPerfil()">
-        <div>
-          <label for="perfil-nome" class="block text-sm text-gray-300 mb-2">Nome</label>
-          <input
-            id="perfil-nome"
-            type="text"
-            [ngModel]="formNome()"
-            (ngModelChange)="formNome.set($event)"
-            name="nome"
-            maxlength="80"
-            aria-describedby="ajuda-nome"
-            class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <p id="ajuda-nome" class="mt-2 text-xs text-gray-500">
-            Fica só na sua conta. No site você aparece pelo nome de usuário.
-          </p>
-        </div>
-
-        <div>
-          <label for="perfil-username" class="block text-sm text-gray-300 mb-2">Nome de usuário</label>
-          <input
-            id="perfil-username"
-            type="text"
-            [ngModel]="formUsername()"
-            (ngModelChange)="formUsername.set($event)"
-            name="username"
-            minlength="3"
-            maxlength="20"
-            autocapitalize="none"
-            spellcheck="false"
-            class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-
-        <div>
-          <label for="perfil-avatar" class="block text-sm text-gray-300 mb-2">Foto</label>
-          <input
-            id="perfil-avatar"
-            type="url"
-            [ngModel]="formAvatar()"
-            (ngModelChange)="formAvatar.set($event)"
-            name="avatar"
-            placeholder="https://..."
-            maxlength="500"
-            aria-describedby="ajuda-avatar"
-            class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <p id="ajuda-avatar" class="mt-2 text-xs text-gray-500">
-            Endereço de uma imagem. Deixe em branco para voltar à inicial.
-          </p>
-        </div>
-
-        <div>
-          <label for="perfil-bio" class="block text-sm text-gray-300 mb-2">Bio</label>
-          <textarea
-            id="perfil-bio"
-            [ngModel]="formBio()"
-            (ngModelChange)="formBio.set($event)"
-            name="bio"
-            rows="3"
-            maxlength="300"
-            class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-y min-h-24 max-h-56"></textarea>
-        </div>
-
-        <div class="pt-2 border-t border-white/5">
-          <label for="perfil-email" class="block text-sm text-gray-300 mb-2 mt-5">Novo e-mail</label>
-          <input
-            id="perfil-email"
-            type="email"
-            [ngModel]="formEmail()"
-            (ngModelChange)="formEmail.set($event)"
-            name="email"
-            autocomplete="email"
-            maxlength="180"
-            placeholder="deixe em branco para manter o atual"
-            aria-describedby="ajuda-email"
-            class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <p id="ajuda-email" class="mt-2 text-xs text-gray-500">
-            O e-mail é o que você usa para entrar, então trocá-lo pede sua senha atual.
-          </p>
-        </div>
-
-        @if (formEmail().trim()) {
-          <div>
-            <label for="perfil-senha" class="block text-sm text-gray-300 mb-2">Senha atual</label>
-            <input
-              id="perfil-senha"
-              type="password"
-              [ngModel]="formSenha()"
-              (ngModelChange)="formSenha.set($event)"
-              name="senhaAtual"
-              autocomplete="current-password"
-              maxlength="128"
-              class="w-full bg-[#1a1a1a] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-        }
-
-        @if (erroPerfil()) {
-          <p class="text-sm text-red-400" role="alert">{{ erroPerfil() }}</p>
-        }
-
-        <div class="flex flex-wrap items-center gap-4">
-          <button
-            type="submit"
-            [disabled]="salvandoPerfil()"
-            class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-            {{ salvandoPerfil() ? 'Salvando...' : 'Salvar' }}
-          </button>
-          <button
-            type="button"
-            (click)="cancelarEdicao()"
-            [disabled]="salvandoPerfil()"
-            class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer disabled:cursor-not-allowed">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </section>
-  }
 
   <section class="px-gutter mt-12 sm:mt-16">
     <h2 class="titulo-secao mb-5 sm:mb-8">Sua watchlist</h2>

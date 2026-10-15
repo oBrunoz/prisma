@@ -107,6 +107,12 @@ export class AuthService {
     });
   }
 
+  // trocar e-mail ou senha derruba todas as sessões e a API reabre só esta
+  adotarSessao(res: SessionResponse): void {
+    this.accessToken.set(res.accessToken);
+    if (res.user) this.usuario.set(res.user);
+  }
+
   limparSessao(): void {
     this.usuario.set(null);
     this.accessToken.set(null);

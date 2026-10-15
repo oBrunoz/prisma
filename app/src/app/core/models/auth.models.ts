@@ -36,14 +36,12 @@ export interface SessionResponse {
   accessToken: string;
 }
 
+// o username é fixo; e-mail e senha mudam pela ContaService
 export interface AtualizacaoPerfil {
   name?: string;
-  username?: string;
-  email?: string;
   bio?: string;
   // string vazia tira a foto
   avatarUrl?: string;
-  currentPassword?: string;
 }
 
 export interface Credenciais {

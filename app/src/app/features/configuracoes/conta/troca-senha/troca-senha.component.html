@@ -1,0 +1,90 @@
+<form class="bg-[#1a1a1a] rounded-xl p-5 sm:p-6 space-y-5" (ngSubmit)="trocar()" novalidate>
+  <h3 class="text-base font-semibold text-white">Trocar senha</h3>
+
+  <div>
+    <label for="senha-atual" class="block text-sm text-gray-300 mb-2">Senha atual</label>
+    <div class="relative">
+      <input
+        id="senha-atual"
+        [type]="verAtual() ? 'text' : 'password'"
+        [ngModel]="atual()"
+        (ngModelChange)="editar('atual', $event)"
+        (blur)="campos.tocar('atual')"
+        name="atual"
+        maxlength="128"
+        autocomplete="current-password"
+        [attr.aria-invalid]="!!campos.erro('atual')"
+        [attr.aria-describedby]="campos.erro('atual') ? 'erro-senha-atual' : null"
+        [class.ring-1]="!!campos.erro('atual')"
+        [class.ring-coral]="!!campos.erro('atual')"
+        class="w-full bg-[#111111] text-white px-4 pr-11 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <button
+        type="button"
+        (click)="verAtual.set(!verAtual())"
+        [attr.aria-label]="verAtual() ? 'Ocultar senha atual' : 'Mostrar senha atual'"
+        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-300 cursor-pointer">
+        @if (verAtual()) {
+          <svg lucideEyeOff [size]="16" strokeWidth="1.75"></svg>
+        } @else {
+          <svg lucideEye [size]="16" strokeWidth="1.75"></svg>
+        }
+      </button>
+    </div>
+    @if (campos.erro('atual'); as erro) {
+      <p id="erro-senha-atual" class="mt-2 text-xs text-coral">{{ erro }}</p>
+    }
+  </div>
+
+  <div>
+    <label for="senha-nova" class="block text-sm text-gray-300 mb-2">Senha nova</label>
+    <div class="relative">
+      <input
+        id="senha-nova"
+        [type]="verNova() ? 'text' : 'password'"
+        [ngModel]="nova()"
+        (ngModelChange)="editar('nova', $event)"
+        (blur)="campos.tocar('nova')"
+        name="nova"
+        maxlength="128"
+        autocomplete="new-password"
+        aria-describedby="ajuda-senha-nova"
+        [attr.aria-invalid]="!!campos.erro('nova')"
+        [class.ring-1]="!!campos.erro('nova')"
+        [class.ring-coral]="!!campos.erro('nova')"
+        class="w-full bg-[#111111] text-white px-4 pr-11 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <button
+        type="button"
+        (click)="verNova.set(!verNova())"
+        [attr.aria-label]="verNova() ? 'Ocultar senha nova' : 'Mostrar senha nova'"
+        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-300 cursor-pointer">
+        @if (verNova()) {
+          <svg lucideEyeOff [size]="16" strokeWidth="1.75"></svg>
+        } @else {
+          <svg lucideEye [size]="16" strokeWidth="1.75"></svg>
+        }
+      </button>
+    </div>
+    <p id="ajuda-senha-nova" class="mt-2 text-xs" [class]="campos.erro('nova') ? 'text-coral' : 'text-gray-500'">
+      {{ campos.erro('nova') || 'Pelo menos 8 caracteres.' }}
+    </p>
+  </div>
+
+  <p class="flex gap-2 text-sm text-gray-400">
+    <svg lucideInfo [size]="16" strokeWidth="1.75" class="mt-0.5 shrink-0 text-gray-500"></svg>
+    Ao trocar, as outras sessões são encerradas. Este navegador continua conectado.
+  </p>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button
+      type="submit"
+      [disabled]="enviando()"
+      class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+      {{ enviando() ? 'Trocando...' : 'Trocar senha' }}
+    </button>
+    <button type="button" (click)="fechou.emit()" class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+      Cancelar
+    </button>
+  </div>
+</form>

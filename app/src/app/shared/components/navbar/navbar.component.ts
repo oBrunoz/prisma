@@ -14,7 +14,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoadingService } from '../../../core/services/loading.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { LucideLogOut, LucideSearch, LucideUser, LucideX } from '@lucide/angular';
+import { LucideLogOut, LucideSearch, LucideSettings, LucideUser, LucideX } from '@lucide/angular';
 import { BuscaComponent } from '../busca/busca.component';
 import { LogoComponent } from '../logo/logo.component';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
@@ -22,7 +22,7 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, LucideSearch, LucideX, LucideUser, LucideLogOut, BuscaComponent, LogoComponent, UserAvatarComponent],
+  imports: [CommonModule, RouterModule, FormsModule, LucideSearch, LucideX, LucideUser, LucideSettings, LucideLogOut, BuscaComponent, LogoComponent, UserAvatarComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
 })

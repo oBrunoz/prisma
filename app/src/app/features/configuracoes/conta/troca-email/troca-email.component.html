@@ -1,0 +1,146 @@
+<div class="bg-[#1a1a1a] rounded-xl p-5 sm:p-6">
+  @if (!troca()) {
+    <form class="space-y-5" (ngSubmit)="pedirCodigo()" novalidate>
+      <div class="flex items-baseline justify-between gap-3">
+        <h3 class="text-base font-semibold text-white">Trocar e-mail</h3>
+        <span class="text-xs text-gray-500 tabular-nums">1 de 2</span>
+      </div>
+
+      @if (avisoPedido()) {
+        <p class="text-sm text-coral" role="alert">{{ avisoPedido() }}</p>
+      }
+
+      <div>
+        <label for="troca-email" class="block text-sm text-gray-300 mb-2">E-mail novo</label>
+        <input
+          #primeiro
+          id="troca-email"
+          type="email"
+          [ngModel]="email()"
+          (ngModelChange)="editar('email', $event)"
+          (blur)="campos.tocar('email')"
+          name="email"
+          maxlength="180"
+          autocomplete="email"
+          [attr.aria-invalid]="!!campos.erro('email')"
+          [attr.aria-describedby]="campos.erro('email') ? 'erro-troca-email' : null"
+          [class.ring-1]="!!campos.erro('email')"
+          [class.ring-coral]="!!campos.erro('email')"
+          class="w-full bg-[#111111] text-white placeholder-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          placeholder="voce@email.com"
+        />
+        @if (campos.erro('email'); as erro) {
+          <p id="erro-troca-email" class="mt-2 text-xs text-coral">{{ erro }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="troca-senha" class="block text-sm text-gray-300 mb-2">Senha atual</label>
+        <div class="relative">
+          <input
+            id="troca-senha"
+            [type]="verSenha() ? 'text' : 'password'"
+            [ngModel]="senha()"
+            (ngModelChange)="editar('senha', $event)"
+            (blur)="campos.tocar('senha')"
+            name="senha"
+            maxlength="128"
+            autocomplete="current-password"
+            aria-describedby="ajuda-troca-senha"
+            [attr.aria-invalid]="!!campos.erro('senha')"
+            [class.ring-1]="!!campos.erro('senha')"
+            [class.ring-coral]="!!campos.erro('senha')"
+            class="w-full bg-[#111111] text-white placeholder-gray-500 pl-4 pr-11 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+          <button
+            type="button"
+            (click)="verSenha.set(!verSenha())"
+            [attr.aria-label]="verSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+            class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-300 cursor-pointer">
+            @if (verSenha()) {
+              <svg lucideEyeOff [size]="16" strokeWidth="1.75"></svg>
+            } @else {
+              <svg lucideEye [size]="16" strokeWidth="1.75"></svg>
+            }
+          </button>
+        </div>
+        <p id="ajuda-troca-senha" class="mt-2 text-xs" [class]="campos.erro('senha') ? 'text-coral' : 'text-gray-500'">
+          {{ campos.erro('senha') || 'Para ter certeza de que é você.' }}
+        </p>
+      </div>
+
+      <p class="flex gap-2 text-sm text-gray-400">
+        <svg lucideInfo [size]="16" strokeWidth="1.75" class="mt-0.5 shrink-0 text-gray-500"></svg>
+        Vamos mandar um código para o e-mail novo. Até você confirmar, continua entrando com o atual.
+      </p>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <button
+          type="submit"
+          [disabled]="enviando()"
+          class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+          {{ enviando() ? 'Enviando...' : 'Enviar código' }}
+        </button>
+        <button type="button" (click)="cancelar()" class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  } @else {
+    <form class="space-y-5" (ngSubmit)="confirmar()" novalidate>
+      <div class="flex items-baseline justify-between gap-3">
+        <h3 class="text-base font-semibold text-white">Digite o código</h3>
+        <span class="text-xs text-gray-500 tabular-nums">2 de 2</span>
+      </div>
+
+      <p id="ajuda-codigo" class="text-sm text-gray-400">
+        Mandamos 6 dígitos para <span class="text-white break-all">{{ troca()!.email }}</span>.
+        @if (venceu()) {
+          <span class="text-coral">Esse código venceu: peça outro.</span>
+        } @else {
+          Vale por 15 minutos.
+        }
+      </p>
+
+      <div>
+        <app-campo-codigo
+          [valor]="codigo()"
+          (valorChange)="codigo.set($event); erroCodigo.set('')"
+          (completo)="confirmar($event)"
+          [invalido]="!!erroCodigo()"
+          [desativado]="enviando()"
+          [descricao]="erroCodigo() ? 'erro-codigo' : 'ajuda-codigo'">
+        </app-campo-codigo>
+        @if (erroCodigo()) {
+          <p id="erro-codigo" class="mt-2 text-xs text-coral" role="alert">{{ erroCodigo() }}</p>
+        }
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <button
+          type="submit"
+          [disabled]="enviando() || codigo().length !== 6 || venceu()"
+          class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-600">
+          {{ enviando() ? 'Confirmando...' : 'Confirmar' }}
+        </button>
+        <button
+          type="button"
+          (click)="reenviar()"
+          [disabled]="enviando() || segundosParaReenvio() > 0"
+          class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer tabular-nums disabled:text-gray-600 disabled:hover:text-gray-600 disabled:cursor-default">
+          @if (segundosParaReenvio() > 0) {
+            Reenviar em 0:{{ segundosParaReenvio().toString().padStart(2, '0') }}
+          } @else {
+            Reenviar código
+          }
+        </button>
+        <button type="button" (click)="usarOutroEmail()" class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+          Usar outro e-mail
+        </button>
+        <button type="button" (click)="cancelar()" class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  }
+</div>

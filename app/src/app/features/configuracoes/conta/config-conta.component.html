@@ -1,0 +1,97 @@
+<h2 class="text-xl sm:text-2xl font-bold text-white">Conta</h2>
+<p class="mt-1 text-sm text-gray-400">Como você entra no Prisma.</p>
+
+<div class="mt-6 divide-y divide-white/5">
+  <div class="flex items-center gap-4 py-4">
+    <div class="flex-1 min-w-0">
+      <p class="text-sm text-gray-400">Nome de usuário</p>
+      <p class="text-white font-medium break-all">/{{ auth.usuario()?.username }}</p>
+      <p class="mt-1 text-xs text-gray-500">É o endereço do seu perfil e o jeito de te acharem, então não muda.</p>
+    </div>
+    <span class="flex items-center gap-1.5 text-sm text-gray-500">
+      <svg lucideLock [size]="14" strokeWidth="2"></svg>
+      Fixo
+    </span>
+  </div>
+
+  @if (carregando()) {
+    @for (vazio of [1, 2, 3]; track vazio) {
+      <div class="py-4" aria-hidden="true">
+        <div class="h-4 w-20 rounded bg-[#1a1a1a]"></div>
+        <div class="mt-2 h-5 w-48 rounded bg-[#1a1a1a]"></div>
+      </div>
+    }
+  } @else if (erro()) {
+    <div class="py-4">
+      <p class="text-sm text-coral" role="alert">{{ erro() }}</p>
+      <button type="button" (click)="carregar()" class="mt-3 text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+        Tentar de novo
+      </button>
+    </div>
+  } @else if (conta(); as conta) {
+    <div class="py-4">
+      <div class="flex items-center gap-4">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-gray-400">E-mail</p>
+          <p class="text-white font-medium break-all">{{ conta.email }}</p>
+        </div>
+        @if (painel() !== 'email') {
+          <button
+            type="button"
+            (click)="abrir('email')"
+            class="px-5 py-2 rounded-full transition duration-300 text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer">
+            Trocar
+          </button>
+        }
+      </div>
+      @if (painel() === 'email') {
+        <app-troca-email
+          class="block mt-4"
+          [emailAtual]="conta.email"
+          [pendente]="conta.trocaDeEmail"
+          (trocou)="emailTrocado($event)"
+          (fechou)="fecharPainel()">
+        </app-troca-email>
+      }
+    </div>
+
+    <div class="py-4">
+      <div class="flex items-center gap-4">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-gray-400">Senha</p>
+          <p class="text-white font-medium tracking-widest" aria-label="Senha definida">••••••••</p>
+        </div>
+        @if (painel() !== 'senha') {
+          <button
+            type="button"
+            (click)="abrir('senha')"
+            class="px-5 py-2 rounded-full transition duration-300 text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer">
+            Trocar
+          </button>
+        }
+      </div>
+      @if (painel() === 'senha') {
+        <app-troca-senha class="block mt-4" (trocou)="senhaTrocada()" (fechou)="fecharPainel()"></app-troca-senha>
+      }
+    </div>
+
+    <div class="flex items-center gap-4 py-4">
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-gray-400">Sessões</p>
+        <p class="text-white font-medium">
+          {{ conta.sessoes <= 1 ? 'Só este navegador' : 'Este navegador e mais ' + (conta.sessoes - 1) }}
+        </p>
+        <p class="mt-1 text-xs text-gray-500">Aparelhos onde sua conta está aberta.</p>
+      </div>
+      @if (conta.sessoes > 1) {
+        <button
+          type="button"
+          (click)="encerrarOutras()"
+          [disabled]="encerrando()"
+          class="px-5 py-2 rounded-full transition duration-300 text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed">
+          {{ encerrando() ? 'Encerrando...' : 'Sair dos outros' }}
+        </button>
+      }
+    </div>
+  }
+</div>

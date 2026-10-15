@@ -37,6 +37,25 @@ export const routes: Routes = [
       import('./features/profile/profile.component').then((m) => m.ProfileComponent),
   },
   {
+    path: 'configuracoes',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/configuracoes/configuracoes.component').then((m) => m.ConfiguracoesComponent),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'perfil' },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./features/configuracoes/perfil/config-perfil.component').then((m) => m.ConfigPerfilComponent),
+      },
+      {
+        path: 'conta',
+        loadComponent: () =>
+          import('./features/configuracoes/conta/config-conta.component').then((m) => m.ConfigContaComponent),
+      },
+    ],
+  },
+  {
     path: 'busca',
     loadComponent: () =>
       import('./features/resultados/resultados.component').then((m) => m.ResultadosComponent),
