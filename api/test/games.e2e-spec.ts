@@ -2,6 +2,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
+import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { App } from 'supertest/types.js';
 import { AppModule } from '../src/app.module.js';
@@ -62,7 +63,8 @@ describe('Jogos (e2e)', () => {
     await criar('amanha', 'FRAMES', AMANHA, 90003);
     await criar('poster', 'POSTER', HOJE, 90002);
 
-    const username = `jogo_${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 100)}`;
+    // o relogio esta congelado, entao o Date.now() repetiria o mesmo nome a cada execucao
+    const username = `jogo_${randomUUID().replaceAll('-', '').slice(0, 12)}`;
     const res = await server()
       .post('/auth/register')
       .send({ name: 'jogo', username, email: `${username}@teste.com`, password: SENHA })
@@ -73,6 +75,7 @@ describe('Jogos (e2e)', () => {
 
   afterAll(async () => {
     await prisma.gameChallenge.deleteMany({ where: { id: { in: Object.values(desafios) } } });
+    if (userId) await prisma.user.delete({ where: { id: userId } });
     await app.close();
     vi.useRealTimers();
   });
