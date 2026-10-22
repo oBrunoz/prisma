@@ -26,4 +26,5 @@ COPY --from=build --chown=node:node /app/prisma ./prisma
 
 USER node
 EXPOSE 3000
-CMD ["node", "dist/main.js"]
+# migra antes de subir: o Render gratis nao tem pre-deploy, e na VPS fica um passo a menos
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/main.js"]
