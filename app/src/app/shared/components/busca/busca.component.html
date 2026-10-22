@@ -38,56 +38,84 @@
 
   <div class="px-gutter py-6">
     @if (vazia()) {
-      <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
-        @if (emAlta().length > 0) {
-          <section class="min-w-0 lg:shrink-0">
-            <h2 class="text-xs font-medium text-gray-400 mb-3">Em alta esta semana</h2>
-            <div data-lenis-prevent-horizontal class="trilho-sangria hide-scrollbar flex gap-3 overflow-x-auto snap-x">
-              @for (titulo of emAlta(); track titulo.id) {
-                <a
-                  [routerLink]="['/search', titulo.tipo, titulo.id]"
-                  (click)="aoAbrir()"
-                  class="group snap-start shrink-0 w-[5.5rem] sm:w-24 2xl:w-28">
-                  <div class="aspect-[2/3] rounded-lg overflow-hidden bg-[#111111]">
-                    @if (titulo.posterPath) {
-                      <img [src]="posterUrl(titulo.posterPath)" [alt]="titulo.titulo" class="w-full h-full object-cover transition duration-300 group-hover:opacity-80" />
-                    } @else {
-                      <app-media-fallback kind="poster" [compact]="true"></app-media-fallback>
-                    }
-                  </div>
-                  <p class="mt-2 text-xs text-gray-300 truncate group-hover:text-white transition duration-300">{{ titulo.titulo }}</p>
-                </a>
+      <!-- no celular: recentes, fileiras, gêneros; do lg em diante as fileiras à esquerda e o resto numa coluna -->
+      <div class="grid gap-8 lg:gap-y-0 lg:gap-x-12 lg:grid-cols-[minmax(0,1fr)_18rem] lg:grid-rows-[auto_1fr] xl:grid-cols-[minmax(0,1fr)_20rem]">
+        @if (recentes.itens().length > 0) {
+          <section class="min-w-0 lg:col-start-2 lg:row-start-1 lg:mb-8">
+            <h2 class="text-xs font-medium text-gray-400 mb-3">Buscas recentes</h2>
+            <div class="flex flex-wrap gap-2">
+              @for (recente of recentes.itens(); track recente) {
+                <span class="inline-flex items-center rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
+                  <button
+                    type="button"
+                    (click)="usarRecente(recente)"
+                    class="inline-flex items-center gap-2 pl-3 pr-1 py-1.5 hover:text-white transition duration-300 cursor-pointer">
+                    <svg lucideClock [size]="13" strokeWidth="2" class="text-gray-500"></svg>
+                    {{ recente }}
+                  </button>
+                  <button
+                    type="button"
+                    (click)="recentes.remover(recente)"
+                    [attr.aria-label]="'Tirar ' + recente + ' das buscas recentes'"
+                    class="w-7 h-7 flex items-center justify-center rounded-full text-gray-500 hover:text-white transition duration-300 cursor-pointer">
+                    <svg lucideX [size]="12" strokeWidth="2"></svg>
+                  </button>
+                </span>
               }
             </div>
           </section>
         }
 
-        <section class="flex-1 min-w-0 space-y-4">
-          @if (recentes.itens().length > 0) {
-            <div>
-              <h2 class="text-xs font-medium text-gray-400 mb-3">Buscas recentes</h2>
-              <div class="flex flex-wrap gap-2">
-                @for (recente of recentes.itens(); track recente) {
-                  <span class="inline-flex items-center rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
-                    <button
-                      type="button"
-                      (click)="usarRecente(recente)"
-                      class="inline-flex items-center gap-2 pl-3 pr-1 py-1.5 hover:text-white transition duration-300 cursor-pointer">
-                      <svg lucideClock [size]="13" strokeWidth="2" class="text-gray-500"></svg>
-                      {{ recente }}
-                    </button>
-                    <button
-                      type="button"
-                      (click)="recentes.remover(recente)"
-                      [attr.aria-label]="'Tirar ' + recente + ' das buscas recentes'"
-                      class="w-7 h-7 flex items-center justify-center rounded-full text-gray-500 hover:text-white transition duration-300 cursor-pointer">
-                      <svg lucideX [size]="12" strokeWidth="2"></svg>
-                    </button>
-                  </span>
-                }
+        <div class="min-w-0 space-y-6 lg:col-start-1 lg:row-start-1 lg:row-span-2">
+          @if (carregandoEmAlta()) {
+            @for (fileira of [1, 2]; track fileira) {
+              <div>
+                <div class="h-4 w-28 mb-3 rounded bg-white/5 animate-pulse"></div>
+                <div class="flex gap-4 overflow-hidden trilho-sangria pb-2">
+                  @for (vazio of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track vazio) {
+                    <div class="shrink-0 w-[5.5rem] sm:w-24 2xl:w-28 aspect-[2/3] rounded-lg bg-white/5 animate-pulse"></div>
+                  }
+                </div>
               </div>
-            </div>
+            }
           }
+          @if (filmesEmAlta().length > 0) {
+            <section>
+              <h2 class="text-xs font-medium text-gray-400 mb-3">Filmes em alta esta semana</h2>
+              <app-carousel-row class="block">
+                @for (titulo of filmesEmAlta(); track titulo.id) {
+                  <ng-container *ngTemplateOutlet="poster; context: { $implicit: titulo }"></ng-container>
+                }
+              </app-carousel-row>
+            </section>
+          }
+          @if (seriesEmAlta().length > 0) {
+            <section>
+              <h2 class="text-xs font-medium text-gray-400 mb-3">Séries em alta esta semana</h2>
+              <app-carousel-row class="block">
+                @for (titulo of seriesEmAlta(); track titulo.id) {
+                  <ng-container *ngTemplateOutlet="poster; context: { $implicit: titulo }"></ng-container>
+                }
+              </app-carousel-row>
+            </section>
+          }
+        </div>
+
+        <section class="min-w-0 space-y-4 lg:col-start-2 lg:row-start-2">
+          <div>
+            <h2 class="text-xs font-medium text-gray-400 mb-3">Explorar por gênero</h2>
+            <div class="flex flex-wrap gap-2">
+              @for (genero of generos; track genero.id) {
+                <a
+                  routerLink="/movies"
+                  [queryParams]="{ genero: genero.id }"
+                  (click)="aoAbrir()"
+                  class="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-sm text-gray-300 hover:text-white hover:bg-white/20 transition duration-300">
+                  {{ genero.nome }}
+                </a>
+              }
+            </div>
+          </div>
           <p class="text-sm text-gray-400">
             Comece com <span class="text-white font-semibold">&#64;</span> para procurar só usuários.
           </p>
@@ -117,30 +145,11 @@
         @if (r.titulos.length > 0) {
           <section class="min-w-0 xl:shrink-0">
             <h2 class="text-xs font-medium text-gray-400 mb-3">Títulos</h2>
-            <div data-lenis-prevent-horizontal class="trilho-sangria hide-scrollbar flex gap-3 overflow-x-auto snap-x">
+            <app-carousel-row class="block">
               @for (titulo of r.titulos; track titulo.tipo + titulo.id; let i = $index) {
-                <a
-                  [attr.data-indice]="i"
-                  [routerLink]="['/search', titulo.tipo, titulo.id]"
-                  (click)="aoAbrir()"
-                  (mouseenter)="ativo.set(i)"
-                  class="snap-start shrink-0 w-[5.5rem] sm:w-24 2xl:w-28">
-                  <div
-                    class="aspect-[2/3] rounded-lg overflow-hidden bg-[#111111] ring-offset-2 ring-offset-[#1a1a1a] transition duration-300"
-                    [ngClass]="{ 'ring-2 ring-white': ativo() === i }">
-                    @if (titulo.posterPath) {
-                      <img [src]="posterUrl(titulo.posterPath)" [alt]="titulo.titulo" class="w-full h-full object-cover" />
-                    } @else {
-                      <app-media-fallback kind="poster" [compact]="true"></app-media-fallback>
-                    }
-                  </div>
-                  <p class="mt-2 text-xs text-gray-300 truncate">@for (p of titulo.partes; track $index) {<span [class.text-white]="p.destaque" [class.font-semibold]="p.destaque">{{ p.texto }}</span>}</p>
-                  <p class="text-xs text-gray-500">
-                    {{ titulo.tipo === 'movies' ? 'Filme' : 'Série' }}{{ titulo.ano ? ' · ' + titulo.ano : '' }}
-                  </p>
-                </a>
+                <ng-container *ngTemplateOutlet="poster; context: { $implicit: titulo, indice: i }"></ng-container>
               }
-            </div>
+            </app-carousel-row>
           </section>
         }
 
@@ -154,8 +163,7 @@
                   [attr.data-indice]="indiceDePessoa(i)"
                   [routerLink]="['/search', 'people', pessoa.id]"
                   (click)="aoAbrir()"
-                  (mouseenter)="ativo.set(indiceDePessoa(i))"
-                  class="flex items-center gap-3 p-2 rounded-xl transition duration-300"
+                  class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition duration-300"
                   [ngClass]="{ 'bg-white/10': ativo() === indiceDePessoa(i) }">
                   <div class="w-11 h-11 rounded-full overflow-hidden bg-[#111111] shrink-0">
                     @if (pessoa.fotoPath) {
@@ -185,8 +193,7 @@
                   [attr.data-indice]="indiceDeUsuario(i)"
                   [routerLink]="['/username', usuario.username]"
                   (click)="aoAbrir()"
-                  (mouseenter)="ativo.set(indiceDeUsuario(i))"
-                  class="flex items-center gap-3 p-2 rounded-xl transition duration-300 min-w-0"
+                  class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition duration-300 min-w-0"
                   [ngClass]="{ 'bg-white/10': ativo() === indiceDeUsuario(i) }">
                   <app-user-avatar [nome]="usuario.username" [avatarUrl]="usuario.avatarUrl" tamanho="sm"></app-user-avatar>
                   <div class="min-w-0 flex-1">
@@ -222,3 +229,38 @@
     </div>
   }
 </div>
+
+<!-- o mesmo pôster no "em alta" e nos resultados; o anel por dentro marca a escolha pelo teclado -->
+<ng-template #poster let-titulo let-indice="indice">
+  <a
+    [attr.data-indice]="indice"
+    [routerLink]="['/search', titulo.tipo, titulo.id]"
+    (click)="aoAbrir()"
+    class="group snap-start shrink-0 w-[5.5rem] sm:w-24 2xl:w-28">
+    <div class="relative aspect-[2/3] rounded-lg overflow-hidden bg-[#111111]">
+      @if (titulo.posterPath) {
+        <img
+          [src]="posterUrl(titulo.posterPath)"
+          [alt]="titulo.titulo"
+          class="w-full h-full object-cover transition duration-300 group-hover:opacity-80"
+          [class.opacity-80]="ativo() === indice" />
+      } @else {
+        <app-media-fallback kind="poster" [compact]="true"></app-media-fallback>
+      }
+      @if (ativo() === indice) {
+        <span class="absolute inset-0 rounded-lg ring-2 ring-inset ring-white pointer-events-none"></span>
+      }
+    </div>
+    <p
+      class="mt-2 text-xs truncate transition duration-300 group-hover:text-white"
+      [class]="ativo() === indice ? 'text-white' : 'text-gray-300'">@for (p of titulo.partes; track $index) {<span [class.text-white]="p.destaque" [class.font-semibold]="p.destaque">{{ p.texto }}</span>}</p>
+    <!-- nos resultados filme e série se misturam; no "em alta" a fileira já diz o tipo -->
+    <p class="text-xs text-gray-500">
+      @if (indice !== undefined) {
+        {{ titulo.tipo === 'movies' ? 'Filme' : 'Série' }}{{ titulo.ano ? ' · ' + titulo.ano : '' }}
+      } @else {
+        {{ titulo.ano }}
+      }
+    </p>
+  </a>
+</ng-template>
