@@ -158,6 +158,13 @@
           class="w-full cursor-pointer bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition duration-300 text-base font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
           {{ enviando() ? 'Criando...' : 'Criar conta' }}
         </button>
+
+        <p class="text-xs text-gray-400 text-center leading-relaxed">
+          Ao criar a conta, você concorda com os
+          <a routerLink="/termos" class="text-gray-300 underline decoration-white/30 underline-offset-2 hover:text-white transition duration-300">Termos de uso</a>
+          e a
+          <a routerLink="/privacidade" class="text-gray-300 underline decoration-white/30 underline-offset-2 hover:text-white transition duration-300">Política de privacidade</a>.
+        </p>
       </form>
 
       <p class="text-center mt-8 text-sm text-gray-400">

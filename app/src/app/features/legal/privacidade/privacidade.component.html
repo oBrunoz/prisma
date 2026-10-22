@@ -1,0 +1,300 @@
+<app-pagina-legal
+  titulo="Política de privacidade"
+  rota="/privacidade"
+  [secoes]="secoes"
+  [outra]="{ rota: '/termos', rotulo: 'Termos de uso' }">
+
+  <section id="quem-somos">
+    <h2>Quem somos</h2>
+    <p>
+      O Prisma é um catálogo de filmes e séries em que você registra o que assistiu, dá notas,
+      escreve resenhas, monta sua watchlist, segue outras pessoas e joga os desafios do dia.
+    </p>
+    <p>
+      Esta política explica quais dados pessoais tratamos, por que e o que você pode fazer com eles,
+      de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018). O controlador dos
+      dados é <strong>{{ controlador }}</strong>. Para qualquer assunto sobre os seus dados, o canal
+      é o e-mail <a [href]="'mailto:' + email">{{ email }}</a>.
+    </p>
+  </section>
+
+  <section id="dados">
+    <h2>Quais dados coletamos</h2>
+
+    <h3>Cadastro</h3>
+    <p>
+      Nome, nome de usuário, e-mail e senha. A senha nunca é guardada como você digitou: guardamos
+      só um hash dela, que não dá para reverter (mais em "Como protegemos", abaixo).
+    </p>
+
+    <h3>Perfil</h3>
+    <p>
+      Se você quiser preencher: foto, bio, até quatro títulos favoritos e a capa do perfil (uma cena
+      de um filme ou série). A foto enviada é regravada pelo servidor em formato quadrado e sem
+      metadados, o que remove, por exemplo, a localização que o celular costuma gravar na imagem.
+    </p>
+
+    <h3>O que você registra</h3>
+    <ul>
+      <li>notas, resenhas e curtidas;</li>
+      <li>os títulos que marcou como assistidos e a data em que assistiu (o seu diário);</li>
+      <li>a sua watchlist;</li>
+      <li>quem você segue;</li>
+      <li>nos jogos, com a conta conectada: os palpites e o resultado de cada desafio.</li>
+    </ul>
+
+    <h3>Sessão e conta</h3>
+    <ul>
+      <li>
+        Ao entrar, o navegador recebe um código de sessão. No servidor fica só um hash
+        dele, com a data de criação e a validade, para manter você conectado e permitir encerrar
+        as outras sessões. Não registramos o aparelho, o navegador nem o endereço IP de cada sessão.
+      </li>
+      <li>
+        Ao trocar de e-mail: o endereço novo e o código de confirmação enviado a ele, até a troca ser
+        concluída, cancelada ou substituída por outro pedido.
+      </li>
+    </ul>
+
+    <h3>Dados técnicos</h3>
+    <p>
+      Como em qualquer site, o seu navegador envia o endereço IP e informações técnicas a cada
+      acesso. O Prisma usa o IP de passagem, só na memória do servidor, para limitar o número de
+      pedidos por minuto e conter abusos. Ele não é gravado no nosso banco de dados. O provedor de
+      hospedagem pode manter registros técnicos de acesso por conta própria.
+    </p>
+
+    <h3>O que não coletamos</h3>
+    <p>
+      Não usamos ferramentas de análise de audiência, publicidade ou rastreamento, não montamos
+      perfil para anúncios e não vendemos dados. Também não pedimos CPF, telefone, endereço ou
+      localização.
+    </p>
+  </section>
+
+  <section id="finalidades">
+    <h2>Para que usamos e com qual base legal</h2>
+    <ul>
+      <li>
+        <strong>Fazer o Prisma funcionar:</strong> criar e manter a sua conta, mostrar o seu perfil e
+        o que você registra, guardar suas partidas e enviar os e-mails da conta (código para trocar
+        de e-mail, aviso de que o e-mail ou a senha mudou). Base legal: execução do contrato, isto é,
+        dos <a routerLink="/termos">Termos de uso</a> (art. 7º, V, da LGPD).
+      </li>
+      <li>
+        <strong>Segurança:</strong> limitar tentativas de login e pedidos por minuto, encerrar
+        sessões quando um código de sessão antigo reaparece e avisar você por e-mail quando a senha
+        ou o e-mail mudam. Base legal: legítimo interesse em proteger você e o serviço (art. 7º, IX).
+      </li>
+      <li>
+        <strong>Obrigações legais:</strong> cumprir a lei e atender pedidos de autoridades
+        competentes (art. 7º, II e VI).
+      </li>
+    </ul>
+    <p>
+      O Prisma não envia newsletter nem e-mail de marketing. Também não toma decisões automatizadas
+      sobre você com base nos seus dados.
+    </p>
+  </section>
+
+  <section id="publico">
+    <h2>O que fica público</h2>
+    <p>
+      O Prisma é uma rede para mostrar o que você assiste. O seu perfil fica no endereço
+      <code>/username/seu_usuario</code> e qualquer pessoa, mesmo sem conta, pode ver:
+    </p>
+    <ul>
+      <li>nome, nome de usuário, foto, bio e a data em que você entrou;</li>
+      <li>favoritos e capa do perfil;</li>
+      <li>notas, resenhas e curtidas, e o diário com o que você assistiu e quando;</li>
+      <li>quem você segue, quem segue você e as contagens do perfil.</li>
+    </ul>
+    <p>
+      As resenhas também aparecem na página de cada título e na página inicial, e o nome de usuário
+      aparece na busca de pessoas. Hoje não existe opção de perfil privado.
+    </p>
+    <p>
+      Ficam só com você: <strong>e-mail, senha, watchlist, partidas dos jogos e sessões</strong>.
+    </p>
+  </section>
+
+  <section id="compartilhamento">
+    <h2>Com quem compartilhamos</h2>
+    <p>Não vendemos nem alugamos dados. Eles passam apenas por quem ajuda o Prisma a funcionar:</p>
+    <ul>
+      <li>
+        <strong>Hospedagem e banco de dados:</strong> os servidores onde ficam o site, a API e o
+        banco. Tratam os dados em nosso nome e só para isso.
+      </li>
+      <li>
+        <strong>Provedor de e-mail:</strong> recebe o seu endereço e o conteúdo das mensagens da conta
+        para entregá-las.
+      </li>
+      <li>
+        <strong>TMDB (The Movie Database):</strong> de onde vêm os dados de filmes e séries. As
+        consultas ao catálogo passam pelo nosso servidor, então a TMDB não sabe quem pediu. Já os
+        pôsteres e imagens são carregados pelo seu navegador direto de <code>image.tmdb.org</code>,
+        que recebe o seu IP e dados técnicos do navegador, como qualquer imagem da web. Nenhum dado da
+        sua conta vai para a TMDB.
+      </li>
+      <li>
+        <strong>YouTube (Google):</strong> os trailers são do YouTube, no modo de privacidade
+        aprimorada (<code>youtube-nocookie.com</code>), e só carregam quando você aperta para ver. As
+        miniaturas dos vídeos na página de um título vêm de <code>img.youtube.com</code>. Nesses
+        momentos o YouTube recebe o seu IP e segue a política de privacidade do Google.
+      </li>
+      <li>
+        <strong>Links externos</strong>, como as opções de onde assistir (JustWatch): só levam dados
+        se você clicar, e aí vale a política do site de destino.
+      </li>
+      <li><strong>Autoridades</strong>, quando a lei ou uma ordem judicial exigir.</li>
+    </ul>
+    <p>
+      Alguns desses serviços ficam fora do Brasil, como a TMDB e o Google. Nesses casos a
+      transferência se apoia nas hipóteses do art. 33 da LGPD.
+    </p>
+  </section>
+
+  <section id="cookies">
+    <h2>Cookies e armazenamento local</h2>
+    <p>O Prisma usa um único cookie, essencial para o login:</p>
+    <ul>
+      <li>
+        <code>boxd_refresh</code>: guarda o código de sessão para manter você conectado. Vale por 30
+        dias, é inacessível a scripts da página (httpOnly), só vai para as rotas de login da nossa API
+        e é apagado quando você sai da conta. Sem ele não dá para ficar conectado.
+      </li>
+    </ul>
+    <p>
+      O acesso do dia a dia usa uma chave de curta duração (15 minutos) que fica só na memória da
+      aba aberta. Não usamos cookies de análise ou de publicidade.
+    </p>
+    <p>No armazenamento local do navegador (localStorage), ficam no seu aparelho:</p>
+    <ul>
+      <li>
+        <code>prisma:buscas-recentes</code>: as suas cinco últimas buscas. Nunca saem do aparelho.
+      </li>
+      <li>
+        <code>prisma.jogos.*</code>: para quem joga sem conta, as partidas, o histórico e os títulos
+        já usados nos palpites. A cada palpite o servidor só confere a resposta e não guarda nada.
+      </li>
+    </ul>
+    <p>
+      Você pode apagar tudo isso limpando os dados do site nas configurações do navegador. O vídeo do
+      YouTube, quando carregado, pode usar o armazenamento dele.
+    </p>
+  </section>
+
+  <section id="retencao">
+    <h2>Por quanto tempo guardamos</h2>
+    <ul>
+      <li>
+        <strong>Conta e o que você registrou:</strong> enquanto a conta existir. O que você apaga
+        (uma avaliação, a foto, um título da watchlist, um seguir) sai do banco na hora.
+      </li>
+      <li>
+        <strong>Ao excluir a conta:</strong> apagamos o perfil, a foto, as avaliações, o diário, a
+        watchlist, os favoritos, as relações de seguir, as partidas e as sessões.
+      </li>
+      <li>
+        <strong>Sessões:</strong> cada uma vale até 30 dias. Os registros de sessões vencidas ou
+        encerradas não dão acesso a nada e são apagados quando você troca a senha ou o e-mail, ou
+        exclui a conta.
+      </li>
+      <li>
+        <strong>Troca de e-mail:</strong> o código vale 15 minutos e o pedido some quando a troca é
+        concluída, cancelada ou substituída.
+      </li>
+    </ul>
+    <p>
+      Podemos manter o mínimo necessário por mais tempo quando a lei exigir ou para exercer direitos
+      em processos (art. 16 da LGPD).
+    </p>
+  </section>
+
+  <section id="seguranca">
+    <h2>Como protegemos</h2>
+    <ul>
+      <li>
+        A senha é guardada com argon2id, um algoritmo feito para isso. Ela nunca fica em texto claro,
+        nem nós conseguimos vê-la.
+      </li>
+      <li>
+        O código de sessão é guardado só como hash. Se um código já usado reaparecer, todas as
+        sessões da conta são encerradas.
+      </li>
+      <li>
+        Os códigos de troca de e-mail são guardados em HMAC, valem 15 minutos e aceitam no máximo
+        cinco tentativas.
+      </li>
+      <li>
+        Trocar a senha ou o e-mail encerra as outras sessões, e você pode encerrá-las quando quiser em
+        <a routerLink="/configuracoes/conta">Configurações › Conta</a>.
+      </li>
+      <li>Há limite de tentativas de login e de pedidos por minuto.</li>
+    </ul>
+    <p>
+      Nenhum sistema é infalível. Se acontecer um incidente de segurança que possa trazer risco ou
+      dano relevante, avisaremos você e a Autoridade Nacional de Proteção de Dados (ANPD), como pede
+      o art. 48 da LGPD.
+    </p>
+  </section>
+
+  <section id="direitos">
+    <h2>Seus direitos</h2>
+    <p>Pelo art. 18 da LGPD, você pode pedir a qualquer momento:</p>
+    <ul>
+      <li>confirmação de que tratamos dados seus e acesso a eles;</li>
+      <li>correção de dados incompletos, inexatos ou desatualizados;</li>
+      <li>anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desacordo com a lei;</li>
+      <li>portabilidade dos seus dados para outro serviço;</li>
+      <li>eliminação dos seus dados e da conta;</li>
+      <li>informação sobre com quem compartilhamos os dados;</li>
+      <li>oposição a um tratamento que considere irregular.</li>
+    </ul>
+    <p>
+      Muita coisa você faz sozinho: nome, foto, bio, favoritos e capa ficam em
+      <a routerLink="/configuracoes/perfil">Configurações › Perfil</a>; e-mail, senha e sessões em
+      <a routerLink="/configuracoes/conta">Configurações › Conta</a>; avaliações, watchlist e quem
+      você segue se desfazem nas próprias páginas.
+    </p>
+    <p>
+      Para o resto, como receber uma cópia dos seus dados, escreva para
+      <a [href]="'mailto:' + email">{{ email }}</a> a partir do e-mail da conta. Ainda não há botão
+      para excluir a conta no site: a exclusão é feita por esse mesmo e-mail. Confirmamos que o pedido
+      é seu e respondemos em até 15 dias.
+    </p>
+    <p>
+      Se achar que não resolvemos, você também pode reclamar à ANPD
+      (<a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer">gov.br/anpd</a>).
+    </p>
+  </section>
+
+  <section id="menores">
+    <h2>Crianças e adolescentes</h2>
+    <p>
+      O Prisma não é feito para menores de 13 anos, que não devem criar conta. Entre 13 e 18 anos, o
+      uso deve ter o conhecimento e a autorização dos pais ou responsáveis, conforme o art. 14 da LGPD
+      e o Estatuto da Criança e do Adolescente. Se você é responsável e acredita que uma criança criou
+      uma conta, escreva para <a [href]="'mailto:' + email">{{ email }}</a> e ela será removida.
+    </p>
+  </section>
+
+  <section id="alteracoes">
+    <h2>Mudanças nesta política</h2>
+    <p>
+      Esta política muda quando o Prisma muda. A data no topo indica a versão em vigor. Mudanças
+      relevantes, como um novo tipo de dado ou um novo parceiro, serão avisadas no site ou por e-mail
+      antes de valer.
+    </p>
+  </section>
+
+  <section id="contato">
+    <h2>Contato</h2>
+    <p>
+      Dúvidas, pedidos ou reclamações sobre privacidade:
+      <a [href]="'mailto:' + email">{{ email }}</a>.
+    </p>
+    <p>Controlador: {{ controlador }}.</p>
+  </section>
+</app-pagina-legal>

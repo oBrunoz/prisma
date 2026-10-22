@@ -101,6 +101,18 @@ export const routes: Routes = [
       import('./features/details/details.component').then((m) => m.DetailsComponent),
   },
   {
+    path: 'privacidade',
+    title: 'Política de privacidade',
+    loadComponent: () =>
+      import('./features/legal/privacidade/privacidade.component').then((m) => m.PrivacidadeComponent),
+  },
+  {
+    path: 'termos',
+    title: 'Termos de uso',
+    loadComponent: () =>
+      import('./features/legal/termos/termos.component').then((m) => m.TermosComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

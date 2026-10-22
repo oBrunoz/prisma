@@ -1,0 +1,165 @@
+<app-pagina-legal
+  titulo="Termos de uso"
+  rota="/termos"
+  [secoes]="secoes"
+  [outra]="{ rota: '/privacidade', rotulo: 'Política de privacidade' }">
+
+  <section id="aceitacao">
+    <h2>Aceitação</h2>
+    <p>
+      O Prisma é um catálogo gratuito de filmes e séries em que você registra o que assistiu, avalia,
+      monta sua watchlist, segue outras pessoas e joga desafios diários. Ele é mantido por
+      <strong>{{ controlador }}</strong>.
+    </p>
+    <p>
+      Ao criar uma conta ou usar o Prisma, você concorda com estes termos e com a
+      <a routerLink="/privacidade">Política de privacidade</a>, que explica o que fazemos com os seus
+      dados. Se não concordar, não use o serviço.
+    </p>
+  </section>
+
+  <section id="conta">
+    <h2>Sua conta</h2>
+    <ul>
+      <li>Para criar uma conta é preciso ter pelo menos 13 anos. Entre 13 e 18, com a autorização dos pais ou responsáveis.</li>
+      <li>A conta é pessoal: uma pessoa, uma conta. Use um e-mail seu e que funcione, porque é por ele que chegam os códigos e avisos da conta.</li>
+      <li>
+        Guarde bem a sua senha e não a compartilhe. Se suspeitar que alguém entrou na sua conta, troque
+        a senha: isso encerra todas as outras sessões.
+      </li>
+      <li>
+        O <strong>nome de usuário é fixo e público</strong>: ele vira o endereço do seu perfil e é como
+        as pessoas acham você, por isso não pode ser trocado depois. Não escolha um nome que se passe
+        por outra pessoa ou marca, ou que seja ofensivo.
+      </li>
+      <li>Você responde pelo que é feito com a sua conta.</li>
+    </ul>
+  </section>
+
+  <section id="conteudo">
+    <h2>O que você publica</h2>
+    <p>
+      Resenhas, notas, bio, foto e o resto que você publica continuam sendo seus. Ao publicar, você dá
+      ao Prisma uma licença gratuita e não exclusiva para guardar, exibir e reproduzir esse conteúdo
+      dentro do serviço, como no seu perfil, na página de cada título e na página inicial. A licença
+      termina quando você apaga o conteúdo ou a conta.
+    </p>
+    <p>Você é responsável pelo que publica. Não é permitido publicar:</p>
+    <ul>
+      <li>conteúdo ilegal, ou que incentive crimes ou violência;</li>
+      <li>discurso de ódio, assédio, ameaças ou ataques pessoais;</li>
+      <li>conteúdo sexual explícito ou que envolva menores;</li>
+      <li>dados pessoais de outras pessoas sem autorização;</li>
+      <li>texto ou imagem de terceiros sem direito de uso, como uma crítica copiada de outro site;</li>
+      <li>spam, propaganda ou links enganosos;</li>
+      <li>conteúdo que se passe por outra pessoa.</li>
+    </ul>
+    <p>
+      Seja gentil com quem ainda não assistiu: se a resenha conta o final, avise no começo do texto.
+    </p>
+    <p>
+      Podemos remover conteúdo que desrespeite estes termos. Se encontrar algo assim, escreva para
+      <a [href]="'mailto:' + email">{{ email }}</a>.
+    </p>
+  </section>
+
+  <section id="conduta">
+    <h2>Uso aceitável</h2>
+    <p>Para o Prisma continuar funcionando para todo mundo, não é permitido:</p>
+    <ul>
+      <li>coletar dados do site ou da API em massa, por robôs, scripts ou raspagem;</li>
+      <li>criar contas em série ou automatizar ações, como seguir, avaliar e jogar;</li>
+      <li>contornar os limites de pedidos por minuto, que existem e bloqueiam o acesso por um tempo quando estourados;</li>
+      <li>tentar entrar na conta de outra pessoa ou descobrir senhas;</li>
+      <li>atacar, sobrecarregar ou explorar falhas do serviço.</li>
+    </ul>
+    <p>
+      Achou uma falha de segurança? Conte para nós em <a [href]="'mailto:' + email">{{ email }}</a>
+      antes de divulgar, e sem acessar dados de outras pessoas.
+    </p>
+  </section>
+
+  <section id="jogos">
+    <h2>Jogos diários</h2>
+    <p>
+      Cada jogo tem um desafio por dia, o mesmo para todo mundo, que vira à meia-noite de Brasília.
+      São sete tentativas, e pular conta como uma delas. Com a conta conectada, as partidas ficam
+      guardadas nela; sem conta, só no seu aparelho.
+    </p>
+    <p>
+      Os jogos são só diversão: não valem prêmio, dinheiro nem qualquer vantagem. Se um desafio sair
+      com erro, podemos corrigi-lo ou trocá-lo.
+    </p>
+  </section>
+
+  <section id="tmdb">
+    <h2>Dados de filmes e séries</h2>
+    <p>
+      <strong>Este produto usa a API do TMDB, mas não é endossado nem certificado pelo TMDB.</strong>
+    </p>
+    <p>
+      Sinopses, elenco, datas, imagens e onde assistir vêm da
+      <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB (The Movie Database)</a>,
+      e as opções de streaming chegam a ela pela JustWatch. Os trailers são do YouTube. Títulos,
+      pôsteres, imagens e vídeos pertencem aos seus titulares e aparecem aqui só para identificar e
+      comentar as obras. Não garantimos que essas informações estejam sempre completas ou corretas.
+    </p>
+    <p>
+      O nome Prisma, a logo e o desenho do site são nossos e não podem ser usados sem autorização.
+    </p>
+  </section>
+
+  <section id="disponibilidade">
+    <h2>Disponibilidade e garantias</h2>
+    <p>
+      O Prisma é oferecido de graça e como está. Fazemos o possível para mantê-lo no ar e funcionando
+      bem, mas não garantimos que ele vá estar sempre disponível, sem erros ou sem perda de dados.
+      Recursos podem mudar, entrar ou sair.
+    </p>
+    <p>
+      Não respondemos por falhas de serviços de terceiros, como a TMDB e o YouTube, nem pelo que outras
+      pessoas publicam, que é responsabilidade de quem publicou. Essas limitações valem na medida em que
+      a lei permite.
+    </p>
+  </section>
+
+  <section id="encerramento">
+    <h2>Suspensão e encerramento</h2>
+    <p>
+      Você pode parar de usar o Prisma quando quiser e pedir a exclusão da conta pelo e-mail
+      <a [href]="'mailto:' + email">{{ email }}</a>.
+    </p>
+    <p>
+      Podemos suspender ou encerrar contas que desrespeitem estes termos. Sempre que possível, avisamos
+      antes e explicamos o motivo; em casos graves, como ataque ao serviço ou conteúdo ilegal, a
+      suspensão pode ser imediata. Se um dia o Prisma for encerrado, avisaremos com antecedência para
+      que você possa pedir uma cópia dos seus dados.
+    </p>
+  </section>
+
+  <section id="alteracoes">
+    <h2>Mudanças nestes termos</h2>
+    <p>
+      Estes termos podem mudar. A data no topo indica a versão em vigor, e mudanças relevantes serão
+      avisadas no site ou por e-mail antes de valer. Continuar usando o Prisma depois disso significa
+      aceitar a versão nova; se não concordar, você pode encerrar a conta.
+    </p>
+  </section>
+
+  <section id="lei">
+    <h2>Lei aplicável e foro</h2>
+    <p>
+      Estes termos seguem as leis do Brasil. Antes de qualquer outra medida, procure a gente: a maior
+      parte das coisas se resolve por e-mail. Se não der, vale o foro da cidade onde você mora, como
+      garante o Código de Defesa do Consumidor.
+    </p>
+  </section>
+
+  <section id="contato">
+    <h2>Contato</h2>
+    <p>
+      Dúvidas sobre estes termos: <a [href]="'mailto:' + email">{{ email }}</a>.
+    </p>
+    <p>Responsável pelo Prisma: {{ controlador }}.</p>
+  </section>
+</app-pagina-legal>

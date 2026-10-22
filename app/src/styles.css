@@ -69,6 +69,35 @@
     @apply text-2xl sm:text-3xl font-bold text-white;
   }
 
+  /* texto corrido das páginas legais (privacidade, termos) */
+  .texto-legal {
+    @apply text-base text-gray-300 leading-relaxed break-words;
+  }
+  .texto-legal section + section {
+    @apply mt-12 sm:mt-14;
+  }
+  .texto-legal section > * + * {
+    @apply mt-4;
+  }
+  .texto-legal h2 {
+    @apply text-xl sm:text-2xl font-bold text-white;
+  }
+  .texto-legal h3 {
+    @apply !mt-7 text-base font-semibold text-white;
+  }
+  .texto-legal ul {
+    @apply list-disc pl-5 space-y-2 marker:text-gray-600;
+  }
+  .texto-legal strong {
+    @apply font-semibold text-white;
+  }
+  .texto-legal a {
+    @apply text-white underline decoration-white/30 underline-offset-2 hover:decoration-white transition duration-300;
+  }
+  .texto-legal code {
+    @apply text-[0.875em] text-gray-200 bg-white/10 px-1.5 py-0.5 rounded;
+  }
+
   /* abaixo de lg a fileira sangra até a borda da tela: o card cortado convida a deslizar */
   @media (max-width: 1023.98px) {
     .trilho-sangria {
