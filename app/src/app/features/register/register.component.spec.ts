@@ -57,7 +57,7 @@ describe('RegisterComponent', () => {
     preencher();
     falhar(409, 'E-mail ja cadastrado');
 
-    expect(componente.campos.erro('email')).toBe('Esse e-mail já tem uma conta.');
+    expect(componente.campos.erro('email')).toBe('E-mail já em uso.');
     expect(componente.emailJaCadastrado()).toBeTrue();
 
     componente.editar('email', 'outro@email.com');
