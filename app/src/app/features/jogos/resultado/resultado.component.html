@@ -39,9 +39,9 @@
           <app-quick-actions
             [tmdbId]="resposta.tmdbId"
             mediaType="movie"
-            [rotaAvaliacao]="['/search', 'movie', resposta.tmdbId]"></app-quick-actions>
+            [rotaAvaliacao]="['/search', 'movies', resposta.tmdbId]"></app-quick-actions>
           <a
-            [routerLink]="['/search', 'movie', resposta.tmdbId]"
+            [routerLink]="['/search', 'movies', resposta.tmdbId]"
             class="ver-ficha ml-1 inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white transition duration-300">
             Ver ficha
             <svg lucideArrowRight [size]="14" strokeWidth="2" class="transition duration-300"></svg>
