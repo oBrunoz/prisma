@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, ViewChild, computed, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ViewChild, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -37,19 +37,6 @@ export class JogosComponent implements AfterViewInit {
 
   // quem chega direto numa partida não espera a abertura
   ngAfterViewInit(): void {
-    if (this.emPartida()) this.pular();
-  }
-
-  pular(): void {
-    this.travessia?.pular();
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  aoTeclar(evento: KeyboardEvent): void {
-    if (this.estado.atravessou()) return;
-    if (evento.key === 'Escape' || evento.key === 'Enter' || evento.key === ' ') {
-      evento.preventDefault();
-      this.pular();
-    }
+    if (this.emPartida()) this.travessia?.pular();
   }
 }

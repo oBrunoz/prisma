@@ -21,7 +21,13 @@ let seq = 0;
 // a entrada completa só na primeira vez da sessão; depois a cena já abre do outro lado
 const jaAtravessou = new Set<VarianteTravessia>();
 
-const vaiEVolta = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+// espera, a folha abrindo e a câmera atravessando, em ms; a abertura da página inteira é mais curta
+const TEMPOS: Record<VarianteTravessia, [number, number, number]> = {
+  painel: [300, 1000, 1600],
+  tela: [200, 750, 1150],
+};
+
+const vaiEVolta =(t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 // a folha abre, a câmera atravessa a janela e as listras viram o fundo
 @Component({
@@ -91,9 +97,10 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
   }
 
   private async tocar(): Promise<void> {
-    await this.esperar(300);
-    await this.animar(1000, (e) => this.aplicar(1, e));
-    await this.animar(1600, (e) => this.aplicar(1 + (APROXIMACAO - 1) * e, 1));
+    const [espera, abrir, atravessar] = TEMPOS[this.variante];
+    await this.esperar(espera);
+    await this.animar(abrir, (e) => this.aplicar(1, e));
+    await this.animar(atravessar, (e) => this.aplicar(1 + (APROXIMACAO - 1) * e, 1));
     if (this.destruido || this.pulou) return;
 
     jaAtravessou.add(this.variante);
