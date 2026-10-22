@@ -162,4 +162,48 @@ describe('Jogos (e2e)', () => {
     });
     expect(res.body.POSTER).toMatchObject({ played: 0, currentStreak: 0 });
   });
+
+  describe('aleatorio', () => {
+    const sortear = (query: Record<string, string>) =>
+      server().get('/games/random').query(query).set('Authorization', `Bearer ${token}`);
+
+    it('so para quem tem conta, e valida o pedido', async () => {
+      await server().get('/games/random').query({ kind: 'FRAMES' }).expect(401);
+      await sortear({ kind: 'ELENCO' }).expect(400);
+      await sortear({ kind: 'FRAMES', exceto: 'nao-e-id' }).expect(400);
+    });
+
+    it('sorteia um desafio de dia passado, sem resposta e sem o que ja terminou', async () => {
+      for (let i = 0; i < 10; i++) {
+        const res = await sortear({ kind: 'FRAMES' }).expect(200);
+        const { challenge } = res.body;
+        expect(challenge.day < HOJE).toBe(true);
+        expect(challenge).toMatchObject({ kind: 'FRAMES', guesses: [], status: 'PLAYING', answer: null });
+        expect(challenge.images).toHaveLength(1);
+        // ontem ja foi ganho (teste anterior): so volta quando acabar o resto
+        expect(challenge.id).not.toBe(desafios.ontem);
+        expect(res.body.repeated).toBe(false);
+      }
+    });
+
+    it('visto tudo, repete avisando e nao devolve o ultimo sorteado', async () => {
+      const antigos = await prisma.gameChallenge.findMany({
+        where: { kind: 'FRAMES', day: { lt: new Date(HOJE) }, id: { not: desafios.ontem } },
+        select: { id: true },
+      });
+      const exceto = antigos.map((a) => a.id);
+
+      const res = await sortear({ kind: 'FRAMES', exceto: exceto.join(',') }).expect(200);
+      expect(res.body.repeated).toBe(true);
+      expect(res.body.challenge.id).not.toBe(exceto.at(-1));
+    });
+
+    it('a partida sorteada confere, mas nao grava', async () => {
+      const res = await sortear({ kind: 'FRAMES' }).expect(200);
+      const id = res.body.challenge.id;
+      await jogar(id, [0], true).expect(200);
+      const salva = await prisma.gamePlay.findUnique({ where: { userId_challengeId: { userId, challengeId: id } } });
+      expect(salva).toBeNull();
+    });
+  });
 });

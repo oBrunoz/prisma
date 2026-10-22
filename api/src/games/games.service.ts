@@ -3,7 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { GameChallenge, Media } from '../generated/prisma/client.js';
+import type {
+  GameChallenge,
+  Media,
+  Prisma,
+} from '../generated/prisma/client.js';
 import { GameKind } from '../generated/prisma/enums.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { diaDoJogo, TENTATIVAS } from './games.constants.js';
@@ -28,6 +32,12 @@ export interface PartidaView {
   guesses: number[];
   status: SituacaoDaPartida;
   answer: RespostaDoDesafio | null;
+}
+
+export interface SorteioView {
+  challenge: PartidaView;
+  // a pessoa já tinha visto todos os desafios antigos desse jogo
+  repeated: boolean;
 }
 
 export interface EstatisticasDoJogo {
@@ -118,6 +128,39 @@ export class GamesService {
     return this.montar(desafio, palpites);
   }
 
+  // fora do diario: um desafio de dia passado, que nao grava nem conta na sequencia
+  async sortear(
+    userId: string,
+    kind: GameKind,
+    exceto: string[],
+  ): Promise<SorteioView> {
+    // so dias passados: hoje e o diario, e amanha estragaria o desafio
+    const antigos: Prisma.GameChallengeWhereInput = {
+      kind,
+      day: { lt: new Date(diaDoJogo()) },
+    };
+    const terminados = await this.prisma.gamePlay.findMany({
+      where: { userId, result: { not: null }, challenge: { kind } },
+      select: { challengeId: true },
+    });
+    const vistos = [...exceto, ...terminados.map((t) => t.challengeId)];
+
+    // primeiro o que a pessoa nao viu; acabando, repete, menos o ultimo sorteado
+    const inedito = await this.umAoAcaso({
+      ...antigos,
+      id: { notIn: vistos },
+    });
+    const desafio =
+      inedito ??
+      (await this.umAoAcaso({ ...antigos, id: { notIn: exceto.slice(-1) } })) ??
+      (await this.umAoAcaso(antigos));
+    if (!desafio) {
+      throw new NotFoundException('Ainda não há desafios antigos desse jogo');
+    }
+
+    return { challenge: this.montar(desafio, []), repeated: !inedito };
+  }
+
   async estatisticas(
     userId: string,
   ): Promise<Record<GameKind, EstatisticasDoJogo>> {
@@ -197,6 +240,19 @@ export class GamesService {
   private situacao(guesses: number[], resposta: number): SituacaoDaPartida {
     if (guesses.includes(resposta)) return 'WON';
     return guesses.length >= TENTATIVAS ? 'LOST' : 'PLAYING';
+  }
+
+  private async umAoAcaso(
+    where: Prisma.GameChallengeWhereInput,
+  ): Promise<DesafioComMidia | null> {
+    const total = await this.prisma.gameChallenge.count({ where });
+    if (!total) return null;
+    return this.prisma.gameChallenge.findFirst({
+      where,
+      include: { media: true },
+      orderBy: { number: 'asc' },
+      skip: Math.floor(Math.random() * total),
+    });
   }
 
   private diaDe(desafio: GameChallenge): string {
