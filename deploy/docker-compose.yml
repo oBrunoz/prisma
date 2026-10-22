@@ -1,0 +1,31 @@
+# a VM roda so isto, em /opt/prisma: a API e o tunel da Cloudflare, sem nenhuma porta aberta
+# segredos da API em api.env; o token do tunel em .env (TUNNEL_TOKEN)
+# atualizar: docker compose pull && docker compose up -d
+services:
+  api:
+    image: ghcr.io/obrunoz/prisma-api:latest
+    restart: unless-stopped
+    env_file: api.env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # so o tunel chega na API, entao o cabecalho da Cloudflare e confiavel
+      CLIENT_IP_HEADER: cf-connecting-ip
+      NODE_OPTIONS: --max-old-space-size=256
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  tunel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    mem_limit: 128m
+    depends_on:
+      - api
