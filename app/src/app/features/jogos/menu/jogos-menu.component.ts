@@ -11,7 +11,7 @@ import {
   untracked,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { LucidePlay } from '@lucide/angular';
+import { LucidePlay, LucideShuffle } from '@lucide/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ESPECTRO } from '../../../core/models/espectro';
@@ -26,7 +26,7 @@ import { PosterListrasComponent } from '../../../shared/components/poster-listra
 @Component({
   selector: 'app-jogos-menu',
   standalone: true,
-  imports: [RouterLink, LucidePlay, PosterListrasComponent],
+  imports: [RouterLink, LucidePlay, LucideShuffle, PosterListrasComponent],
   templateUrl: './jogos-menu.component.html',
   styleUrls: ['./jogos-menu.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,6 +100,11 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
     clearInterval(this.relogio);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  jogarAleatorio(slug: string): void {
+    if (this.auth.autenticado()) this.router.navigate(['/jogos', slug, 'aleatorio']);
+    else this.auth.pedirLogin('Crie uma conta para jogar desafios aleatórios');
   }
 
   @HostListener('document:keydown', ['$event'])

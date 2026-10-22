@@ -6,6 +6,7 @@ import {
   DesafiosDoDia,
   EstatisticasJogo,
   Partida,
+  SorteioJogo,
   TENTATIVAS,
   TipoJogo,
   TituloPalpite,
@@ -98,6 +99,18 @@ export class JogosService {
   // manda a lista inteira de palpites; a API confere e libera as imagens
   jogar(partida: Partida, palpites: number[]): Observable<Partida> {
     return this.conferir(partida.id, palpites).pipe(tap((p) => this.guardar(p)));
+  }
+
+  // desafio antigo ao acaso, só com conta; exceto vai do mais antigo ao mais recente
+  sortear(tipo: TipoJogo, exceto: string[]): Observable<SorteioJogo> {
+    const params: Record<string, string> = { kind: tipo };
+    if (exceto.length) params['exceto'] = exceto.join(',');
+    return this.http.get<SorteioJogo>(`${this.base}/random`, { params });
+  }
+
+  // a sorteada só é conferida: não vai para o aparelho nem para a sequência
+  jogarSorteada(partida: Partida, palpites: number[]): Observable<Partida> {
+    return this.conferir(partida.id, palpites);
   }
 
   estatisticas(numerosDeHoje: Partial<Record<TipoJogo, number>>): Observable<Record<TipoJogo, EstatisticasJogo>> {

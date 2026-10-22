@@ -13,7 +13,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { LucideChevronLeft } from '@lucide/angular';
+import { LucideChevronLeft, LucideShuffle } from '@lucide/angular';
 import { Subject, map, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { mensagemDeErro } from '../../../core/errors/mensagens';
@@ -27,6 +27,7 @@ import {
   TituloPalpite,
   jogoPorSlug,
 } from '../../../core/models/jogos.models';
+import { AuthService } from '../../../core/services/auth.service';
 import { JogosService } from '../../../core/services/jogos.service';
 import { MovieService } from '../../../core/services/movie.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -41,13 +42,14 @@ type Evento = 'erro' | 'pulou' | 'acerto' | 'perdeu';
 @Component({
   selector: 'app-partida',
   standalone: true,
-  imports: [RouterLink, LucideChevronLeft, PalpiteComponent, PosterListrasComponent, ResultadoComponent],
+  imports: [RouterLink, LucideChevronLeft, LucideShuffle, PalpiteComponent, PosterListrasComponent, ResultadoComponent],
   templateUrl: './partida.component.html',
   styleUrls: ['./partida.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PartidaComponent implements OnDestroy {
   readonly estado = inject(JogosEstado);
+  readonly auth = inject(AuthService);
   private readonly jogos = inject(JogosService);
   private readonly filmes = inject(MovieService);
   private readonly toast = inject(ToastService);
@@ -62,14 +64,18 @@ export class PartidaComponent implements OnDestroy {
   readonly rotulosDoPoster = ROTULOS_DOS_NIVEIS;
   readonly tentativas = Array.from({ length: TENTATIVAS }, (_, i) => i);
 
-  private readonly slug = toSignal(inject(ActivatedRoute).paramMap.pipe(map((p) => p.get('jogo'))), {
+  private readonly rota = inject(ActivatedRoute);
+  private readonly slug = toSignal(this.rota.paramMap.pipe(map((p) => p.get('jogo'))), {
     initialValue: null,
   });
+  // desafio antigo sorteado: não grava, não conta na sequência
+  readonly aleatorio = !!this.rota.snapshot.data['aleatorio'];
   readonly info = computed(() => jogoPorSlug(this.slug()));
   readonly outro = computed(() => JOGOS.find((j) => j.tipo !== this.info()?.tipo)!);
   readonly partida = computed(() => {
     const info = this.info();
-    return info ? this.estado.partida(info.tipo) : null;
+    if (!info) return null;
+    return this.aleatorio ? this.estado.sorteada(info.tipo) : this.estado.partida(info.tipo);
   });
   readonly outroFeito = computed(() => {
     const p = this.estado.partida(this.outro().tipo);
@@ -143,6 +149,18 @@ export class PartidaComponent implements OnDestroy {
   readonly palpitesFeitos = computed(() => this.partida()?.guesses.filter((g) => g !== PULO) ?? []);
 
   constructor() {
+    // no aleatório, entrar sem partida em andamento já sorteia outra; a terminada sai antes de abrir o resultado
+    effect(() => {
+      const info = this.info();
+      if (!this.aleatorio || !info || !this.auth.autenticado()) return;
+      untracked(() => {
+        const atual = this.estado.sorteada(info.tipo);
+        if (atual?.status === 'PLAYING') return;
+        if (atual) this.estado.sorteadas.update((s) => ({ ...s, [info.tipo]: undefined }));
+        this.estado.sortear(info.tipo);
+      });
+    });
+
     // ao abrir (ou quando a partida chega), mostra a última imagem liberada
     effect(() => {
       const p = this.partida();
@@ -193,6 +211,11 @@ export class PartidaComponent implements OnDestroy {
     this.router.navigate(['/jogos', this.outro().slug]);
   }
 
+  sortearOutro(): void {
+    const info = this.info();
+    if (info) this.estado.sortear(info.tipo);
+  }
+
   @HostListener('document:keydown', ['$event'])
   aoTeclar(evento: KeyboardEvent): void {
     if (evento.key === 'Escape') {
@@ -219,8 +242,8 @@ export class PartidaComponent implements OnDestroy {
     if (!p || this.enviando() || p.status !== 'PLAYING') return;
     this.enviando.set(true);
 
-    this.jogos
-      .jogar(p, [...p.guesses, id])
+    const palpites = [...p.guesses, id];
+    (this.aleatorio ? this.jogos.jogarSorteada(p, palpites) : this.jogos.jogar(p, palpites))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (nova) => {
@@ -270,7 +293,7 @@ export class PartidaComponent implements OnDestroy {
 
   private carregarEstatisticas(): void {
     const info = this.info();
-    if (!info) return;
+    if (!info || this.aleatorio) return;
     this.jogos
       .estatisticas(this.estado.numerosDeHoje())
       .pipe(takeUntil(this.destroy$))

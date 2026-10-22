@@ -35,6 +35,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/jogos/partida/partida.component').then((m) => m.PartidaComponent),
       },
+      {
+        path: ':jogo/aleatorio',
+        data: { aleatorio: true },
+        loadComponent: () =>
+          import('./features/jogos/partida/partida.component').then((m) => m.PartidaComponent),
+      },
     ],
   },
   {

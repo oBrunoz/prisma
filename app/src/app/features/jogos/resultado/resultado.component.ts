@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LucideArrowRight, LucideCheck, LucideCopy, LucideX } from '@lucide/angular';
+import { LucideArrowRight, LucideCheck, LucideCopy, LucideShuffle, LucideX } from '@lucide/angular';
 import { environment } from '../../../../environments/environment';
 import { ESPECTRO } from '../../../core/models/espectro';
 import { EstatisticasJogo, InfoJogo, Partida, TENTATIVAS } from '../../../core/models/jogos.models';
@@ -23,7 +23,7 @@ import { tempoAteAVirada, textoDoResultado } from '../jogos.util';
 @Component({
   selector: 'app-resultado',
   standalone: true,
-  imports: [RouterLink, LucideArrowRight, LucideCheck, LucideCopy, LucideX, MiniIngressoComponent, QuickActionsComponent],
+  imports: [RouterLink, LucideArrowRight, LucideCheck, LucideCopy, LucideShuffle, LucideX, MiniIngressoComponent, QuickActionsComponent],
   templateUrl: './resultado.component.html',
   styleUrls: ['./resultado.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,9 +34,13 @@ export class ResultadoComponent implements OnInit, OnChanges, OnDestroy {
   @Input() estatisticas: EstatisticasJogo | null = null;
   @Input({ required: true }) outro!: InfoJogo;
   @Input() outroFeito = false;
+  // sorteada: sem números do diário, e o convite é para outro sorteio
+  @Input() aleatorio = false;
+  @Input() sorteando = false;
 
   @Output() fechar = new EventEmitter<void>();
   @Output() irParaOutro = new EventEmitter<void>();
+  @Output() sortear = new EventEmitter<void>();
 
   readonly espectro = ESPECTRO;
   readonly imagens = environment.tmdbImageUrl;

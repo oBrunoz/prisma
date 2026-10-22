@@ -11,7 +11,7 @@
         <div class="text-center leading-tight">
           <h1 class="text-lg font-semibold text-white">{{ jogo.nome }}</h1>
           @if (partida(); as p) {
-            <p class="text-xs text-gray-500 tabular-nums">Nº {{ p.number }}</p>
+            <p class="text-xs text-gray-500 tabular-nums">{{ aleatorio ? 'Aleatório · ' : '' }}Nº {{ p.number }}</p>
           }
         </div>
         <p class="justify-self-end text-sm text-gray-400 tabular-nums">
@@ -83,15 +83,27 @@
             (pular)="pular()"></app-palpite>
         } @else {
           <div class="flex items-center justify-between gap-3 pl-5 pr-2 py-2 rounded-full bg-[#1a1a1a] text-sm text-white">
-            <span class="truncate">
+            <span class="min-w-0 truncate">
               {{ p.status === 'WON' ? jogo.acerto(p.guesses.length) : 'Era ' + (p.answer?.title ?? '') }}
             </span>
-            <button
-              type="button"
-              (click)="resultadoAberto.set(true)"
-              class="shrink-0 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 cursor-pointer">
-              Ver resultado
-            </button>
+            <span class="shrink-0 flex gap-2">
+              <button
+                type="button"
+                (click)="resultadoAberto.set(true)"
+                class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 cursor-pointer">
+                {{ aleatorio ? 'Resultado' : 'Ver resultado' }}
+              </button>
+              @if (aleatorio) {
+                <button
+                  type="button"
+                  (click)="sortearOutro()"
+                  [disabled]="estado.sorteando()"
+                  class="px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white text-sm font-medium transition duration-300 flex items-center gap-2 cursor-pointer">
+                  <svg lucideShuffle [size]="14" strokeWidth="2"></svg>
+                  Outro
+                </button>
+              }
+            </span>
           </div>
         }
 
@@ -126,9 +138,45 @@
               [estatisticas]="estatisticas()"
               [outro]="outro()"
               [outroFeito]="outroFeito()"
+              [aleatorio]="aleatorio"
+              [sorteando]="estado.sorteando()"
               (fechar)="fecharResultado()"
-              (irParaOutro)="irParaOutro()"></app-resultado>
+              (irParaOutro)="irParaOutro()"
+              (sortear)="sortearOutro()"></app-resultado>
           </div>
+        }
+      } @else if (aleatorio) {
+        @if (!auth.autenticado()) {
+          <div class="py-16 text-center">
+            <p class="text-white font-medium">Desafios aleatórios são para quem tem conta</p>
+            <p class="mt-1 text-sm text-gray-400 text-pretty">Crie a sua e jogue os desafios dos dias que passaram, quantos quiser.</p>
+            <div class="mt-6 flex flex-wrap justify-center gap-3">
+              <a
+                routerLink="/register"
+                [queryParams]="{ redirect: '/jogos/' + jogo.slug + '/aleatorio' }"
+                class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition duration-300 flex items-center">
+                Criar conta
+              </a>
+              <a
+                routerLink="/login"
+                [queryParams]="{ redirect: '/jogos/' + jogo.slug + '/aleatorio' }"
+                class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 flex items-center">
+                Entrar
+              </a>
+            </div>
+          </div>
+        } @else if (estado.erroDoSorteio(); as erro) {
+          <div class="py-16 text-center">
+            <p class="text-sm text-gray-300">{{ erro }}</p>
+            <button
+              type="button"
+              (click)="sortearOutro()"
+              class="mt-4 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 cursor-pointer">
+              Tentar de novo
+            </button>
+          </div>
+        } @else {
+          <div class="skeleton mx-auto w-full max-w-[720px] aspect-video rounded-xl bg-white/5"></div>
         }
       } @else if (estado.carregando()) {
         <div class="skeleton mx-auto w-full max-w-[720px] aspect-video rounded-xl bg-white/5"></div>

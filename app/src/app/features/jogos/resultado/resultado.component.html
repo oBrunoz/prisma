@@ -97,15 +97,28 @@
         </button>
         <app-mini-ingresso [aberto]="copiado()" (fechou)="copiado.set(false)">Resultado copiado</app-mini-ingresso>
       </div>
-      <button
-        type="button"
-        (click)="irParaOutro.emit()"
-        class="flex-1 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
-        {{ outroFeito ? 'Ver ' + outro.nome : 'Jogar ' + outro.nome }}
-        <svg lucideArrowRight [size]="16" strokeWidth="2"></svg>
-      </button>
+      @if (aleatorio) {
+        <button
+          type="button"
+          (click)="sortear.emit()"
+          [disabled]="sorteando"
+          class="flex-1 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-60 text-white text-sm font-medium transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
+          <svg lucideShuffle [size]="16" strokeWidth="2"></svg>
+          Sortear outro
+        </button>
+      } @else {
+        <button
+          type="button"
+          (click)="irParaOutro.emit()"
+          class="flex-1 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
+          {{ outroFeito ? 'Ver ' + outro.nome : 'Jogar ' + outro.nome }}
+          <svg lucideArrowRight [size]="16" strokeWidth="2"></svg>
+        </button>
+      }
     </div>
 
-    <p class="text-xs text-gray-500 tabular-nums">Próximo desafio em {{ proximo() }}</p>
+    @if (!aleatorio) {
+      <p class="text-xs text-gray-500 tabular-nums">Próximo desafio em {{ proximo() }}</p>
+    }
   </div>
 }

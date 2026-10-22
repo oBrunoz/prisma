@@ -30,6 +30,13 @@ export interface DesafiosDoDia {
   challenges: Partida[];
 }
 
+// um desafio antigo sorteado, fora do diário
+export interface SorteioJogo {
+  challenge: Partida;
+  // a pessoa já tinha visto todos os antigos desse jogo
+  repeated: boolean;
+}
+
 export interface EstatisticasJogo {
   played: number;
   won: number;
