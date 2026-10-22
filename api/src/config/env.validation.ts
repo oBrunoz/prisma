@@ -27,6 +27,11 @@ class EnvironmentVariables {
   @IsInt()
   TRUST_PROXY?: number;
 
+  // cabecalho com o IP real do visitante, ex.: cf-connecting-ip atras da Cloudflare
+  @IsOptional()
+  @IsString()
+  CLIENT_IP_HEADER?: string;
+
   @IsString()
   @IsNotEmpty()
   CORS_ORIGIN: string;

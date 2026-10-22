@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
+import type { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module.js';
 
@@ -14,6 +15,17 @@ async function bootstrap() {
   // vira um balde unico para todo mundo; com o proxy da Cloudflare na frente sao 2 saltos
   if (config.getOrThrow<string>('NODE_ENV') === 'production') {
     app.set('trust proxy', config.get<number>('TRUST_PROXY') ?? 1);
+  }
+
+  // atras da Cloudflare (tunel ou proxy) o IP real vem num cabecalho que o cliente
+  // nao consegue forjar; so ligar onde nada chega na API sem passar por ela
+  const cabecalhoDoIp = config.get<string>('CLIENT_IP_HEADER')?.toLowerCase();
+  if (cabecalhoDoIp) {
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      const ip = req.get(cabecalhoDoIp);
+      if (ip) Object.defineProperty(req, 'ip', { value: ip.trim() });
+      next();
+    });
   }
 
   app.use(helmet());
