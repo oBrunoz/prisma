@@ -382,7 +382,7 @@ export class MovieService {
   // similares e recomendações, cada filme pesa uma fração do getMovieDetails
   private getSpotlightDetails(id: number): Observable<ContentDetails> {
     return this.get<ContentDetails>(`/movie/${id}`, {
-      append_to_response: 'images,videos',
+      append_to_response: 'images,videos,watch/providers',
       include_image_language: 'pt,en,null',
       include_video_language: 'pt,en',
     });

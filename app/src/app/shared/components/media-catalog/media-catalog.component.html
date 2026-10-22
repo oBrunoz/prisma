@@ -92,6 +92,8 @@
     [genres]="spotlight()?.details?.genres ?? []"
     [overview]="spotlight()?.overview ?? ''"
     [trailerUrl]="spotlight()?.trailerUrl ?? '#'"
+    [provedores]="spotlight()?.details?.['watch/providers']?.results?.['BR'] ?? null"
+    [estreia]="spotlight()?.details?.release_date ?? null"
     [detailsRoute]="spotlightRoute"
     [tmdbId]="spotlight()?.id ?? null"
     [mediaType]="type"

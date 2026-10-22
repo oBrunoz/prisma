@@ -30,6 +30,11 @@
       @if (year) {
         <span class="block text-gray-300 text-xs tabular-nums mt-0.5">{{ year }}</span>
       }
+      @if (plataformas.de(id, tipo); as o) {
+        @if (o.plataformas.length || o.nosCinemas) {
+          <app-plataformas [onde]="o" [tamanho]="18" class="mt-1.5 max-w-full text-[11px] text-gray-300"></app-plataformas>
+        }
+      }
     </span>
   </a>
 

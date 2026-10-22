@@ -1,0 +1,23 @@
+@if (onde.plataformas[0]; as principal) {
+  <span class="inline-flex items-center gap-2 min-w-0" [title]="todas">
+    @if (logoUrl(principal.logoPath)) {
+      <img
+        [src]="logoUrl(principal.logoPath)"
+        alt=""
+        [width]="tamanho"
+        [height]="tamanho"
+        class="shrink-0 rounded-[5px] ring-1 ring-white/10 object-cover"
+        [style.width.px]="tamanho"
+        [style.height.px]="tamanho" />
+    }
+    <span class="truncate">{{ principal.nome }}</span>
+    @if (onde.plataformas.length > 1) {
+      <span class="shrink-0 text-gray-400 tabular-nums">+{{ onde.plataformas.length - 1 }}</span>
+    }
+  </span>
+} @else if (onde.nosCinemas) {
+  <span class="inline-flex items-center gap-1.5">
+    <svg lucideTicket [size]="tamanho * 0.75" strokeWidth="2" class="shrink-0"></svg>
+    Nos cinemas
+  </span>
+}

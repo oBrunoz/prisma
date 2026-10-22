@@ -137,6 +137,9 @@
             @if (runtime) {
               <span>{{ runtime }}</span>
             }
+            @if (onde) {
+              <app-plataformas [onde]="onde" [tamanho]="20"></app-plataformas>
+            }
             @if (tagline) {
               <span class="italic text-gray-300 hidden sm:inline">"{{ tagline }}"</span>
             }

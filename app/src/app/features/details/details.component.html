@@ -14,6 +14,8 @@
     [genres]="details()?.genres ?? []"
     [overview]="details()?.overview ?? ''"
     [trailerUrl]="trailerUrl()"
+    [provedores]="watchProviders()"
+    [estreia]="details()?.release_date ?? null"
     [tmdbId]="contentType() === 'people' ? null : details()?.id ?? null"
     [mediaType]="contentType() === 'people' ? null : apiType()"
     (avaliarClicked)="rolarParaAvaliacao()">

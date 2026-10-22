@@ -17,6 +17,8 @@
       [genres]="currentSpotlight?.details?.genres ?? []"
       [overview]="currentSpotlight?.movie?.overview ?? ''"
       [trailerUrl]="currentSpotlight?.trailerUrl ?? '#'"
+      [provedores]="currentSpotlight?.details?.['watch/providers']?.results?.['BR'] ?? null"
+      [estreia]="currentSpotlight?.details?.release_date ?? null"
       [detailsRoute]="spotlightDetailsRoute"
       [tmdbId]="currentSpotlight?.movie?.id ?? null"
       mediaType="movie"

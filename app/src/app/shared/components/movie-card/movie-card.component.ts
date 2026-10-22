@@ -5,9 +5,11 @@ import { LucideEllipsis, LucideStar } from '@lucide/angular';
 import { TipoMidia } from '../../../core/models/catalogo.models';
 import { FolhaAcoesService } from '../../../core/services/folha-acoes.service';
 import { MarcasService } from '../../../core/services/marcas.service';
+import { PlataformasService } from '../../../core/services/plataformas.service';
 import { SegurarDirective } from '../../directives/segurar.directive';
 import { AcoesCardComponent } from '../acoes-card/acoes-card.component';
 import { MediaFallbackComponent } from '../media-fallback/media-fallback.component';
+import { PlataformasComponent } from '../plataformas/plataformas.component';
 import { SeloMarcasComponent } from '../selo-marcas/selo-marcas.component';
 
 // só o pôster e a nota; o hover (ou o ⋯ no toque) traz título e ações
@@ -21,6 +23,7 @@ import { SeloMarcasComponent } from '../selo-marcas/selo-marcas.component';
     LucideStar,
     AcoesCardComponent,
     MediaFallbackComponent,
+    PlataformasComponent,
     SeloMarcasComponent,
     SegurarDirective,
   ],
@@ -38,9 +41,12 @@ export class MovieCardComponent implements OnChanges {
 
   private readonly marcas = inject(MarcasService);
   private readonly folha = inject(FolhaAcoesService);
+  readonly plataformas = inject(PlataformasService);
 
   ngOnChanges(): void {
-    if (this.id) this.marcas.pedir(this.id, this.tipo);
+    if (!this.id) return;
+    this.marcas.pedir(this.id, this.tipo);
+    this.plataformas.pedir(this.id, this.tipo);
   }
 
   get tipo(): TipoMidia {

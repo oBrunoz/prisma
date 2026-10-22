@@ -11,8 +11,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Genre } from '../../../core/models/tmdb.models';
+import { Genre, WatchProviderCountry } from '../../../core/models/tmdb.models';
+import { OndeAssistir, ondeAssistir } from '../../../core/models/onde-assistir';
 import { TipoMidia } from '../../../core/models/catalogo.models';
+import { PlataformasComponent } from '../plataformas/plataformas.component';
 import { QuickActionsComponent } from '../quick-actions/quick-actions.component';
 import {
   LucideTriangleAlert,
@@ -27,7 +29,7 @@ import { noTamanho, srcsetDeFundo } from '../../../core/services/movie.service';
 @Component({
   selector: 'app-hero-section',
   standalone: true,
-  imports: [CommonModule, RouterModule, QuickActionsComponent, LucideTriangleAlert, LucideRotateCcw, LucideStar, LucidePlay, LucidePause, LucideInfo],
+  imports: [CommonModule, RouterModule, PlataformasComponent, QuickActionsComponent, LucideTriangleAlert, LucideRotateCcw, LucideStar, LucidePlay, LucidePause, LucideInfo],
   templateUrl: './hero-section.component.html',
   styleUrl: './hero-section.component.css'
 })
@@ -51,6 +53,11 @@ export class HeroSectionComponent implements OnChanges {
   @Input() genres: Genre[] = [];
   @Input() overview = '';
   @Input() trailerUrl = '#';
+  // provedores do Brasil e a estreia (filme) viram o item de onde assistir no fio de metadados
+  @Input() provedores: WatchProviderCountry | null = null;
+  @Input() estreia: string | null = null;
+
+  onde: OndeAssistir | null = null;
   
   @Input() detailsRoute: unknown[] | null = null;
 
@@ -78,6 +85,10 @@ export class HeroSectionComponent implements OnChanges {
   // destaque novo: volta à prévia até a imagem boa chegar
   ngOnChanges(mudancas: SimpleChanges): void {
     if (mudancas['backgroundUrl']) this.isBgLoaded.set(false);
+    if (mudancas['provedores'] || mudancas['estreia']) {
+      const onde = ondeAssistir(this.provedores, this.estreia);
+      this.onde = onde.plataformas.length || onde.nosCinemas ? onde : null;
+    }
   }
 
   onBackgroundLoad(): void {
