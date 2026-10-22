@@ -22,6 +22,11 @@ class EnvironmentVariables {
   @IsInt()
   PORT: number;
 
+  // quantos proxies ficam entre a internet e a API (padrao 1)
+  @IsOptional()
+  @IsInt()
+  TRUST_PROXY?: number;
+
   @IsString()
   @IsNotEmpty()
   CORS_ORIGIN: string;

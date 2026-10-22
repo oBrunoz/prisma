@@ -11,18 +11,24 @@ async function bootstrap() {
   const config = app.get(ConfigService);
 
   // sem isso o req.ip atras do balanceador e sempre o mesmo, e o rate limit
-  // vira um balde unico para todo mundo
+  // vira um balde unico para todo mundo; com o proxy da Cloudflare na frente sao 2 saltos
   if (config.getOrThrow<string>('NODE_ENV') === 'production') {
-    app.set('trust proxy', 1);
+    app.set('trust proxy', config.get<number>('TRUST_PROXY') ?? 1);
   }
 
   app.use(helmet());
   app.use(cookieParser());
 
   app.enableCors({
-    origin: config.getOrThrow<string>('CORS_ORIGIN').split(','),
+    origin: config
+      .getOrThrow<string>('CORS_ORIGIN')
+      .split(',')
+      .map((origem) => origem.trim()),
     credentials: true,
   });
+
+  // o deploy encerra com SIGTERM; assim a conexao com o banco fecha direito
+  app.enableShutdownHooks();
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -34,7 +40,7 @@ async function bootstrap() {
 
   const port = config.getOrThrow<number>('PORT');
   await app.listen(port);
-  console.log(`API em http://localhost:${port}`);
+  console.log(`API na porta ${port}`);
 }
 
 await bootstrap();
