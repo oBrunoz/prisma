@@ -9,7 +9,7 @@
         #campo
         id="palpite"
         type="text"
-        placeholder="Qual é o filme?"
+        [placeholder]="modo === 'pessoa' ? 'Quem dirigiu?' : 'Qual é o filme?'"
         role="combobox"
         aria-autocomplete="list"
         aria-controls="palpite-opcoes"
@@ -33,14 +33,20 @@
             [attr.aria-selected]="i === ativa()"
             (mousedown)="$event.preventDefault(); escolher(opcao)"
             (mouseenter)="ativa.set(i)"
-            class="flex justify-between gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition duration-150"
+            (mouseleave)="ativa.set(-1)"
+            class="flex justify-between items-baseline gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition duration-150"
             [class]="i === ativa() ? 'bg-white/10 text-white' : 'text-gray-300'">
-            <span class="truncate">{{ opcao.title }}</span>
+            <span class="min-w-0">
+              <span class="block truncate">{{ opcao.title }}</span>
+              @if (opcao.original) {
+                <span class="block truncate text-xs text-gray-500">{{ opcao.original }}</span>
+              }
+            </span>
             <span class="shrink-0 text-gray-500 tabular-nums">{{ opcao.year ?? '' }}</span>
           </li>
         } @empty {
           <li class="px-3 py-2.5 text-gray-500">
-            {{ buscando() ? 'Procurando…' : 'Nenhum filme com esse nome' }}
+            {{ buscando() ? 'Procurando…' : modo === 'pessoa' ? 'Ninguém com esse nome' : 'Nenhum filme com esse nome' }}
           </li>
         }
       </ul>
