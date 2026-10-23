@@ -4,93 +4,176 @@
       <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-1">
         <a
           routerLink="/jogos"
-          class="justify-self-start inline-flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-sm text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
+          class="justify-self-start whitespace-nowrap inline-flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-sm text-gray-400 hover:text-white hover:bg-white/10 transition duration-300">
           <svg lucideChevronLeft [size]="16" strokeWidth="2"></svg>
           Jogos
         </a>
         <div class="text-center leading-tight">
-          <h1 class="text-lg font-semibold text-white">{{ jogo.nome }}</h1>
+          <h1 class="text-lg font-semibold text-white whitespace-nowrap">{{ jogo.nome }}</h1>
           @if (partida(); as p) {
             <p class="text-xs text-gray-500 tabular-nums">{{ aleatorio ? 'Aleatório · ' : '' }}Nº {{ p.number }}</p>
           }
         </div>
-        <p class="justify-self-end text-sm text-gray-400 tabular-nums">
-          @if (partida() && !fim()) {
-            {{ restam() }} {{ restam() === 1 ? 'tentativa' : 'tentativas' }}
-          }
-        </p>
+        <div class="justify-self-end flex items-center gap-1">
+          <p class="hidden sm:block text-sm text-gray-400 tabular-nums">{{ contagem() }}</p>
+          <button
+            type="button"
+            (click)="comoJogarAberto.set(true)"
+            aria-label="Como jogar"
+            title="Como jogar"
+            class="w-11 h-11 grid place-items-center rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition duration-300 cursor-pointer">
+            <svg lucideCircleQuestionMark [size]="20" strokeWidth="2"></svg>
+          </button>
+        </div>
       </div>
+      @if (contagem()) {
+        <p class="sm:hidden -mt-2 text-center text-xs text-gray-400 tabular-nums">{{ contagem() }}</p>
+      }
 
-      @if (partida(); as p) {
-        <div class="palco relative flex justify-center" [class.treme]="tremendo()" (animationend)="tremendo.set(false)">
-          @if (p.kind === 'FRAMES') {
-            <div class="quadro relative aspect-video bg-black rounded-xl overflow-hidden">
-              @for (q of quadro(); track q.src) {
-                <img
-                  [src]="imagens + '/w1280' + q.src"
-                  [alt]="'Cena ' + (vendo() + 1) + ' do filme do dia'"
-                  class="projeta w-full h-full object-cover" />
+      @if (trancado() && !aleatorio) {
+        <div class="py-16 text-center">
+          <p class="text-white font-medium">{{ jogo.nome }} é para quem tem conta</p>
+          <p class="mt-1 text-sm text-gray-400 text-pretty">Crie a sua e jogue todos os desafios do dia, com a sequência guardada.</p>
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <a
+              routerLink="/register"
+              [queryParams]="{ redirect: '/jogos/' + jogo.slug }"
+              class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition duration-300 flex items-center">
+              Criar conta
+            </a>
+            <a
+              routerLink="/login"
+              [queryParams]="{ redirect: '/jogos/' + jogo.slug }"
+              class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 flex items-center">
+              Entrar
+            </a>
+          </div>
+        </div>
+      } @else if (partida(); as p) {
+        <div class="palco relative flex flex-col gap-3.5" [class.treme]="tremendo()" (animationend)="tremendo.set(false)">
+          @switch (p.kind) {
+            @case ('FRAMES') {
+              <div class="flex justify-center">
+                <div class="quadro relative aspect-video bg-black rounded-xl overflow-hidden">
+                  @for (q of quadro(); track q.src) {
+                    <img
+                      [src]="imagens + '/w1280' + q.src"
+                      [alt]="'Cena ' + (vendo() + 1) + ' do filme do dia'"
+                      class="projeta w-full h-full object-cover" />
+                  }
+                  <span class="absolute right-3 bottom-3 px-2.5 py-1 rounded-full bg-black/60 text-xs text-gray-300 tabular-nums">
+                    {{ vendo() + 1 }} / {{ p.attempts }}
+                  </span>
+                </div>
+              </div>
+            }
+            @case ('POSTER') {
+              <div class="flex justify-center">
+                <div class="cartaz relative aspect-[2/3] max-w-full bg-black rounded-xl overflow-hidden">
+                  <app-poster-listras class="absolute inset-0" [src]="imagens + '/w780' + p.images[0]" [nivel]="vendo()"></app-poster-listras>
+                  <span class="absolute right-3 bottom-3 px-2.5 py-1 rounded-full bg-black/60 text-xs text-gray-300 tabular-nums">
+                    {{ rotulosDoPoster[vendo()] }}
+                  </span>
+                </div>
+              </div>
+            }
+            @case ('FICHA') {
+              <app-pistas titulo="Ficha técnica" legenda="7 linhas" [linhas]="linhasDaFicha()"></app-pistas>
+            }
+            @case ('PERSONAGENS') {
+              <app-pistas titulo="Personagens" legenda="dos créditos" [linhas]="linhasDosPersonagens()" [destaque]="true"></app-pistas>
+            }
+            @case ('ASSINATURA') {
+              <app-filmografia [conteudo]="assinatura()"></app-filmografia>
+            }
+            @case ('LETREIRO') {
+              <app-letreiro [conteudo]="letreiro()"></app-letreiro>
+              @if (!fim()) {
+                <app-dicas [conteudo]="letreiro()" [ocupado]="enviando()" (pedir)="dica($event)"></app-dicas>
               }
-              <span class="absolute right-3 bottom-3 px-2.5 py-1 rounded-full bg-black/60 text-xs text-gray-300 tabular-nums">
-                {{ vendo() + 1 }} / {{ p.attempts }}
-              </span>
-            </div>
-          } @else {
-            <div class="cartaz relative aspect-[2/3] max-w-full bg-black rounded-xl overflow-hidden">
-              <app-poster-listras class="absolute inset-0" [src]="imagens + '/w780' + p.images[0]" [nivel]="vendo()"></app-poster-listras>
-              <span class="absolute right-3 bottom-3 px-2.5 py-1 rounded-full bg-black/60 text-xs text-gray-300 tabular-nums">
-                {{ rotulosDoPoster[vendo()] }}
-              </span>
-            </div>
+            }
+            @case ('LEGENDA') {
+              <app-legenda
+                [conteudo]="legenda()"
+                [fim]="fim()"
+                [ocupado]="enviando()"
+                [recusa]="recusa()"
+                (palavra)="palavra($event)"
+                (dica)="dica($event)"></app-legenda>
+            }
+            @case ('DUELO') {
+              <app-duelo [conteudo]="duelo()" [ocupado]="enviando()" (escolher)="escolher($event)"></app-duelo>
+            }
+            @case ('LINHA') {
+              <app-linha-tempo [conteudo]="linha()" [ocupado]="enviando()" (encaixar)="encaixar($event)"></app-linha-tempo>
+            }
+            @case ('CARREIRA') {
+              <app-carreira [conteudo]="carreira()" [fim]="fim()" [ocupado]="enviando()" (conferir)="conferir($event)"></app-carreira>
+            }
           }
         </div>
 
-        <!-- a trilha: cada tentativa com o seu fio; gasto apaga, erro queima -->
-        <div class="grid grid-cols-7 gap-1.5">
-          @for (t of trilha(); track t.i) {
-            <button
-              type="button"
-              (click)="ver(t.i)"
-              [disabled]="t.trancada"
-              [attr.aria-label]="p.kind === 'FRAMES' ? 'Frame ' + (t.i + 1) : 'Nitidez: ' + rotulosDoPoster[t.i]"
-              [attr.aria-current]="t.atual || null"
-              [style.--cor]="t.cor"
-              class="degrau"
-              [class.mini]="p.kind === 'FRAMES'"
-              [class.atual]="t.atual"
-              [class.trancada]="t.trancada"
-              [class.gasta]="t.gasta"
-              [class.queima]="t.queima"
-              [class.acerto]="t.acerto">
-              @if (p.kind === 'FRAMES') {
-                @if (t.imagem) {
-                  <img [src]="imagens + '/w300' + t.imagem" alt="" class="absolute inset-0 w-full h-full object-cover" />
+        <!-- a trilha dos jogos de imagem: cada tentativa com o seu fio; gasto apaga, erro queima -->
+        @if (p.kind === 'FRAMES' || p.kind === 'POSTER') {
+          <div class="grid grid-cols-7 gap-1.5">
+            @for (t of trilha(); track t.i) {
+              <button
+                type="button"
+                (click)="ver(t.i)"
+                [disabled]="t.trancada"
+                [attr.aria-label]="p.kind === 'FRAMES' ? 'Frame ' + (t.i + 1) : 'Nitidez: ' + rotulosDoPoster[t.i]"
+                [attr.aria-current]="t.atual || null"
+                [style.--cor]="t.cor"
+                class="degrau"
+                [class.mini]="p.kind === 'FRAMES'"
+                [class.atual]="t.atual"
+                [class.trancada]="t.trancada"
+                [class.gasta]="t.gasta"
+                [class.queima]="t.queima"
+                [class.acerto]="t.acerto">
+                @if (p.kind === 'FRAMES') {
+                  @if (t.imagem) {
+                    <img [src]="imagens + '/w300' + t.imagem" alt="" class="absolute inset-0 w-full h-full object-cover" />
+                  } @else {
+                    {{ t.i + 1 }}
+                  }
                 } @else {
-                  {{ t.i + 1 }}
+                  {{ rotulosDoPoster[t.i] }}
                 }
-              } @else {
-                {{ rotulosDoPoster[t.i] }}
-              }
-            </button>
-          }
-        </div>
+              </button>
+            }
+          </div>
+        }
 
         @if (!fim()) {
-          <app-palpite
-            [excluir]="palpitesFeitos()"
-            [desabilitado]="enviando()"
-            (chutar)="chutar($event)"
-            (pular)="pular()"></app-palpite>
+          @if (adivinha()) {
+            <div class="w-full max-w-[680px] mx-auto">
+              <app-palpite
+                [modo]="mecanica() === 'pessoa' ? 'pessoa' : 'filme'"
+                [excluir]="palpitesFeitos()"
+                [desabilitado]="enviando()"
+                (chutar)="chutar($event)"
+                (pular)="pular()"></app-palpite>
+            </div>
+          }
         } @else {
-          <div class="flex items-center justify-between gap-3 pl-5 pr-2 py-2 rounded-full bg-[#1a1a1a] text-sm text-white">
+          <div class="w-full max-w-[680px] mx-auto flex items-center justify-between gap-3 pl-5 pr-2 py-2 rounded-full bg-[#1a1a1a] text-sm text-white">
             <span class="min-w-0 truncate">
-              {{ p.status === 'WON' ? jogo.acerto(p.guesses.length) : 'Era ' + (p.answer?.title ?? '') }}
+              @if (jogo.porPlacar) {
+                {{ jogo.acerto(p.score ?? 0) }}
+              } @else if (p.status === 'WON') {
+                {{ jogo.acerto(tentativasUsadasDe(p)) }}
+              } @else if (p.answer) {
+                Era {{ p.answer.title }}
+              } @else {
+                Não foi dessa vez
+              }
             </span>
             <span class="shrink-0 flex gap-2">
               <button
                 type="button"
                 (click)="resultadoAberto.set(true)"
-                class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition duration-300 cursor-pointer">
+                class="px-5 py-2.5 rounded-full bg-[#eca352]/70 hover:bg-[#eca352]/90 text-white text-sm font-medium transition duration-300 cursor-pointer">
                 {{ aleatorio ? 'Resultado' : 'Ver resultado' }}
               </button>
               @if (aleatorio) {
@@ -108,7 +191,7 @@
         }
 
         @if (palpites().length) {
-          <ul class="grid" aria-label="Seus palpites">
+          <ul class="w-full max-w-[680px] mx-auto grid" aria-label="Seus palpites">
             @for (g of palpites(); track g.n) {
               <li class="flex items-center gap-3 py-2.5 border-b border-white/5 text-sm" [class.novo]="g.novo"
                 [class]="g.pulou ? 'text-gray-500' : 'text-gray-300'">
@@ -128,20 +211,19 @@
           </ul>
         }
 
-        @if (resultadoAberto() && p.answer) {
+        @if (resultadoAberto() && fim()) {
           <div
-            class="fixed inset-x-0 bottom-0 top-16 z-40 flex items-center justify-center bg-black/60 px-gutter py-4"
+            class="fixed inset-x-0 bottom-0 top-16 z-40 flex items-end sm:items-center justify-center bg-black/60 sm:px-gutter sm:py-4"
             (click)="$event.target === $event.currentTarget && fecharResultado()">
             <app-resultado
               [info]="jogo"
               [partida]="p"
               [estatisticas]="estatisticas()"
-              [outro]="outro()"
-              [outroFeito]="outroFeito()"
+              [proximo]="proximo()"
               [aleatorio]="aleatorio"
               [sorteando]="estado.sorteando()"
               (fechar)="fecharResultado()"
-              (irParaOutro)="irParaOutro()"
+              (irParaProximo)="irParaProximo()"
               (sortear)="sortearOutro()"></app-resultado>
           </div>
         }
@@ -193,11 +275,15 @@
       } @else {
         <div class="py-16 text-center">
           <p class="text-white font-medium">Sem desafio de {{ jogo.nome }} hoje</p>
-          <p class="mt-1 text-sm text-gray-400">Volte amanhã, ou jogue o outro jogo enquanto isso.</p>
+          <p class="mt-1 text-sm text-gray-400">Volte amanhã, ou jogue outro jogo enquanto isso.</p>
         </div>
       }
     </div>
   </div>
+
+  @if (comoJogarAberto()) {
+    <app-como-jogar [info]="jogo" (fechar)="fecharComoJogar()"></app-como-jogar>
+  }
 
   <!-- as sete faixas cruzam a área do jogo, sem passar pela navbar -->
   @if (varrendo(); as sentido) {

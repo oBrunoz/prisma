@@ -1,0 +1,135 @@
+@switch (kind()) {
+  @case ('FRAMES') {
+    @if (imagem(); as src) {
+      <img [src]="imagens + '/w780' + src" alt="" class="imagem absolute inset-0 w-full h-full object-cover" />
+    }
+  }
+  @case ('POSTER') {
+    @if (imagem(); as src) {
+      <app-poster-listras class="imagem absolute inset-0" [src]="imagens + '/w780' + src" [nivel]="0" recorte="topo"></app-poster-listras>
+    }
+  }
+  @case ('FICHA') {
+    <div class="lista">
+      @for (p of ficha().pistas.slice(0, 4); track $index; let i = $index) {
+        <div class="item" [class.fechada]="!p.valor" [style.--cor]="espectro[i]">
+          <span class="rotulo">{{ p.rotulo }}</span>
+          @if (p.valor) {
+            <b>{{ p.valor }}</b>
+          } @else {
+            <i [style.width]="larguras[i]"></i>
+          }
+        </div>
+      }
+    </div>
+  }
+  @case ('PERSONAGENS') {
+    <div class="lista">
+      @for (p of personagens().personagens.slice(0, 3); track $index; let i = $index) {
+        <div class="item" [class.fechada]="!p.nome" [style.--cor]="espectro[i]">
+          <span class="rotulo">{{ p.posicao }}</span>
+          @if (p.nome) {
+            <b class="grande">{{ p.nome }}</b>
+          } @else {
+            <i [style.width]="larguras[i + 1]"></i>
+          }
+        </div>
+      }
+    </div>
+  }
+  @case ('ASSINATURA') {
+    <div class="lista">
+      @for (f of assinatura().filmes.slice(0, 4); track $index; let i = $index) {
+        <div class="filme" [class.fechada]="!f.title" [style.--cor]="espectro[i]">
+          <span class="poster">
+            @if (f.posterPath) {
+              <img [src]="imagens + '/w92' + f.posterPath" alt="" />
+            }
+          </span>
+          @if (f.title) {
+            <b>{{ f.title }}</b>
+          } @else {
+            <i [style.width]="larguras[i]"></i>
+          }
+          <em>{{ f.year }}</em>
+        </div>
+      }
+    </div>
+  }
+  @case ('CARREIRA') {
+    <div class="lista">
+      @for (f of carreira().ordem.slice(0, 3); track f.tmdbId; let i = $index) {
+        <div class="filme cartao" [class.travado]="f.travado">
+          <span class="pos">{{ i + 1 }}º</span>
+          <span class="poster">
+            @if (f.posterPath) {
+              <img [src]="imagens + '/w92' + f.posterPath" alt="" />
+            }
+          </span>
+          <b>{{ f.title }}</b>
+          <em>{{ f.year ?? '?' }}</em>
+        </div>
+      }
+    </div>
+  }
+  @case ('LETREIRO') {
+    <div class="letreiro">
+      @for (palavra of letreiro(); track $index) {
+        <div>
+          @for (l of palavra; track $index) {
+            <span>{{ l }}</span>
+          }
+        </div>
+      }
+    </div>
+  }
+  @case ('LEGENDA') {
+    <div class="legenda" [style.--n]="legenda().length">
+      @for (r of [0, 1, 2]; track r) {
+        <div>
+          @for (i of legenda(); track i) {
+            <span></span>
+          }
+        </div>
+      }
+    </div>
+  }
+  @case ('DUELO') {
+    @if (duelo(); as d) {
+      <div class="duelo">
+        @for (f of [d.a, d.b]; track f.tmdbId) {
+          <span class="poster">
+            @if (f.posterPath) {
+              <img [src]="imagens + '/w185' + f.posterPath" alt="" />
+            }
+          </span>
+        }
+      </div>
+    }
+  }
+  @case ('LINHA') {
+    <div class="linha">
+      @if (linha().linha[0]; as ancora) {
+        <figure>
+          <span class="poster">
+            @if (ancora.posterPath) {
+              <img [src]="imagens + '/w185' + ancora.posterPath" alt="" />
+            }
+          </span>
+          <figcaption>{{ ancora.year }}</figcaption>
+        </figure>
+      }
+      <span class="vaga" aria-hidden="true"></span>
+      @if (linha().atual; as carta) {
+        <figure class="vez">
+          <span class="poster">
+            @if (carta.posterPath) {
+              <img [src]="imagens + '/w185' + carta.posterPath" alt="" />
+            }
+          </span>
+          <figcaption>?</figcaption>
+        </figure>
+      }
+    </div>
+  }
+}

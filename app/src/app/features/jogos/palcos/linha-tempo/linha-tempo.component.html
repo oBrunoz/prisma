@@ -1,0 +1,98 @@
+<div class="grid grid-cols-[minmax(0,1fr)] gap-4">
+  <div class="w-full max-w-[680px] mx-auto flex items-center gap-4 sm:gap-5 min-h-[138px] sm:min-h-[168px]">
+    @if (conteudo.atual; as carta) {
+      @for (c of [carta]; track c.tmdbId) {
+        <div class="vez w-[92px] sm:w-28 aspect-[2/3] shrink-0 rounded-lg overflow-hidden bg-[#1a1a1a] shadow-2xl shadow-black/50">
+          @if (c.posterPath) {
+            <img [src]="imagens + '/w185' + c.posterPath" alt="" class="w-full h-full object-cover" />
+          }
+        </div>
+        <div class="min-w-0 grid gap-1">
+          <span class="text-xs text-gray-500 tabular-nums">Filme {{ conteudo.resultados.length + 1 }} de {{ conteudo.total }}</span>
+          <h2 class="text-[22px] sm:text-[26px] font-semibold text-white tracking-tight leading-tight text-balance">{{ c.title }}</h2>
+          <p class="text-[13px] text-gray-400">Onde ele entra na linha do tempo?</p>
+        </div>
+      }
+    } @else {
+      <div class="min-w-0 grid gap-1">
+        <span class="text-xs text-gray-500">Linha completa</span>
+        <h2 class="text-[22px] sm:text-[26px] font-semibold text-white tracking-tight leading-tight">{{ acertos() }} de {{ conteudo.total }} no lugar certo</h2>
+        <p class="text-[13px] text-gray-400">Os que caíram fora do lugar estão com o ponto coral.</p>
+      </div>
+    }
+  </div>
+
+  <div class="trilho-wrap relative w-full" [class.treme]="tremendo()" (animationend)="tremendo.set(false)">
+    <div #trilho class="trilho relative flex items-start overflow-x-auto overscroll-x-contain px-1 pt-1.5 pb-3.5" data-lenis-prevent-horizontal>
+      @for (f of conteudo.linha; track f.tmdbId; let i = $index) {
+        @if (conteudo.atual) {
+          <button
+            type="button"
+            class="vaga"
+            [attr.data-vaga]="i"
+            [class.escolhida]="vaga() === i"
+            [attr.aria-pressed]="vaga() === i"
+            [attr.aria-label]="'Encaixar na posição ' + (i + 1)"
+            (click)="escolher(i)">
+            <span class="fantasma">
+              @if (conteudo.atual.posterPath) {
+                <img [src]="imagens + '/w185' + conteudo.atual.posterPath" alt="" />
+              }
+            </span>
+          </button>
+        }
+        <figure class="carta" [attr.data-filme]="f.tmdbId" [class.entra]="nova() === f.tmdbId" [class.errada]="nova() === f.tmdbId && f.ok === false">
+          <div class="w-full aspect-[2/3] rounded-lg overflow-hidden bg-[#1a1a1a]">
+            @if (f.posterPath) {
+              <img [src]="imagens + '/w185' + f.posterPath" [alt]="f.title" [title]="f.title" class="w-full h-full object-cover" />
+            }
+          </div>
+          <figcaption class="ano">
+            @if (f.ok !== null) {
+              <span class="w-2 h-2 shrink-0" [class]="f.ok ? 'bg-[#78C4C4]' : 'bg-[#D85057]'" aria-hidden="true"></span>
+            }
+            {{ f.year }}
+          </figcaption>
+          @if (f.ok === null) {
+            <span class="-mt-1.5 text-[11px] text-gray-500">ponto de partida</span>
+          }
+        </figure>
+      }
+      @if (conteudo.atual) {
+        <button
+          type="button"
+          class="vaga"
+          [attr.data-vaga]="conteudo.linha.length"
+          [class.escolhida]="vaga() === conteudo.linha.length"
+          [attr.aria-pressed]="vaga() === conteudo.linha.length"
+          [attr.aria-label]="'Encaixar na posição ' + (conteudo.linha.length + 1)"
+          (click)="escolher(conteudo.linha.length)">
+          <span class="fantasma">
+            @if (conteudo.atual.posterPath) {
+              <img [src]="imagens + '/w185' + conteudo.atual.posterPath" alt="" />
+            }
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="flex justify-center gap-1" aria-hidden="true">
+    @for (fio of fios(); track $index) {
+      <i class="fio" [class]="fio.estado" [style.background]="fio.cor"></i>
+    }
+  </div>
+
+  @if (conteudo.atual) {
+    <div class="flex flex-col items-center gap-2">
+      <button
+        type="button"
+        (click)="confirmar()"
+        [disabled]="vaga() === null || ocupado"
+        class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 disabled:bg-red-600/35 disabled:text-white/60 disabled:cursor-not-allowed text-white text-sm font-medium transition duration-300 flex items-center cursor-pointer">
+        Encaixar aqui
+      </button>
+      <p class="hidden mouse:block text-xs text-gray-500">Use ← e → para escolher a vaga e Enter para encaixar.</p>
+    </div>
+  }
+</div>

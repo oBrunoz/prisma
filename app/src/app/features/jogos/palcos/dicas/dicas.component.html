@@ -1,0 +1,54 @@
+<div class="w-full max-w-[680px] mx-auto grid gap-2">
+  @if (conteudo.dicas.length) {
+    <ul class="flex flex-wrap justify-center gap-x-4 gap-y-1.5" aria-label="Dicas usadas">
+      @for (d of conteudo.dicas; track $index) {
+        <li class="inline-flex items-center gap-1.5 text-[13px] text-gray-400">
+          <svg lucideLightbulb [size]="14" strokeWidth="2" class="shrink-0 text-[#F3EAD6]"></svg>
+          @if (d.tipo === 'pista') {
+            <span>{{ d.rotulo }}: <b class="font-medium text-white">{{ d.valor }}</b></span>
+          } @else if (d.posicao !== undefined) {
+            <span>{{ d.posicao + 1 }}ª letra: <b class="font-medium text-white">{{ d.valor }}</b></span>
+          } @else {
+            <span>Letra acesa: <b class="font-medium text-white">{{ d.valor }}</b></span>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  @if (conteudo.podeDica) {
+    <div class="flex flex-wrap justify-center items-center gap-2">
+      @if (!aberta()) {
+        <button
+          type="button"
+          (click)="aberta.set(true)"
+          [disabled]="ocupado"
+          class="min-h-11 px-2 inline-flex items-center gap-1.5 text-[13px] text-gray-400 hover:text-white disabled:opacity-50 transition duration-300 cursor-pointer">
+          <svg lucideLightbulb [size]="16" strokeWidth="2"></svg>
+          Dica <span class="text-gray-500 tabular-nums">{{ restam }} de {{ maximo }}</span>
+        </button>
+      } @else {
+        <button
+          type="button"
+          (click)="escolher('letra')"
+          [disabled]="ocupado || !conteudo.letrasRestantes"
+          class="min-h-10 px-3.5 py-2 rounded-full bg-white/10 border border-white/15 hover:bg-white/20 disabled:opacity-40 text-sm text-gray-300 hover:text-white transition duration-300 cursor-pointer">
+          {{ rotuloLetra }}
+        </button>
+        <button
+          type="button"
+          (click)="escolher('pista')"
+          [disabled]="ocupado || !conteudo.pistasRestantes"
+          class="min-h-10 px-3.5 py-2 rounded-full bg-white/10 border border-white/15 hover:bg-white/20 disabled:opacity-40 text-sm text-gray-300 hover:text-white transition duration-300 cursor-pointer">
+          {{ conteudo.pistasRestantes ? 'Ver uma pista' : 'Sem pistas' }}
+        </button>
+        <button
+          type="button"
+          (click)="aberta.set(false)"
+          class="min-h-11 px-2 text-[13px] text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+          Agora não
+        </button>
+      }
+    </div>
+  }
+</div>

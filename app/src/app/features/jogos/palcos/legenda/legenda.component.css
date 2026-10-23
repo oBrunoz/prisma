@@ -1,0 +1,184 @@
+/* as cores da legenda: trechos do espectro, sem o amarelo (que no site é só de nota) */
+:host {
+  --certo: #78c4c4;
+  --lugar: #eca352;
+  --ausente: #2a2a2a;
+}
+
+.grade {
+  max-width: min(100%, calc(var(--n) * 3.5rem));
+}
+
+.linha {
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+}
+
+.casa {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background: #1a1a1a;
+  font-size: clamp(1.15rem, 5.5vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1;
+  color: #ffffff;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.linha.atual .casa {
+  border-color: rgb(255 255 255 / 0.14);
+}
+
+.linha.atual .casa.cheia {
+  border-color: rgb(255 255 255 / 0.45);
+  animation: bate 120ms ease-out;
+}
+
+.linha.atual .casa.cursor {
+  border-color: #f3ead6;
+}
+
+.linha.vazia .casa {
+  background: rgb(255 255 255 / 0.03);
+}
+
+.casa.dada {
+  color: rgb(243 234 214 / 0.4);
+  border-style: dashed;
+}
+
+.casa.certo {
+  background: var(--certo);
+  color: #111111;
+}
+
+.casa.lugar {
+  background: var(--lugar);
+  color: #111111;
+}
+
+.casa.ausente {
+  background: var(--ausente);
+  color: #9ca3af;
+}
+
+.linha.vira .casa {
+  animation: vira 500ms ease both;
+  animation-delay: calc(var(--k) * 110ms);
+}
+
+.linha.treme {
+  animation: treme 380ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.aviso {
+  animation: aparece 2.2s ease both;
+}
+
+/* teclado: alvo de toque com 52px de altura */
+.tecla {
+  flex: 1;
+  max-width: 2.875rem;
+  height: 3.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.12);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 300ms;
+}
+
+.tecla:hover {
+  background: rgb(255 255 255 / 0.2);
+}
+
+.tecla.larga {
+  flex: 1.6;
+  max-width: 4.75rem;
+  font-size: 12px;
+  text-transform: none;
+}
+
+.tecla.certo {
+  background: var(--certo);
+  color: #111111;
+}
+
+.tecla.lugar {
+  background: var(--lugar);
+  color: #111111;
+}
+
+.tecla.ausente {
+  background: var(--ausente);
+  color: #6b7280;
+}
+
+@keyframes bate {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes vira {
+  0% {
+    transform: rotateX(0);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+@keyframes treme {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+@keyframes aparece {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  12%,
+  85% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linha.vira .casa,
+  .linha.treme,
+  .linha.atual .casa.cheia,
+  .aviso {
+    animation: none;
+  }
+}

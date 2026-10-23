@@ -1,0 +1,64 @@
+<div class="grid grid-cols-[minmax(0,1fr)] gap-4">
+  <div class="grade w-full mx-auto grid gap-1.5" [style.--n]="conteudo.tamanho" role="grid" aria-label="Suas palavras">
+    @for (linha of linhas(); track $index; let r = $index) {
+      <div
+        class="linha grid gap-1.5"
+        role="row"
+        [class.atual]="linha.tipo === 'atual'"
+        [class.vazia]="linha.tipo === 'vazia'"
+        [class.vira]="virando() === r"
+        [class.treme]="linha.tipo === 'atual' && tremendo()"
+        (animationend)="tremendo.set(false)">
+        @for (casa of linha.casas; track $index; let i = $index) {
+          <span
+            class="casa"
+            role="gridcell"
+            [class.certo]="casa.cor === 'certo'"
+            [class.lugar]="casa.cor === 'lugar'"
+            [class.ausente]="casa.cor === 'ausente'"
+            [class.cheia]="casa.cheia"
+            [class.dada]="casa.dada"
+            [class.cursor]="casa.cursor"
+            [style.--k]="i">{{ casa.l }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <p class="min-h-5 text-center text-[13px] text-gray-400" aria-live="polite">
+    @if (aviso(); as a) {
+      @for (x of [a.vez]; track x) {
+        <span class="aviso inline-block">{{ a.texto }}</span>
+      }
+    }
+  </p>
+
+  @if (!fim) {
+    <app-dicas [conteudo]="conteudo" [ocupado]="ocupado" rotuloLetra="Mostrar uma letra" (pedir)="dica.emit($event)"></app-dicas>
+
+    <div class="w-full max-w-[520px] mx-auto grid gap-1.5 select-none" aria-label="Teclado">
+      @for (fileira of teclas; track fileira; let f = $index) {
+        <div class="flex justify-center gap-[5px]">
+          @if (f === 2) {
+            <button type="button" class="tecla larga" (mousedown)="semFoco($event)" (click)="enviar()" [disabled]="ocupado">Enter</button>
+          }
+          @for (k of fileira; track k) {
+            <button
+              type="button"
+              class="tecla"
+              [class.certo]="cores()[k] === 'certo'"
+              [class.lugar]="cores()[k] === 'lugar'"
+              [class.ausente]="cores()[k] === 'ausente'"
+              (mousedown)="semFoco($event)"
+              (click)="tecla(k)">{{ k }}</button>
+          }
+          @if (f === 2) {
+            <button type="button" class="tecla larga" aria-label="Apagar" (mousedown)="semFoco($event)" (click)="apagar()">
+              <svg lucideDelete [size]="20" strokeWidth="2"></svg>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

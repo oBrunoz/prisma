@@ -1,0 +1,105 @@
+.lado {
+  transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.lado:disabled {
+  cursor: default;
+}
+
+.lado:not(:disabled) {
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lado:not(:disabled):hover {
+    transform: translateY(-4px);
+  }
+
+  .lado:not(:disabled):hover .capa {
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.5);
+  }
+}
+
+.capa {
+  transition:
+    box-shadow 300ms,
+    opacity 400ms,
+    filter 400ms;
+}
+
+.lado.escolhido .capa {
+  box-shadow: 0 0 0 3px #ffffff;
+}
+
+.lado.perde .capa {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+
+.nota {
+  animation: nota 350ms ease-out both;
+}
+
+/* um fio por duelo: aceso no acerto, apagado no erro */
+.fio {
+  display: block;
+  width: 1.375rem;
+  height: 4px;
+  opacity: 0.35;
+  transition: opacity 400ms;
+}
+
+.fio.ok {
+  opacity: 1;
+}
+
+.fio.erro {
+  opacity: 0.14;
+}
+
+.fio.atual {
+  opacity: 1;
+  transform: scaleY(1.6);
+}
+
+.duelo.treme {
+  animation: treme 380ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes nota {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes treme {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nota,
+  .duelo.treme {
+    animation: none;
+  }
+}

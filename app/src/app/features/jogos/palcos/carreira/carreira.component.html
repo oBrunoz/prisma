@@ -1,0 +1,79 @@
+<div class="grid grid-cols-[minmax(0,1fr)] gap-4">
+  <div class="text-center grid gap-0.5">
+    <h2 class="text-[22px] font-semibold text-white tracking-tight">{{ conteudo.pessoa.name }}</h2>
+    <p class="text-[13px] text-gray-400">Do primeiro filme ao mais recente</p>
+  </div>
+
+  <ol class="w-full max-w-[560px] mx-auto grid gap-1.5" [class.treme]="tremendo()" (animationend)="tremendo.set(false)">
+    @for (f of linhas(); track f.tmdbId) {
+      <li
+        class="linha"
+        [style.--cor]="espectro[f.i]"
+        [class.travado]="f.travado"
+        [class.errou]="f.errou"
+        [class.trava]="f.travou"
+        [class.moveu]="moveu() === f.tmdbId">
+        <span class="font-mono text-[13px] tabular-nums" [class]="f.travado ? 'text-[#78C4C4]' : 'text-gray-500'">{{ f.i + 1 }}º</span>
+        <div class="w-10 aspect-[2/3] rounded overflow-hidden bg-white/5">
+          @if (f.posterPath) {
+            <img [src]="imagens + '/w92' + f.posterPath" alt="" class="w-full h-full object-cover" />
+          }
+        </div>
+        <span class="min-w-0">
+          <span class="block truncate text-[15px] font-medium text-white">{{ f.title }}</span>
+          @if (f.year !== null) {
+            <small class="block font-mono text-xs font-medium tabular-nums" [class]="f.foraDoLugar ? 'text-[#D85057]' : 'text-[#78C4C4]'">{{ f.year }}</small>
+          }
+        </span>
+        @if (fim) {
+          <span></span>
+        } @else if (f.travado) {
+          <span class="pr-2.5 inline-flex items-center gap-1 text-xs text-[#78C4C4]">
+            <svg lucideLock [size]="13" strokeWidth="2"></svg>
+            No lugar
+          </span>
+        } @else {
+          <span class="flex gap-0.5">
+            <button
+              type="button"
+              data-passo="-1"
+              class="seta"
+              [disabled]="!f.sobe || ocupado"
+              [attr.aria-label]="'Subir ' + f.title"
+              (click)="mover(f.i, -1, $event)">
+              <svg lucideChevronUp [size]="18" strokeWidth="2"></svg>
+            </button>
+            <button
+              type="button"
+              data-passo="1"
+              class="seta"
+              [disabled]="!f.desce || ocupado"
+              [attr.aria-label]="'Descer ' + f.title"
+              (click)="mover(f.i, 1, $event)">
+              <svg lucideChevronDown [size]="18" strokeWidth="2"></svg>
+            </button>
+          </span>
+        }
+      </li>
+    }
+  </ol>
+
+  <div class="flex justify-center gap-1" aria-hidden="true">
+    @for (fio of fios(); track $index) {
+      <i class="fio" [class]="fio.estado" [style.background]="fio.cor"></i>
+    }
+  </div>
+
+  @if (!fim) {
+    <div class="flex flex-col items-center gap-1.5">
+      <button
+        type="button"
+        (click)="enviar()"
+        [disabled]="ocupado"
+        class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 disabled:bg-red-600/35 disabled:text-white/60 text-white text-sm font-medium transition duration-300 flex items-center cursor-pointer">
+        Conferir ordem
+      </button>
+      <p class="text-xs text-gray-500 tabular-nums">{{ restam() }} {{ restam() === 1 ? 'conferida' : 'conferidas' }}</p>
+    </div>
+  }
+</div>

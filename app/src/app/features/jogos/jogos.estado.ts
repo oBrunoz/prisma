@@ -25,7 +25,7 @@ export class JogosEstado implements OnDestroy {
   readonly sorteadas = signal<Partial<Record<TipoJogo, Partida>>>({});
   readonly sorteando = signal(false);
   readonly erroDoSorteio = signal<string | null>(null);
-  private readonly jaSorteados: Record<TipoJogo, string[]> = { FRAMES: [], POSTER: [] };
+  private readonly jaSorteados: Partial<Record<TipoJogo, string[]>> = {};
 
   readonly numerosDeHoje = computed(() => {
     const numeros: Partial<Record<TipoJogo, number>> = {};
@@ -64,12 +64,12 @@ export class JogosEstado implements OnDestroy {
     this.sorteando.set(true);
     this.erroDoSorteio.set(null);
     this.jogos
-      .sortear(tipo, this.jaSorteados[tipo])
+      .sortear(tipo, this.jaSorteados[tipo] ?? [])
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ challenge, repeated }) => {
           this.sorteando.set(false);
-          const lista = this.jaSorteados[tipo].filter((id) => id !== challenge.id);
+          const lista = (this.jaSorteados[tipo] ?? []).filter((id) => id !== challenge.id);
           this.jaSorteados[tipo] = [...lista, challenge.id].slice(-LEMBRAR_SORTEADOS);
           this.sorteadas.update((s) => ({ ...s, [tipo]: challenge }));
           if (repeated) {

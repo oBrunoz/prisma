@@ -1,0 +1,25 @@
+<article class="w-full max-w-[680px] mx-auto rounded-2xl bg-[#1a1a1a] overflow-hidden shadow-2xl shadow-black/40">
+  <header class="flex justify-between items-baseline gap-3 px-5 pt-4 pb-3.5 border-b-2 border-dashed border-white/[0.08]">
+    <h2 class="text-[15px] font-semibold text-white">Filmografia</h2>
+    <span class="font-mono text-xs text-gray-500">do menos ao mais conhecido</span>
+  </header>
+  <ol class="py-1.5">
+    @for (f of conteudo.filmes; track $index; let i = $index) {
+      <li class="linha" [style.--cor]="espectro[i]" [class.aberta]="f.title !== null" [class.abre]="abrindo().has(i)">
+        <div class="capa w-11 aspect-[2/3] rounded overflow-hidden bg-white/5">
+          @if (f.posterPath) {
+            <img [src]="imagens + '/w92' + f.posterPath" alt="" class="w-full h-full object-cover" />
+          }
+        </div>
+        <div class="min-w-0">
+          @if (f.title !== null) {
+            <span class="titulo block truncate text-base font-medium text-white">{{ f.title }}</span>
+          } @else {
+            <i class="block h-3.5 max-w-full rounded-[3px] bg-white/[0.07]" [style.width]="larguras[i]" aria-label="Filme fechado"></i>
+          }
+        </div>
+        <span class="font-mono text-[13px] tabular-nums" [class]="f.title !== null ? 'text-gray-400' : 'text-gray-600'">{{ f.year }}</span>
+      </li>
+    }
+  </ol>
+</article>

@@ -1,0 +1,56 @@
+@if (duelo(); as d) {
+  <div class="grid grid-cols-[minmax(0,1fr)] gap-5">
+    <div class="text-center grid gap-1">
+      <h2 class="text-xl font-semibold text-white tracking-tight">Qual tem a nota maior?</h2>
+      <p class="text-[13px] text-gray-400 tabular-nums">Duelo {{ vendo() + 1 }} de {{ conteudo.total }}</p>
+    </div>
+
+    <div class="duelo w-full max-w-[520px] mx-auto grid grid-cols-2 gap-3.5 sm:gap-7" [class.treme]="tremendo()" (animationend)="tremendo.set(false)">
+      @for (f of [d.a, d.b]; track f.tmdbId) {
+        <button
+          type="button"
+          class="lado group relative grid gap-2.5 text-left rounded-xl"
+          [disabled]="d.escolhido !== null || ocupado"
+          (click)="tocar(f)"
+          [class.escolhido]="d.escolhido === f.tmdbId"
+          [class.perde]="maior() !== null && maior() !== f.tmdbId"
+          [attr.aria-label]="f.title + ', ' + f.year + (f.nota !== null ? ', nota ' + f.nota.toFixed(1) : '')">
+          <div class="capa relative aspect-[2/3] rounded-lg overflow-hidden bg-[#1a1a1a] shadow-2xl shadow-black/50">
+            @if (f.posterPath) {
+              <img [src]="imagens + '/w342' + f.posterPath" alt="" class="w-full h-full object-cover" />
+            }
+            @if (f.nota !== null) {
+              <span class="nota absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-yellow-500/20 backdrop-blur-sm text-yellow-400 text-[13px] font-semibold tabular-nums">
+                <svg lucideStar [size]="13" strokeWidth="2" class="fill-current"></svg>
+                {{ f.nota.toFixed(1).replace('.', ',') }}
+              </span>
+            }
+          </div>
+          <span class="min-w-0 text-sm font-medium text-white leading-snug line-clamp-2">
+            {{ f.title }} <span class="text-gray-500 font-normal tabular-nums">{{ f.year }}</span>
+          </span>
+        </button>
+      }
+    </div>
+
+    <div class="flex justify-center gap-1" aria-hidden="true">
+      @for (fio of fios(); track $index) {
+        <i class="fio" [class]="fio.estado" [style.background]="fio.cor"></i>
+      }
+    </div>
+
+    <div class="min-h-11 flex justify-center">
+      @if (temProximo()) {
+        <button
+          type="button"
+          (click)="proximo()"
+          class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition duration-300 flex items-center gap-2 cursor-pointer">
+          Próximo duelo
+          <svg lucideArrowRight [size]="16" strokeWidth="2"></svg>
+        </button>
+      }
+    </div>
+
+    <p class="text-center text-xs text-gray-500">A nota é a da TMDB, guardada no dia do desafio.</p>
+  </div>
+}

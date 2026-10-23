@@ -1,0 +1,219 @@
+/* a carta: 76px no celular, 96px a partir do sm; a vaga tem a altura do pôster */
+:host {
+  --larg: 4.75rem;
+  --alt: calc(var(--larg) * 1.5);
+}
+
+@media (min-width: 640px) {
+  :host {
+    --larg: 6rem;
+  }
+}
+
+.trilho {
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.15) transparent;
+}
+
+/* sem rolagem, a linha fica no meio */
+.trilho > :first-child {
+  margin-left: auto;
+}
+
+.trilho > :last-child {
+  margin-right: auto;
+}
+
+/* a régua: um fio entre o pôster e o ano */
+.trilho-wrap::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(0.375rem + var(--alt) + 0.25rem);
+  height: 1px;
+  background: rgb(255 255 255 / 0.1);
+  pointer-events: none;
+}
+
+.carta {
+  flex: none;
+  width: var(--larg);
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  scroll-snap-align: center;
+}
+
+.ano {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  font-size: 13px;
+  color: #d1d5db;
+  font-variant-numeric: tabular-nums;
+}
+
+.carta.entra {
+  animation: encaixa 550ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.carta.errada > div {
+  animation: erro-carta 1.4s ease-out both;
+}
+
+.vaga {
+  flex: none;
+  position: relative;
+  width: 2.75rem;
+  height: var(--alt);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: width 350ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.vaga::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 50%;
+  border-left: 1px dashed rgb(255 255 255 / 0.18);
+  transition:
+    opacity 300ms,
+    border-color 300ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .vaga:hover::before {
+    border-color: rgb(255 255 255 / 0.45);
+  }
+}
+
+.fantasma {
+  position: absolute;
+  inset: 0 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.9);
+  outline: 2px solid #ffffff;
+  outline-offset: -2px;
+  transition:
+    opacity 300ms,
+    transform 350ms;
+}
+
+.fantasma img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+}
+
+.vaga.escolhida {
+  width: calc(var(--larg) + 1rem);
+}
+
+.vaga.escolhida::before {
+  opacity: 0;
+}
+
+.vaga.escolhida .fantasma {
+  opacity: 1;
+  transform: none;
+}
+
+.vez {
+  animation: carta-entra 500ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.fio {
+  display: block;
+  width: 1.375rem;
+  height: 4px;
+  opacity: 0.35;
+  transition: opacity 400ms;
+}
+
+.fio.ok {
+  opacity: 1;
+}
+
+.fio.erro {
+  opacity: 0.14;
+}
+
+.fio.atual {
+  opacity: 1;
+  transform: scaleY(1.6);
+}
+
+.trilho-wrap.treme {
+  animation: treme 380ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes encaixa {
+  from {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes erro-carta {
+  0%,
+  40% {
+    box-shadow: 0 0 0 3px #d85057;
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgb(216 80 87 / 0);
+  }
+}
+
+@keyframes carta-entra {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) rotate(-3deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes treme {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carta.entra,
+  .carta.errada > div,
+  .vez,
+  .trilho-wrap.treme {
+    animation: none;
+  }
+}

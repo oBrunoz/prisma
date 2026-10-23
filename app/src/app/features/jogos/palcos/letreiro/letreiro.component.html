@@ -1,0 +1,16 @@
+<div class="letreiro w-full max-w-[760px] mx-auto rounded-2xl bg-[#0d0d0d] px-4 sm:px-7 pt-6 sm:pt-8 pb-5 grid gap-5 shadow-2xl shadow-black/40" [style.--n]="maior()">
+  <div class="flex flex-wrap justify-center gap-x-5 gap-y-3" role="img" [attr.aria-label]="'Título com ' + resumo()">
+    @for (palavra of palavras(); track $index) {
+      <div class="flex gap-1">
+        @for (casa of palavra; track casa.i) {
+          @if (casa.letra) {
+            <span class="casa" [class.apagada]="!casa.c" [class.acende]="acendendo().has(casa.i)" [style.--cor]="casa.cor">{{ casa.c }}</span>
+          } @else {
+            <span class="sinal">{{ casa.c }}</span>
+          }
+        }
+      </div>
+    }
+  </div>
+  <p class="text-center text-[13px] text-gray-400 tabular-nums">{{ resumo() }}</p>
+</div>
