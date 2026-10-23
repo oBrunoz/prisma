@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { LucideCheck, LucideInfo, LucideTriangleAlert, LucideX } from '@lucide/angular';
+import { LucideCheck, LucideHeart, LucideInfo, LucideTriangleAlert, LucideX } from '@lucide/angular';
 import { ESPECTRO } from '../../../core/models/espectro';
 import { AcaoToast, COR_DO_TIPO, TipoToast, Toast, ZONA_DO_TIPO } from '../../../core/models/toast.models';
 import { ToastService } from '../../../core/services/toast.service';
@@ -10,7 +10,7 @@ const RECOLHER_MS = 300;
 @Component({
   selector: 'app-toast-roll',
   standalone: true,
-  imports: [LucideCheck, LucideInfo, LucideTriangleAlert, LucideX],
+  imports: [LucideCheck, LucideHeart, LucideInfo, LucideTriangleAlert, LucideX],
   templateUrl: './toast-roll.component.html',
   styleUrls: ['./toast-roll.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

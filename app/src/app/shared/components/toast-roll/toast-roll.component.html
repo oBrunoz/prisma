@@ -24,18 +24,22 @@
           <div class="corpo">
             <div class="flex-1 min-w-0">
               <p class="flex items-center gap-2 text-sm font-medium" [style.color]="corDoTipo[t.tipo]">
-                @switch (t.tipo) {
-                  @case ('sucesso') {
-                    <svg lucideCheck [size]="16" strokeWidth="2.4" class="shrink-0"></svg>
-                  }
-                  @case ('info') {
-                    <svg lucideInfo [size]="16" strokeWidth="2.2" class="shrink-0"></svg>
-                  }
-                  @case ('aviso') {
-                    <svg lucideTriangleAlert [size]="16" strokeWidth="2.2" class="shrink-0"></svg>
-                  }
-                  @case ('erro') {
-                    <span class="ponto" aria-hidden="true"></span>
+                @if (t.icone === 'coracao') {
+                  <svg lucideHeart [size]="16" strokeWidth="2.2" fill="currentColor" class="shrink-0"></svg>
+                } @else {
+                  @switch (t.tipo) {
+                    @case ('sucesso') {
+                      <svg lucideCheck [size]="16" strokeWidth="2.4" class="shrink-0"></svg>
+                    }
+                    @case ('info') {
+                      <svg lucideInfo [size]="16" strokeWidth="2.2" class="shrink-0"></svg>
+                    }
+                    @case ('aviso') {
+                      <svg lucideTriangleAlert [size]="16" strokeWidth="2.2" class="shrink-0"></svg>
+                    }
+                    @case ('erro') {
+                      <span class="ponto" aria-hidden="true"></span>
+                    }
                   }
                 }
                 <span class="text-white">{{ t.titulo }}</span>

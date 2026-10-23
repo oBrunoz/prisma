@@ -14,6 +14,7 @@ export interface OpcoesToast {
   acaoSecundaria?: AcaoToast;
   // avisos com a mesma chave se substituem em vez de empilhar
   chave?: string;
+  icone?: 'coracao';
   // chamado uma vez quando o aviso começa a sair, por tempo, X, ação ou limite
   aoFechar?: () => void;
 }
