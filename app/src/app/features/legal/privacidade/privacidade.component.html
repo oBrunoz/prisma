@@ -1,8 +1,9 @@
 <app-pagina-legal
   titulo="Política de privacidade"
   rota="/privacidade"
+  [apoio]="apoio"
   [secoes]="secoes"
-  [outra]="{ rota: '/termos', rotulo: 'Termos de uso' }">
+  [outras]="outras">
 
   <section id="quem-somos">
     <h2>Quem somos</h2>
@@ -12,9 +13,8 @@
     </p>
     <p>
       Esta política explica quais dados pessoais tratamos, por que e o que você pode fazer com eles,
-      de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018). O controlador dos
-      dados é <strong>{{ controlador }}</strong>. Para qualquer assunto sobre os seus dados, o canal
-      é o e-mail <a [href]="'mailto:' + email">{{ email }}</a>.
+      de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018). Quase tudo sobre os
+      seus dados você resolve sozinho, no próprio site (veja "Seus direitos", mais abaixo).
     </p>
   </section>
 
@@ -193,8 +193,9 @@
         (uma avaliação, a foto, um título da watchlist, um seguir) sai do banco na hora.
       </li>
       <li>
-        <strong>Ao excluir a conta:</strong> apagamos o perfil, a foto, as avaliações, o diário, a
-        watchlist, os favoritos, as relações de seguir, as partidas e as sessões.
+        <strong>Ao excluir a conta</strong> (em Configurações › Conta): o perfil, a foto, as
+        avaliações, o diário, a watchlist, os favoritos, as relações de seguir, as partidas e as
+        sessões saem do banco na hora.
       </li>
       <li>
         <strong>Sessões:</strong> cada uma vale até 30 dias. Os registros de sessões vencidas ou
@@ -235,37 +236,39 @@
     </ul>
     <p>
       Nenhum sistema é infalível. Se acontecer um incidente de segurança que possa trazer risco ou
-      dano relevante, avisaremos você e a Autoridade Nacional de Proteção de Dados (ANPD), como pede
-      o art. 48 da LGPD.
+      dano relevante, avisaremos no site e à Autoridade Nacional de Proteção de Dados (ANPD), como
+      pede o art. 48 da LGPD.
     </p>
   </section>
 
   <section id="direitos">
     <h2>Seus direitos</h2>
-    <p>Pelo art. 18 da LGPD, você pode pedir a qualquer momento:</p>
+    <p>
+      A LGPD (art. 18) garante acesso, correção, portabilidade e eliminação dos seus dados, entre
+      outros direitos. No Prisma você exerce esses direitos sozinho, na hora, sem precisar pedir a
+      ninguém:
+    </p>
     <ul>
-      <li>confirmação de que tratamos dados seus e acesso a eles;</li>
-      <li>correção de dados incompletos, inexatos ou desatualizados;</li>
-      <li>anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desacordo com a lei;</li>
-      <li>portabilidade dos seus dados para outro serviço;</li>
-      <li>eliminação dos seus dados e da conta;</li>
-      <li>informação sobre com quem compartilhamos os dados;</li>
-      <li>oposição a um tratamento que considere irregular.</li>
+      <li>
+        <strong>Ver e corrigir:</strong> nome, foto, bio, favoritos e capa em
+        <a routerLink="/configuracoes/perfil">Configurações › Perfil</a>; e-mail, senha e sessões em
+        <a routerLink="/configuracoes/conta">Configurações › Conta</a>. Avaliações, watchlist e quem
+        você segue se desfazem nas próprias páginas.
+      </li>
+      <li>
+        <strong>Receber uma cópia:</strong> em Configurações › Conta › Seus dados, um arquivo com tudo
+        que guardamos de você, num formato que outro serviço consegue ler.
+      </li>
+      <li>
+        <strong>Apagar tudo:</strong> em Configurações › Conta › Excluir conta. A exclusão é imediata
+        e definitiva.
+      </li>
+      <li>
+        <strong>Saber com quem compartilhamos:</strong> está em "Com quem compartilhamos", acima.
+      </li>
     </ul>
     <p>
-      Muita coisa você faz sozinho: nome, foto, bio, favoritos e capa ficam em
-      <a routerLink="/configuracoes/perfil">Configurações › Perfil</a>; e-mail, senha e sessões em
-      <a routerLink="/configuracoes/conta">Configurações › Conta</a>; avaliações, watchlist e quem
-      você segue se desfazem nas próprias páginas.
-    </p>
-    <p>
-      Para o resto, como receber uma cópia dos seus dados, escreva para
-      <a [href]="'mailto:' + email">{{ email }}</a> a partir do e-mail da conta. Ainda não há botão
-      para excluir a conta no site: a exclusão é feita por esse mesmo e-mail. Confirmamos que o pedido
-      é seu e respondemos em até 15 dias.
-    </p>
-    <p>
-      Se achar que não resolvemos, você também pode reclamar à ANPD
+      Se mesmo assim achar que algo não foi respeitado, você pode reclamar à ANPD
       (<a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer">gov.br/anpd</a>).
     </p>
   </section>
@@ -275,8 +278,8 @@
     <p>
       O Prisma não é feito para menores de 13 anos, que não devem criar conta. Entre 13 e 18 anos, o
       uso deve ter o conhecimento e a autorização dos pais ou responsáveis, conforme o art. 14 da LGPD
-      e o Estatuto da Criança e do Adolescente. Se você é responsável e acredita que uma criança criou
-      uma conta, escreva para <a [href]="'mailto:' + email">{{ email }}</a> e ela será removida.
+      e o Estatuto da Criança e do Adolescente. Contas de menores de 13 anos que chegarem ao nosso
+      conhecimento serão removidas.
     </p>
   </section>
 
@@ -284,17 +287,15 @@
     <h2>Mudanças nesta política</h2>
     <p>
       Esta política muda quando o Prisma muda. A data no topo indica a versão em vigor. Mudanças
-      relevantes, como um novo tipo de dado ou um novo parceiro, serão avisadas no site ou por e-mail
-      antes de valer.
+      relevantes, como um novo tipo de dado ou um novo parceiro, serão avisadas no site antes de valer.
     </p>
   </section>
 
   <section id="contato">
     <h2>Contato</h2>
     <p>
-      Dúvidas, pedidos ou reclamações sobre privacidade:
+      Só para o que não der para resolver pelo próprio site:
       <a [href]="'mailto:' + email">{{ email }}</a>.
     </p>
-    <p>Controlador: {{ controlador }}.</p>
   </section>
 </app-pagina-legal>

@@ -1,8 +1,8 @@
-import { Component, afterNextRender, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, NgZone, afterNextRender, computed, inject, input, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LucideChevronDown } from '@lucide/angular';
 import { SmoothScrollService } from '../../../core/services/smooth-scroll.service';
-import { ATUALIZADO_EM, SecaoLegal } from '../legal.config';
+import { OutraPagina, SecaoLegal } from '../legal.config';
 
 // a moldura de leitura das páginas legais: título, data, índice e o texto projetado
 @Component({
@@ -17,16 +17,53 @@ export class PaginaLegalComponent {
   readonly titulo = input.required<string>();
   readonly rota = input.required<string>();
   readonly secoes = input.required<SecaoLegal[]>();
-  readonly outra = input.required<{ rota: string; rotulo: string }>();
+  readonly outras = input.required<OutraPagina[]>();
+  // linha embaixo do título: a data da versão nas páginas legais
+  readonly apoio = input('');
 
-  readonly atualizadoEm = ATUALIZADO_EM;
   readonly indiceAberto = signal(false);
+  // a seção que está na tela; o índice acende ela
+  readonly atual = signal('');
+  readonly tituloAtual = computed(() => this.secoes().find((s) => s.id === this.atual())?.titulo ?? '');
+
+  // depois de um clique no índice, a escolhida fica marcada até a pessoa rolar com a mão:
+  // seção curta no fim da página nunca chega à linha e o índice acenderia a vizinha
+  private escolhida = '';
 
   constructor() {
+    const zone = inject(NgZone);
+    const destroyRef = inject(DestroyRef);
+
     // link com #secao: salto nativo, porque o Lenis ainda não mediu a página nova
     afterNextRender(() => {
       const id = decodeURIComponent(window.location.hash.slice(1));
       if (id) requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
+
+      let quadro = 0;
+      const medir = () => {
+        quadro = 0;
+        this.atual.set(this.escolhida || this.secaoNaTela());
+      };
+      const aoRolar = () => (quadro ||= requestAnimationFrame(medir));
+      const soltar = () => (this.escolhida = '');
+
+      zone.runOutsideAngular(() => {
+        window.addEventListener('scroll', aoRolar, { passive: true });
+        window.addEventListener('resize', aoRolar, { passive: true });
+        for (const gesto of ['wheel', 'touchmove', 'keydown'] as const) {
+          window.addEventListener(gesto, soltar, { passive: true });
+        }
+      });
+      medir();
+
+      destroyRef.onDestroy(() => {
+        cancelAnimationFrame(quadro);
+        window.removeEventListener('scroll', aoRolar);
+        window.removeEventListener('resize', aoRolar);
+        for (const gesto of ['wheel', 'touchmove', 'keydown'] as const) {
+          window.removeEventListener(gesto, soltar);
+        }
+      });
     });
   }
 
@@ -35,8 +72,26 @@ export class PaginaLegalComponent {
     const alvo = document.getElementById(id);
     if (!alvo) return;
     evento.preventDefault();
+    this.escolhida = id;
+    this.atual.set(id);
     this.indiceAberto.set(false);
     // espera o índice recolher no celular, senão o alvo sobe depois de medido
     requestAnimationFrame(() => this.scroll.scrollTo(alvo, -16));
+  }
+
+  // a última seção que já passou da linha de leitura (um terço da tela); no fim da página, a última
+  private secaoNaTela(): string {
+    const secoes = this.secoes();
+    const fim = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    if (fim) return secoes.at(-1)?.id ?? '';
+
+    const linha = Math.max(160, window.innerHeight / 3);
+    let atual = '';
+    for (const { id } of secoes) {
+      const topo = document.getElementById(id)?.getBoundingClientRect().top;
+      if (topo === undefined || topo > linha) break;
+      atual = id;
+    }
+    return atual;
   }
 }

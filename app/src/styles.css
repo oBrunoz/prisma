@@ -73,6 +73,10 @@
   .texto-legal {
     @apply text-base text-gray-300 leading-relaxed break-words;
   }
+  /* no celular o índice fica preso embaixo da navbar e cobriria o título da seção */
+  .texto-legal section {
+    @apply scroll-mt-16 lg:scroll-mt-0;
+  }
   .texto-legal section + section {
     @apply mt-12 sm:mt-14;
   }

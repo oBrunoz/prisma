@@ -1,15 +1,16 @@
 <app-pagina-legal
   titulo="Termos de uso"
   rota="/termos"
+  [apoio]="apoio"
   [secoes]="secoes"
-  [outra]="{ rota: '/privacidade', rotulo: 'Política de privacidade' }">
+  [outras]="outras">
 
   <section id="aceitacao">
     <h2>Aceitação</h2>
     <p>
       O Prisma é um catálogo gratuito de filmes e séries em que você registra o que assistiu, avalia,
-      monta sua watchlist, segue outras pessoas e joga desafios diários. Ele é mantido por
-      <strong>{{ controlador }}</strong>.
+      monta sua watchlist, segue outras pessoas e joga desafios diários. É um projeto independente,
+      sem anúncios.
     </p>
     <p>
       Ao criar uma conta ou usar o Prisma, você concorda com estes termos e com a
@@ -57,10 +58,7 @@
     <p>
       Seja gentil com quem ainda não assistiu: se a resenha conta o final, avise no começo do texto.
     </p>
-    <p>
-      Podemos remover conteúdo que desrespeite estes termos. Se encontrar algo assim, escreva para
-      <a [href]="'mailto:' + email">{{ email }}</a>.
-    </p>
+    <p>Podemos remover, sem aviso, conteúdo que desrespeite estes termos.</p>
   </section>
 
   <section id="conduta">
@@ -73,10 +71,6 @@
       <li>tentar entrar na conta de outra pessoa ou descobrir senhas;</li>
       <li>atacar, sobrecarregar ou explorar falhas do serviço.</li>
     </ul>
-    <p>
-      Achou uma falha de segurança? Conte para nós em <a [href]="'mailto:' + email">{{ email }}</a>
-      antes de divulgar, e sem acessar dados de outras pessoas.
-    </p>
   </section>
 
   <section id="jogos">
@@ -126,14 +120,13 @@
   <section id="encerramento">
     <h2>Suspensão e encerramento</h2>
     <p>
-      Você pode parar de usar o Prisma quando quiser e pedir a exclusão da conta pelo e-mail
-      <a [href]="'mailto:' + email">{{ email }}</a>.
+      Você pode parar de usar o Prisma quando quiser. Para apagar a conta e tudo que registrou, use
+      <a routerLink="/configuracoes/conta">Configurações › Conta › Excluir conta</a>; lá também dá para
+      baixar uma cópia dos seus dados antes.
     </p>
     <p>
-      Podemos suspender ou encerrar contas que desrespeitem estes termos. Sempre que possível, avisamos
-      antes e explicamos o motivo; em casos graves, como ataque ao serviço ou conteúdo ilegal, a
-      suspensão pode ser imediata. Se um dia o Prisma for encerrado, avisaremos com antecedência para
-      que você possa pedir uma cópia dos seus dados.
+      Podemos suspender ou encerrar, sem aviso prévio, contas que desrespeitem estes termos. Se um dia
+      o Prisma for encerrado, avisaremos no site com antecedência, para dar tempo de baixar seus dados.
     </p>
   </section>
 
@@ -141,7 +134,7 @@
     <h2>Mudanças nestes termos</h2>
     <p>
       Estes termos podem mudar. A data no topo indica a versão em vigor, e mudanças relevantes serão
-      avisadas no site ou por e-mail antes de valer. Continuar usando o Prisma depois disso significa
+      avisadas no site antes de valer. Continuar usando o Prisma depois disso significa
       aceitar a versão nova; se não concordar, você pode encerrar a conta.
     </p>
   </section>
@@ -149,17 +142,8 @@
   <section id="lei">
     <h2>Lei aplicável e foro</h2>
     <p>
-      Estes termos seguem as leis do Brasil. Antes de qualquer outra medida, procure a gente: a maior
-      parte das coisas se resolve por e-mail. Se não der, vale o foro da cidade onde você mora, como
-      garante o Código de Defesa do Consumidor.
+      Estes termos seguem as leis do Brasil. Vale o foro da cidade onde você mora, como garante o
+      Código de Defesa do Consumidor.
     </p>
-  </section>
-
-  <section id="contato">
-    <h2>Contato</h2>
-    <p>
-      Dúvidas sobre estes termos: <a [href]="'mailto:' + email">{{ email }}</a>.
-    </p>
-    <p>Responsável pelo Prisma: {{ controlador }}.</p>
   </section>
 </app-pagina-legal>

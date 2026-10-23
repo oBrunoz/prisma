@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CONTATO_EMAIL, CONTROLADOR, SecaoLegal } from '../legal.config';
+import { ATUALIZADO_EM, OutraPagina, SecaoLegal } from '../legal.config';
 import { PaginaLegalComponent } from '../pagina-legal/pagina-legal.component';
 
 @Component({
@@ -10,8 +10,12 @@ import { PaginaLegalComponent } from '../pagina-legal/pagina-legal.component';
   templateUrl: './termos.component.html',
 })
 export class TermosComponent {
-  readonly email = CONTATO_EMAIL;
-  readonly controlador = CONTROLADOR;
+  readonly apoio = `Atualizado em ${ATUALIZADO_EM}`;
+
+  readonly outras: OutraPagina[] = [
+    { rota: '/privacidade', rotulo: 'Política de privacidade' },
+    { rota: '/sobre', rotulo: 'Sobre o Prisma' },
+  ];
 
   readonly secoes: SecaoLegal[] = [
     { id: 'aceitacao', titulo: 'Aceitação' },
@@ -24,6 +28,5 @@ export class TermosComponent {
     { id: 'encerramento', titulo: 'Suspensão e encerramento' },
     { id: 'alteracoes', titulo: 'Mudanças nestes termos' },
     { id: 'lei', titulo: 'Lei aplicável e foro' },
-    { id: 'contato', titulo: 'Contato' },
   ];
 }
