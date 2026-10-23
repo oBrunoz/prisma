@@ -112,6 +112,12 @@ describe('Jogos (e2e)', () => {
     await jogar(desafios.hoje, [-1]).expect(400);
   });
 
+  it('jogo so com conta recusa quem esta deslogado', async () => {
+    await jogar(desafios.poster, [OUTRO]).expect(403);
+    const res = await jogar(desafios.poster, [OUTRO], true).expect(200);
+    expect(res.body.guesses).toEqual([OUTRO]);
+  });
+
   it('nao deixa jogar o desafio de amanha', async () => {
     await jogar(desafios.amanha, []).expect(404);
   });

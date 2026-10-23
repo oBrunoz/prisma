@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,16 +12,24 @@ import type {
 } from '../generated/prisma/client.js';
 import { GameKind } from '../generated/prisma/enums.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { diaDoJogo, TENTATIVAS } from './games.constants.js';
+import { diaDoJogo, SO_COM_CONTA, TENTATIVAS } from './games.constants.js';
+import {
+  conteudo,
+  DesafioDoJogo,
+  imagensLiberadas,
+  Jogada,
+  JogadaInvalida,
+  normalizarJogada,
+  placar,
+  posicaoNaDistribuicao,
+  resposta,
+  RespostaDoDesafio,
+  Situacao,
+  situacaoDaJogada,
+} from './games.regras.js';
+import { palavraAceita } from './palavras.js';
 
-export type SituacaoDaPartida = 'PLAYING' | 'WON' | 'LOST';
-
-export interface RespostaDoDesafio {
-  tmdbId: number;
-  title: string;
-  posterPath: string | null;
-  year: number | null;
-}
+export type SituacaoDaPartida = Situacao;
 
 export interface PartidaView {
   id: string;
@@ -30,7 +40,13 @@ export interface PartidaView {
   // so as imagens ja liberadas; a resposta so sai no fim
   images: string[];
   guesses: number[];
+  words: string[];
+  hints: string[];
   status: SituacaoDaPartida;
+  // duelo e linha: quantos acertos
+  score: number | null;
+  // o que o jogo de texto ou de escolha mostra agora (pistas abertas, letras, filmes)
+  content: unknown;
   answer: RespostaDoDesafio | null;
 }
 
@@ -45,13 +61,28 @@ export interface EstatisticasDoJogo {
   won: number;
   currentStreak: number;
   bestStreak: number;
-  // acertos por tentativa (1 a 7) e, na ultima posicao, as derrotas
+  // acertos por tentativa (1 a 7) e, na ultima posicao, as derrotas; duelo e linha: partidas por numero de acertos (0 a 7)
   distribution: number[];
 }
 
-type DesafioComMidia = GameChallenge & { media: Media };
+type DesafioComMidia = GameChallenge & { media: Media | null };
 
-const iguaisAte = (a: number[], b: number[]) => a.every((v, i) => b[i] === v);
+const VAZIA: Jogada = { guesses: [], words: [], hints: [] };
+const iguaisAte = <T>(a: T[], b: T[]) => a.every((v, i) => b[i] === v);
+// a jogada a esta comeca igual a b
+const comecaCom = (a: Jogada, b: Jogada) =>
+  iguaisAte(b.guesses, a.guesses) &&
+  iguaisAte(b.words, a.words) &&
+  iguaisAte(b.hints, a.hints);
+const tamanho = (j: Jogada) =>
+  j.guesses.length + j.words.length + j.hints.length;
+
+const paraRegras = (d: DesafioComMidia): DesafioDoJogo => ({
+  kind: d.kind,
+  images: d.images,
+  data: d.data,
+  media: d.media,
+});
 
 @Injectable()
 export class GamesService {
@@ -70,18 +101,25 @@ export class GamesService {
           where: { userId, challengeId: { in: desafios.map((d) => d.id) } },
         })
       : [];
-    const palpites = new Map(salvas.map((p) => [p.challengeId, p.guesses]));
+    const jogadas = new Map(
+      salvas.map((p) => [
+        p.challengeId,
+        { guesses: p.guesses, words: p.words, hints: p.hints },
+      ]),
+    );
 
     return {
       day,
-      challenges: desafios.map((d) => this.montar(d, palpites.get(d.id) ?? [])),
+      challenges: desafios.map((d) =>
+        this.montar(d, jogadas.get(d.id) ?? VAZIA),
+      ),
     };
   }
 
-  // confere a lista inteira de palpites; quem esta logado tem a partida gravada
+  // confere a jogada inteira; quem esta logado tem a partida gravada
   async jogar(
     challengeId: string,
-    guesses: number[],
+    bruta: Partial<Jogada>,
     userId?: string,
   ): Promise<PartidaView> {
     const hoje = diaDoJogo();
@@ -94,38 +132,43 @@ export class GamesService {
     if (!desafio || this.diaDe(desafio) > hoje) {
       throw new NotFoundException('Desafio não encontrado');
     }
+    // 403, nao 401: o front leria 401 como sessao vencida
+    if (!userId && SO_COM_CONTA.includes(desafio.kind)) {
+      throw new ForbiddenException('Entre na sua conta para jogar esse jogo');
+    }
 
-    const resposta = desafio.media.tmdbId;
-    const palpites = this.normalizar(guesses, resposta);
+    const jogada = this.normalizar(desafio, bruta);
 
     // desafio de outro dia so mostra o resultado, sem contar para a sequencia
     if (!userId || this.diaDe(desafio) !== hoje) {
-      return this.montar(desafio, palpites);
+      return this.montar(desafio, jogada);
     }
 
     const salva = await this.prisma.gamePlay.findUnique({
       where: { userId_challengeId: { userId, challengeId } },
     });
-    if (salva?.result) return this.montar(desafio, salva.guesses);
+    const base: Jogada = salva
+      ? { guesses: salva.guesses, words: salva.words, hints: salva.hints }
+      : VAZIA;
+    if (salva?.result) return this.montar(desafio, base);
 
-    const base = salva?.guesses ?? [];
     // outro aparelho ja andou mais: vale o que esta salvo
-    if (palpites.length <= base.length && iguaisAte(palpites, base)) {
+    if (tamanho(jogada) <= tamanho(base) && comecaCom(base, jogada)) {
       return this.montar(desafio, base);
     }
-    if (!iguaisAte(base, palpites)) {
+    if (!comecaCom(jogada, base)) {
       throw new ConflictException('Essa partida já tem outros palpites salvos');
     }
 
-    const situacao = this.situacao(palpites, resposta);
+    const situacao = situacaoDaJogada(paraRegras(desafio), jogada);
     const result = situacao === 'PLAYING' ? null : situacao;
     await this.prisma.gamePlay.upsert({
       where: { userId_challengeId: { userId, challengeId } },
-      create: { userId, challengeId, guesses: palpites, result },
-      update: { guesses: palpites, result },
+      create: { userId, challengeId, ...jogada, result },
+      update: { ...jogada, result },
     });
 
-    return this.montar(desafio, palpites);
+    return this.montar(desafio, jogada);
   }
 
   // fora do diario: um desafio de dia passado, que nao grava nem conta na sequencia
@@ -158,7 +201,7 @@ export class GamesService {
       throw new NotFoundException('Ainda não há desafios antigos desse jogo');
     }
 
-    return { challenge: this.montar(desafio, []), repeated: !inedito };
+    return { challenge: this.montar(desafio, VAZIA), repeated: !inedito };
   }
 
   async estatisticas(
@@ -170,8 +213,12 @@ export class GamesService {
         where: { userId, result: { not: null } },
         select: {
           guesses: true,
+          words: true,
+          hints: true,
           result: true,
-          challenge: { select: { kind: true, number: true } },
+          challenge: {
+            select: { kind: true, number: true, data: true, images: true },
+          },
         },
       }),
       Promise.all(
@@ -194,7 +241,16 @@ export class GamesService {
 
       const distribution = Array<number>(TENTATIVAS + 1).fill(0);
       for (const p of doJogo) {
-        distribution[p.result === 'WON' ? p.guesses.length - 1 : TENTATIVAS]++;
+        const desafio: DesafioDoJogo = {
+          kind,
+          images: p.challenge.images,
+          data: p.challenge.data,
+          media: null,
+        };
+        const jogada = { guesses: p.guesses, words: p.words, hints: p.hints };
+        distribution[
+          posicaoNaDistribuicao(desafio, jogada, p.result === 'WON')
+        ]++;
       }
 
       // a sequencia conta ate hoje; se hoje ainda nao terminou, ate ontem
@@ -230,16 +286,14 @@ export class GamesService {
     return saida;
   }
 
-  // nada conta depois do acerto, e passar de sete nao muda o resultado
-  private normalizar(guesses: number[], resposta: number): number[] {
-    const acerto = guesses.indexOf(resposta);
-    const ate = acerto >= 0 ? acerto + 1 : guesses.length;
-    return guesses.slice(0, Math.min(ate, TENTATIVAS));
-  }
-
-  private situacao(guesses: number[], resposta: number): SituacaoDaPartida {
-    if (guesses.includes(resposta)) return 'WON';
-    return guesses.length >= TENTATIVAS ? 'LOST' : 'PLAYING';
+  // jogada fora das regras do desafio vira 400 com a mensagem para a pessoa
+  private normalizar(desafio: DesafioComMidia, bruta: Partial<Jogada>): Jogada {
+    try {
+      return normalizarJogada(paraRegras(desafio), bruta, palavraAceita);
+    } catch (e) {
+      if (e instanceof JogadaInvalida) throw new BadRequestException(e.message);
+      throw e;
+    }
   }
 
   private async umAoAcaso(
@@ -259,17 +313,10 @@ export class GamesService {
     return desafio.day.toISOString().slice(0, 10);
   }
 
-  private montar(desafio: DesafioComMidia, guesses: number[]): PartidaView {
-    const status = this.situacao(guesses, desafio.media.tmdbId);
+  private montar(desafio: DesafioComMidia, jogada: Jogada): PartidaView {
+    const regras = paraRegras(desafio);
+    const status = situacaoDaJogada(regras, jogada);
     const fim = status !== 'PLAYING';
-    // no poster a imagem e uma so: quem esconde e o desenho em listras do front
-    const liberadas =
-      desafio.kind === 'POSTER'
-        ? desafio.images.slice(0, 1)
-        : desafio.images.slice(
-            0,
-            fim ? TENTATIVAS : Math.min(guesses.length + 1, TENTATIVAS),
-          );
 
     return {
       id: desafio.id,
@@ -277,17 +324,14 @@ export class GamesService {
       number: desafio.number,
       day: this.diaDe(desafio),
       attempts: TENTATIVAS,
-      images: liberadas,
-      guesses,
+      images: imagensLiberadas(regras, jogada, fim),
+      guesses: jogada.guesses,
+      words: jogada.words,
+      hints: jogada.hints,
       status,
-      answer: fim
-        ? {
-            tmdbId: desafio.media.tmdbId,
-            title: desafio.media.title,
-            posterPath: desafio.media.posterPath,
-            year: desafio.media.releaseDate?.getUTCFullYear() ?? null,
-          }
-        : null,
+      score: placar(regras, jogada),
+      content: conteudo(regras, jogada, fim),
+      answer: resposta(regras, fim),
     };
   }
 }

@@ -19,7 +19,7 @@ try {
   ) as DesafiosDoArquivo;
   const feitos = await app.get(ImportacaoDeDesafiosService).importar(arquivo);
   for (const d of feitos) {
-    console.log(`${d.kind.padEnd(6)} ${d.day}  Nº ${d.number}  ${d.title}`);
+    console.log(`${d.kind.padEnd(11)} ${d.day}  Nº ${d.number}  ${d.title}`);
   }
 } finally {
   await app.close();

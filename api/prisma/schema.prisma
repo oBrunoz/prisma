@@ -24,6 +24,14 @@ enum MediaType {
 enum GameKind {
   FRAMES
   POSTER
+  FICHA
+  PERSONAGENS
+  LETREIRO
+  LEGENDA
+  ASSINATURA
+  CARREIRA
+  DUELO
+  LINHA
 }
 
 enum GameResult {
@@ -88,12 +96,15 @@ model GameChallenge {
   day       DateTime @db.Date
   // Nº do desafio, contado a partir do primeiro dia do jogo
   number    Int
-  mediaId   String
+  // o filme da resposta; jogo sem filme único (duelo, linha, carreira, assinatura) não tem
+  mediaId   String?
   // frames: sete caminhos da TMDB, do mais dificil ao mais facil; poster: um caminho
   images    String[]
+  // o conteúdo dos jogos de texto e de escolha (pistas, letras, filmes), no formato de games.regras
+  data      Json?
   createdAt DateTime @default(now())
 
-  media Media      @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  media Media?     @relation(fields: [mediaId], references: [id], onDelete: Restrict)
   plays GamePlay[]
 
   @@unique([kind, day])
@@ -106,8 +117,12 @@ model GamePlay {
   id          String      @id @default(uuid(7))
   userId      String
   challengeId String
-  // tmdbId de cada palpite na ordem; 0 e um pulo
+  // tmdbId de cada palpite na ordem; 0 e um pulo. Duelo: o escolhido; linha: a vaga; carreira: as ordens
   guesses     Int[]
+  // legenda: as palavras tentadas
+  words       String[]    @default([])
+  // letreiro e legenda: as dicas pedidas, ja resolvidas (pista, letra:X)
+  hints       String[]    @default([])
   result      GameResult?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

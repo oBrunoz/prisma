@@ -52,6 +52,6 @@ export class GamesController {
     @Body() jogada: JogadaDto,
     @CurrentUser() user: AccessTokenPayload | undefined,
   ) {
-    return this.games.jogar(id, jogada.guesses, user?.sub);
+    return this.games.jogar(id, jogada, user?.sub);
   }
 }
