@@ -24,8 +24,17 @@
     box-shadow 350ms;
 }
 
-.escolha:not(.desligada):hover {
+.escolha:not(.desligada):not(.trancada):hover {
   transform: translateY(-6px);
+}
+
+/* só com conta: a capa recua, o texto continua lendo como convite */
+.escolha.trancada {
+  cursor: pointer;
+}
+
+.escolha.trancada .capa {
+  opacity: 0.4;
 }
 
 .escolha.desligada {
@@ -33,11 +42,11 @@
   opacity: 0.6;
 }
 
-.imagem {
+.capa {
   transition: transform 600ms ease;
 }
 
-.escolha:not(.desligada):hover .imagem {
+.escolha:not(.desligada):not(.trancada):hover .capa {
   transform: scale(1.05);
 }
 

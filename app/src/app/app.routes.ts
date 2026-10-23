@@ -27,8 +27,8 @@ export const routes: Routes = [
   },
   {
     path: 'jogos',
-    title: 'Jogos de cinema',
-    data: { descricao: 'Adivinhe o filme do dia por sete cenas ou pelo pôster em listras. Um desafio novo por dia, igual para todo mundo.' },
+    title: 'Jogos',
+    data: { descricao: 'Dez jogos de cinema por dia: adivinhe o filme por cenas, pôster, ficha, personagens ou letreiro, descubra a legenda, quem dirigiu, a ordem da carreira, a nota maior e a linha do tempo.' },
     loadComponent: () =>
       import('./features/jogos/jogos.component').then((m) => m.JogosComponent),
     children: [
@@ -41,7 +41,7 @@ export const routes: Routes = [
         path: ':jogo',
         title: (rota: ActivatedRouteSnapshot) => {
           const jogo = jogoPorSlug(rota.paramMap.get('jogo'));
-          return jogo ? `${jogo.nome}: adivinhe o filme do dia` : 'Jogos de cinema';
+          return jogo ? `${jogo.nome}: ${jogo.seo}` : 'Jogos de cinema';
         },
         loadComponent: () =>
           import('./features/jogos/partida/partida.component').then((m) => m.PartidaComponent),

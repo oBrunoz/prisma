@@ -1,5 +1,5 @@
 <section>
-  @if (cards().length) {
+  @if (!carregado() || cards().length) {
   <div class="px-gutter mb-14 sm:mb-20">
     <div class="flex justify-between items-baseline gap-4 mb-5 sm:mb-8">
       <h2 class="titulo-secao min-w-0">Jogos de hoje</h2>
@@ -8,51 +8,57 @@
       </a>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
-      @for (card of cards(); track card.info.tipo) {
-        <a [routerLink]="['/jogos', card.info.slug]" class="group flex flex-col rounded-lg overflow-hidden bg-[#1a1a1a]">
-          <div class="relative aspect-video overflow-hidden bg-[#0d0d0d]">
-            @if (!card.partida) {
-              <div class="absolute inset-0 skeleton bg-[#1a1a1a]"></div>
-            } @else if (card.info.tipo === 'FRAMES') {
-              <img
-                [src]="imagens + '/w780' + card.partida.images[0]"
-                alt=""
-                loading="lazy"
-                class="imagem absolute inset-0 w-full h-full object-cover" />
-            } @else {
-              <app-poster-listras
-                class="imagem absolute inset-0"
-                [src]="imagens + '/w780' + card.partida.images[0]"
-                [nivel]="0"
-                recorte="topo"></app-poster-listras>
-            }
+    @if (!carregado()) {
+      <div class="flex gap-4 overflow-hidden trilho-sangria pb-2" aria-hidden="true">
+        @for (i of esqueleto; track i) {
+          <div class="card-trilho-largo rounded-lg overflow-hidden bg-[#1a1a1a]">
+            <div class="aspect-video skeleton bg-[#151515]"></div>
+            <div class="h-[118px] sm:h-[126px]"></div>
           </div>
-
-          <div class="p-5 sm:p-6 flex flex-col gap-5 flex-1">
-            <span class="flex gap-[3px]" aria-hidden="true">
-              @for (fio of card.fios; track $index) {
-                <i class="fio" [style.background]="fio.cor" [class.gasto]="fio.gasto" [class.vazio]="fio.vazio"></i>
-              }
-            </span>
-            <div class="flex items-end justify-between gap-4 mt-auto">
-              <div class="min-w-0">
-                <h3 class="text-xl font-bold text-white">{{ card.info.nome }}</h3>
-                <p class="text-gray-400 text-sm mt-1">{{ card.status }}</p>
-              </div>
-              <span
-                class="shrink-0 px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition duration-300"
-                [class]="card.fim ? 'bg-white/10 group-hover:bg-white/20 text-white' : 'bg-red-600 group-hover:bg-red-700 text-white'">
-                @if (!card.fim) {
-                  <svg lucidePlay [size]="14" strokeWidth="2"></svg>
-                }
-                {{ card.botao }}
-              </span>
+        }
+      </div>
+      <!-- o espaço que a fileira guarda para os pontos (só com mouse) -->
+      <div class="hidden mouse:block h-2 mt-3"></div>
+    } @else {
+      <app-carousel-row>
+        @for (card of cards(); track card.info.tipo) {
+          <a
+            [routerLink]="card.trancado ? null : ['/jogos', card.info.slug]"
+            [attr.role]="card.trancado ? 'button' : null"
+            [attr.tabindex]="card.trancado ? 0 : null"
+            (click)="card.trancado && pedirConta(card)"
+            (keydown.enter)="card.trancado && pedirConta(card)"
+            class="card-trilho-largo group flex flex-col rounded-lg overflow-hidden bg-[#1a1a1a] cursor-pointer">
+            <div class="relative aspect-video overflow-hidden" [class.opacity-40]="card.trancado">
+              <app-capa-jogo class="imagem" [partida]="card.partida"></app-capa-jogo>
             </div>
-          </div>
-        </a>
-      }
-    </div>
+            <div class="h-[118px] sm:h-[126px] p-4 sm:p-5 flex flex-col gap-3">
+              <span class="flex gap-[3px]" aria-hidden="true">
+                @for (fio of card.fios; track $index) {
+                  <i class="fio" [style.background]="fio.cor" [class.gasto]="fio.gasto" [class.vazio]="fio.vazio"></i>
+                }
+              </span>
+              <div class="flex items-end justify-between gap-3 mt-auto">
+                <div class="min-w-0">
+                  <h3 class="text-lg font-bold text-white truncate">{{ card.info.nome }}</h3>
+                  <p class="text-gray-400 text-[13px] mt-0.5 line-clamp-2">{{ card.status }}</p>
+                </div>
+                <span
+                  class="shrink-0 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1.5 transition duration-300"
+                  [class]="card.fim || card.trancado ? 'bg-white/10 group-hover:bg-white/20 text-white' : 'bg-red-600 group-hover:bg-red-700 text-white'">
+                  @if (card.trancado) {
+                    <svg lucideLock [size]="13" strokeWidth="2"></svg>
+                  } @else if (!card.fim) {
+                    <svg lucidePlay [size]="13" strokeWidth="2"></svg>
+                  }
+                  {{ card.botao }}
+                </span>
+              </div>
+            </div>
+          </a>
+        }
+      </app-carousel-row>
+    }
 
     <!-- segundo convite de cadastro: menor e com motivo -->
     @if (!auth.autenticado()) {

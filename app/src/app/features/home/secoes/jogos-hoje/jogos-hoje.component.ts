@@ -1,30 +1,31 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LucideArrowRight, LucidePlay } from '@lucide/angular';
+import { LucideArrowRight, LucideLock, LucidePlay } from '@lucide/angular';
 import { Subject, takeUntil } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
 import { ESPECTRO } from '../../../../core/models/espectro';
-import { DesafiosDoDia, InfoJogo, JOGOS, Partida } from '../../../../core/models/jogos.models';
+import { DesafiosDoDia, InfoJogo, JOGOS, Partida, tentativasUsadas } from '../../../../core/models/jogos.models';
 import { AuthService } from '../../../../core/services/auth.service';
 import { JogosService } from '../../../../core/services/jogos.service';
-import { PosterListrasComponent } from '../../../../shared/components/poster-listras/poster-listras.component';
+import { CarouselRowComponent } from '../../../../shared/components/carousel-row/carousel-row.component';
+import { CapaJogoComponent } from '../../../jogos/palcos/capa-jogo/capa-jogo.component';
 
 interface CardJogo {
   info: InfoJogo;
-  // null enquanto o dia não chega
-  partida: Partida | null;
+  partida: Partida;
   fim: boolean;
+  // só com conta e deslogado: o card abre o convite
+  trancado: boolean;
   fios: { cor: string; gasto: boolean; vazio: boolean }[];
   status: string;
   botao: string;
 }
 
-// os dois jogos do dia na home, com o andamento de cada um; some se não houver desafio.
-// Nasce com os cards (nome e regra já se sabem) para a altura não mudar quando o dia chega
+// os jogos do dia na home, numa fileira, com o andamento de cada um; some se não houver desafio.
+// Nasce com o esqueleto da fileira para a altura não mudar quando o dia chega
 @Component({
   selector: 'app-jogos-hoje',
   standalone: true,
-  imports: [RouterLink, LucideArrowRight, LucidePlay, PosterListrasComponent],
+  imports: [RouterLink, LucideArrowRight, LucideLock, LucidePlay, CarouselRowComponent, CapaJogoComponent],
   templateUrl: './jogos-hoje.component.html',
   styleUrls: ['./jogos-hoje.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,39 +35,41 @@ export class JogosHojeComponent implements OnDestroy {
   private readonly jogos = inject(JogosService);
   private readonly destroy$ = new Subject<void>();
 
-  readonly imagens = environment.tmdbImageUrl;
+  readonly esqueleto = Array.from({ length: 5 }, (_, i) => i);
   readonly dia = signal<DesafiosDoDia | null>(null);
   readonly carregado = signal(false);
 
+  // os que faltam primeiro: quem já jogou um vê o próximo logo de cara
   readonly cards = computed(() =>
     JOGOS.flatMap((info): CardJogo[] => {
-      if (!this.carregado()) {
-        const fios = ESPECTRO.map((cor) => ({ cor, gasto: false, vazio: true }));
-        return [{ info, partida: null, fim: false, fios, status: info.regra, botao: 'Jogar' }];
-      }
       const partida = this.dia()?.challenges.find((c) => c.kind === info.tipo);
       if (!partida) return [];
-      const usados = partida.guesses.length;
+      const usados = tentativasUsadas(partida);
       const fim = partida.status !== 'PLAYING';
       const erros = partida.status === 'WON' ? usados - 1 : usados;
+      const trancado = !!info.soComConta && !this.auth.autenticado();
       return [
         {
           info,
           partida,
           fim,
-          fios: ESPECTRO.map((cor, k) => ({ cor, gasto: k < erros, vazio: !usados })),
-          status:
-            partida.status === 'WON'
-              ? info.acerto(usados)
-              : partida.status === 'LOST'
-                ? 'Ficou para amanhã'
-                : usados
-                  ? `${usados + 1} de ${partida.attempts}`
-                  : info.regra,
-          botao: fim ? 'Resultado' : usados ? 'Continuar' : 'Jogar',
+          trancado,
+          fios: ESPECTRO.map((cor, k) => ({ cor, gasto: k < erros && !info.porPlacar, vazio: !usados })),
+          status: trancado
+            ? 'Só com conta'
+            : info.porPlacar && fim
+              ? info.acerto(partida.score ?? 0)
+              : partida.status === 'WON'
+                ? info.acerto(usados)
+                : partida.status === 'LOST'
+                  ? 'Ficou para amanhã'
+                  : usados
+                    ? `${usados} de ${partida.attempts}`
+                    : info.regra,
+          botao: trancado ? 'Entrar' : fim ? 'Resultado' : usados ? 'Continuar' : 'Jogar',
         },
       ];
-    }),
+    }).sort((a, b) => Number(a.fim) - Number(b.fim)),
   );
 
   // o dia é pequeno e decide se a seção existe: vem logo na abertura, com a pessoa ainda no destaque
@@ -83,6 +86,10 @@ export class JogosHojeComponent implements OnDestroy {
         },
         complete: () => this.carregado.set(true),
       });
+  }
+
+  pedirConta(card: CardJogo): void {
+    this.auth.pedirLogin(`Entre para jogar ${card.info.nome}`);
   }
 
   ngOnDestroy(): void {

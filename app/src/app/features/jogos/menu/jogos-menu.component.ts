@@ -11,22 +11,24 @@ import {
   untracked,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { LucidePlay, LucideShuffle } from '@lucide/angular';
+import { LucideLock, LucidePlay, LucideShuffle } from '@lucide/angular';
 import { Subject, takeUntil } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { ESPECTRO } from '../../../core/models/espectro';
-import { EstatisticasJogo, JOGOS, TipoJogo } from '../../../core/models/jogos.models';
+import { EstatisticasJogo, JOGOS, TipoJogo, tentativasUsadas } from '../../../core/models/jogos.models';
 import { AuthService } from '../../../core/services/auth.service';
 import { JogosService } from '../../../core/services/jogos.service';
 import { JogosEstado } from '../jogos.estado';
 import { dataPorExtenso, tempoAteAVirada } from '../jogos.util';
-import { PosterListrasComponent } from '../../../shared/components/poster-listras/poster-listras.component';
+import { CapaJogoComponent } from '../palcos/capa-jogo/capa-jogo.component';
 
-// a escolha do dia: os dois jogos lado a lado, com o andamento de cada um
+// teclas do 1 ao 0: os dez jogos, na ordem do menu
+const TECLAS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
+// a escolha do dia: os jogos lado a lado, com o andamento de cada um
 @Component({
   selector: 'app-jogos-menu',
   standalone: true,
-  imports: [RouterLink, LucidePlay, LucideShuffle, PosterListrasComponent],
+  imports: [RouterLink, LucideLock, LucidePlay, LucideShuffle, CapaJogoComponent],
   templateUrl: './jogos-menu.component.html',
   styleUrls: ['./jogos-menu.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,10 +40,8 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
-  readonly espectro = ESPECTRO;
-  readonly imagens = environment.tmdbImageUrl;
   readonly proximo = signal(tempoAteAVirada());
-  readonly estatisticas = signal<Record<TipoJogo, EstatisticasJogo> | null>(null);
+  readonly estatisticas = signal<Partial<Record<TipoJogo, EstatisticasJogo>> | null>(null);
   private relogio = 0;
 
   readonly data = computed(() => {
@@ -49,30 +49,37 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
     return dia ? dataPorExtenso(dia) : '';
   });
 
-  readonly numero = computed(() => this.estado.dia()?.challenges[0]?.number ?? null);
+  readonly feitos = computed(() => (this.estado.dia()?.challenges ?? []).filter((c) => c.status !== 'PLAYING').length);
+  readonly total = computed(() => this.estado.dia()?.challenges.length ?? 0);
 
   readonly cards = computed(() =>
     JOGOS.map((info, i) => {
       const partida = this.estado.partida(info.tipo);
-      const usados = partida?.guesses.length ?? 0;
+      const usados = partida ? tentativasUsadas(partida) : 0;
       const fim = partida ? partida.status !== 'PLAYING' : false;
       const erros = partida?.status === 'WON' ? usados - 1 : usados;
+      const trancado = !!partida && !!info.soComConta && !this.auth.autenticado();
       return {
         info,
-        tecla: String(i + 1),
+        tecla: TECLAS[i],
         partida,
         fim,
-        fios: ESPECTRO.map((cor, k) => ({ cor, gasto: k < erros, vazio: !usados })),
+        trancado,
+        fios: ESPECTRO.map((cor, k) => ({ cor, gasto: k < erros && !info.porPlacar, vazio: !usados })),
         status: !partida
           ? 'Sem desafio hoje'
-          : partida.status === 'WON'
-            ? `Acertou em ${usados}`
-            : partida.status === 'LOST'
-              ? 'Ficou para amanhã'
-              : usados
-                ? `${usados + 1} de ${partida.attempts}`
-                : 'Não jogado',
-        botao: fim ? 'Resultado' : usados ? 'Continuar' : 'Jogar',
+          : trancado
+            ? 'Só com conta'
+            : info.porPlacar && fim
+            ? info.acerto(partida.score ?? 0)
+            : partida.status === 'WON'
+              ? info.acerto(usados)
+              : partida.status === 'LOST'
+                ? 'Ficou para amanhã'
+                : usados
+                  ? `${usados} de ${partida.attempts}`
+                  : 'Não jogado',
+        botao: trancado ? 'Entrar' : fim ? 'Resultado' : usados ? 'Continuar' : 'Jogar',
         sequencia: this.estatisticas()?.[info.tipo]?.currentStreak ?? 0,
       };
     }),
@@ -102,9 +109,18 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // o aleatório é o que a conta destrava: deslogado, o convite sem sair da página
   jogarAleatorio(slug: string): void {
-    if (this.auth.autenticado()) this.router.navigate(['/jogos', slug, 'aleatorio']);
-    else this.auth.pedirLogin('Crie uma conta para jogar desafios aleatórios');
+    if (!this.auth.autenticado()) {
+      this.auth.pedirLogin('Crie uma conta para jogar desafios aleatórios');
+      return;
+    }
+    this.router.navigate(['/jogos', slug, 'aleatorio']);
+  }
+
+  // os jogos mais legais pedem conta: deslogado, o convite sem sair da página
+  pedirConta(nome: string): void {
+    this.auth.pedirLogin(`Entre para jogar ${nome}`);
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -113,6 +129,7 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
     const alvo = evento.target as HTMLElement | null;
     if (alvo?.closest('input, textarea, [contenteditable]')) return;
     const card = this.cards().find((c) => c.tecla === evento.key);
-    if (card?.partida) this.router.navigate(['/jogos', card.info.slug]);
+    if (card?.trancado) this.pedirConta(card.info.nome);
+    else if (card?.partida) this.router.navigate(['/jogos', card.info.slug]);
   }
 }
