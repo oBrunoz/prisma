@@ -1,10 +1,18 @@
 <div class="pt-32 pb-20">
   <section
     class="relative -mt-32 pt-32 sm:pt-40 overflow-hidden"
-    [ngClass]="capaPath() ? 'min-h-[30rem] sm:min-h-[34rem] flex flex-col justify-end pb-8 sm:pb-10' : 'bg-[#0d0d0d] border-b border-white/5 pb-10 sm:pb-12'">
+    [ngClass]="
+      enfeite()
+        ? 'bg-[#0d0d0d] min-h-[30rem] sm:min-h-[34rem] flex flex-col justify-end pb-8 sm:pb-10'
+        : capaPath()
+          ? 'min-h-[30rem] sm:min-h-[34rem] flex flex-col justify-end pb-8 sm:pb-10'
+          : 'bg-[#0d0d0d] border-b border-white/5 pb-10 sm:pb-12'
+    ">
 
-    <!-- a capa é o primeiro favorito; sem ele, as listras de sempre -->
-    @if (capaPath(); as capa) {
+    @if (enfeite(); as enfeite) {
+      <app-lirios-defs></app-lirios-defs>
+      <app-capa-coracao [src]="enfeite.capa.src"></app-capa-coracao>
+    } @else if (capaPath(); as capa) {
       <img
         [src]="capaSrc(capa)"
         [srcset]="capaSrcset(capa)"
@@ -30,7 +38,14 @@
     <div class="relative px-gutter">
       @if (perfil(); as perfil) {
         <div class="flex flex-wrap items-end gap-5 sm:gap-8">
-          <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+          @if (enfeite()) {
+            <div class="relative shrink-0">
+              <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+              <app-coroa-lirios></app-coroa-lirios>
+            </div>
+          } @else {
+            <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+          }
 
           <div class="flex-1 min-w-[14rem]">
             <h1 class="text-3xl sm:text-5xl font-bold text-white">{{ perfil.username }}</h1>
@@ -113,54 +128,61 @@
   </section>
 
   @if (perfil(); as perfil) {
-    <div class="px-gutter">
-      <div class="flex gap-6 sm:gap-8 border-b border-white/5 overflow-x-auto hide-scrollbar" role="tablist">
-        @for (item of abas(); track item.aba) {
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="abaVisivel() === item.aba"
-            (click)="trocarAba(item.aba)"
-            class="relative shrink-0 py-4 text-sm sm:text-base whitespace-nowrap transition duration-300 cursor-pointer"
-            [class]="abaVisivel() === item.aba ? 'text-white' : 'text-gray-400 hover:text-white'">
-            {{ item.rotulo }}
-            @if (item.total !== null) {
-              <span class="ml-1 text-sm text-gray-500 tabular-nums">{{ item.total }}</span>
+    <div class="relative">
+      <!-- os lírios ficam atrás de tudo o que vem depois das abas -->
+      @if (enfeite()) {
+        <app-fundo-lirios class="absolute inset-x-0 top-14 bottom-0"></app-fundo-lirios>
+      }
+      <div class="relative px-gutter">
+        <div class="flex gap-6 sm:gap-8 border-b border-white/5 overflow-x-auto hide-scrollbar" role="tablist">
+          @for (item of abas(); track item.aba) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="abaVisivel() === item.aba"
+              (click)="trocarAba(item.aba)"
+              class="relative shrink-0 py-4 text-sm sm:text-base whitespace-nowrap transition duration-300 cursor-pointer"
+              [class]="abaVisivel() === item.aba ? 'text-white' : 'text-gray-400 hover:text-white'">
+              {{ item.rotulo }}
+              @if (item.total !== null) {
+                <span class="ml-1 text-sm text-gray-500 tabular-nums">{{ item.total }}</span>
+              }
+              @if (abaVisivel() === item.aba) {
+                <span class="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"></span>
+              }
+            </button>
+          }
+        </div>
+  
+        <div class="pt-8 sm:pt-10">
+          @switch (abaVisivel()) {
+            @case ('geral') {
+              <app-aba-geral
+                [userId]="perfil.id"
+                [username]="perfil.username"
+                [souEu]="souEu()"
+                [favoritos]="perfil.favoritos"
+                [fixa]="enfeite()?.fixa ?? null"
+                (escolherFavoritos)="favoritosAbertos.set(true)"
+                (verAba)="trocarAba($event)">
+              </app-aba-geral>
             }
-            @if (abaVisivel() === item.aba) {
-              <span class="absolute inset-x-0 -bottom-px h-0.5 bg-red-600"></span>
+            @case ('diario') {
+              <app-aba-diario [userId]="perfil.id" [username]="perfil.username"></app-aba-diario>
             }
-          </button>
-        }
-      </div>
-
-      <div class="pt-8 sm:pt-10">
-        @switch (abaVisivel()) {
-          @case ('geral') {
-            <app-aba-geral
-              [userId]="perfil.id"
-              [username]="perfil.username"
-              [souEu]="souEu()"
-              [favoritos]="perfil.favoritos"
-              (escolherFavoritos)="favoritosAbertos.set(true)"
-              (verAba)="trocarAba($event)">
-            </app-aba-geral>
+            @case ('avaliacoes') {
+              <app-aba-avaliacoes
+                [userId]="perfil.id"
+                [username]="perfil.username"
+                [souEu]="souEu()"
+                (excluiu)="aoExcluirAvaliacao()">
+              </app-aba-avaliacoes>
+            }
+            @case ('watchlist') {
+              <app-aba-watchlist></app-aba-watchlist>
+            }
           }
-          @case ('diario') {
-            <app-aba-diario [userId]="perfil.id" [username]="perfil.username"></app-aba-diario>
-          }
-          @case ('avaliacoes') {
-            <app-aba-avaliacoes
-              [userId]="perfil.id"
-              [username]="perfil.username"
-              [souEu]="souEu()"
-              (excluiu)="aoExcluirAvaliacao()">
-            </app-aba-avaliacoes>
-          }
-          @case ('watchlist') {
-            <app-aba-watchlist></app-aba-watchlist>
-          }
-        }
+        </div>
       </div>
     </div>
   }

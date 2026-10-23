@@ -1,6 +1,6 @@
 <div class="space-y-14 sm:space-y-16">
   <!-- quem não escolheu favoritos vê as vagas no próprio perfil; os outros não veem nada -->
-  @if (favoritos().length > 0 || souEu()) {
+  @if (favoritos().length > 0 || souEu() || fixa()) {
     <section>
       <div class="mb-5 sm:mb-6 flex items-baseline justify-between gap-4">
         <h2 class="titulo-secao">Favoritos</h2>
@@ -15,7 +15,29 @@
         }
       </div>
 
-      <div class="grid grid-cols-4 gap-3 sm:gap-6 max-w-4xl">
+      <div
+        class="grid gap-3 sm:gap-6"
+        [class]="fixa() ? 'grid-cols-3 sm:grid-cols-5 max-w-5xl' : 'grid-cols-4 max-w-4xl'">
+        @if (fixa(); as foto) {
+          <figure class="relative aspect-[2/3]">
+            <img [src]="foto.src" alt="" class="w-full h-full rounded-lg object-cover" />
+            <figcaption
+              class="absolute inset-x-0 bottom-0 flex justify-between px-2.5 pt-7 pb-2 rounded-b-lg bg-gradient-to-t from-black/70 to-transparent text-[11px] text-gray-200">
+              <span>{{ foto.marca }}</span>
+              <span>{{ foto.legenda }}</span>
+            </figcaption>
+            <!-- raminho do buquê preso no canto, como um bilhete -->
+            <svg
+              viewBox="-40 -40 80 80"
+              class="absolute -top-4 -right-3 w-14 h-14 sm:-top-5 sm:-right-5 sm:w-[4.75rem] sm:h-[4.75rem] pointer-events-none"
+              aria-hidden="true">
+              <g transform="rotate(-40)"><use href="#enf-folha" x="-6" y="-36" width="10" height="35" /></g>
+              <g transform="rotate(200)"><use href="#enf-folha-clara" x="-6" y="-36" width="10" height="35" /></g>
+              <g transform="rotate(110)"><use href="#enf-botao" x="-6" y="-30" width="12" height="31.7" /></g>
+              <g transform="rotate(10) scale(1 0.9)"><use href="#enf-lirio" x="-26" y="-26" width="52" height="52" /></g>
+            </svg>
+          </figure>
+        }
         @for (midia of favoritos(); track midia.id) {
           <app-movie-card
             [id]="midia.tmdbId"

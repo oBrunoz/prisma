@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LucidePencil, LucideUserCheck, LucideUserPlus } from '@lucide/angular';
 import { EMPTY, Subject, catchError, map, merge, switchMap, takeUntil, tap } from 'rxjs';
+import { ENFEITES } from '../../core/config/enfeites';
 import { mensagemDeErro } from '../../core/errors/mensagens';
 import { PerfilPublico } from '../../core/models/auth.models';
 import { Midia } from '../../core/models/catalogo.models';
 import { AuthService } from '../../core/services/auth.service';
+import { FundoService } from '../../core/services/fundo.service';
 import { MovieService } from '../../core/services/movie.service';
 import { SeoService } from '../../core/services/seo.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -22,6 +24,10 @@ import { AbaAvaliacoesComponent } from './aba-avaliacoes/aba-avaliacoes.componen
 import { AbaDiarioComponent } from './aba-diario/aba-diario.component';
 import { AbaGeralComponent, AbaPerfil } from './aba-geral/aba-geral.component';
 import { AbaWatchlistComponent } from './aba-watchlist/aba-watchlist.component';
+import { CapaCoracaoComponent } from './enfeite/capa-coracao.component';
+import { CoroaLiriosComponent } from './enfeite/coroa-lirios.component';
+import { FundoLiriosComponent } from './enfeite/fundo-lirios.component';
+import { LiriosDefsComponent } from './enfeite/lirios-defs.component';
 import { FavoritosModalComponent } from './favoritos-modal/favoritos-modal.component';
 
 const ABAS: AbaPerfil[] = ['geral', 'diario', 'avaliacoes', 'watchlist'];
@@ -42,6 +48,10 @@ const LISTAS: AbaSeguidores[] = ['seguidores', 'seguindo'];
     AbaDiarioComponent,
     AbaAvaliacoesComponent,
     AbaWatchlistComponent,
+    LiriosDefsComponent,
+    CapaCoracaoComponent,
+    CoroaLiriosComponent,
+    FundoLiriosComponent,
     LucideUserPlus,
     LucideUserCheck,
     LucidePencil,
@@ -56,6 +66,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   private readonly movieService = inject(MovieService);
   private readonly seo = inject(SeoService);
   private readonly toast = inject(ToastService);
+  private readonly fundo = inject(FundoService);
 
   perfil = signal<PerfilPublico | null>(null);
   carregando = signal(true);
@@ -76,6 +87,11 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     return !!perfil && perfil.id === this.auth.usuario()?.id;
   });
 
+  readonly enfeite = computed(() => {
+    const perfil = this.perfil();
+    return perfil ? (ENFEITES[perfil.username.toLowerCase()] ?? null) : null;
+  });
+
   // a watchlist é privada: pedida pela URL no perfil de outra pessoa, cai na visão geral
   readonly abaVisivel = computed<AbaPerfil>(() =>
     this.aba() === 'watchlist' && !this.souEu() ? 'geral' : this.aba(),
@@ -94,6 +110,20 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   });
 
   private destroy$ = new Subject<void>();
+  private recadoDe = '';
+
+  constructor() {
+    effect(() => {
+      const perfil = this.perfil();
+      const enfeite = this.enfeite();
+      if (!perfil || !enfeite || !this.souEu() || this.recadoDe === perfil.id) return;
+      this.recadoDe = perfil.id;
+      untracked(() => this.toast.erro(enfeite.recado, { chave: 'recado', icone: 'coracao' }));
+    });
+
+    // o perfil enfeitado tem fundo próprio (coração e lírios): a fita do site sai enquanto ele está aberto
+    effect(() => this.fundo.listras.set(!this.enfeite()));
+  }
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
@@ -142,6 +172,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.fundo.listras.set(true);
   }
 
   trocarAba(aba: AbaPerfil): void {
@@ -264,6 +295,11 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
   // cena escolhida, ou a do primeiro favorito; sem nenhuma das duas, ficam as listras
   private carregarCapa(perfil: PerfilPublico) {
+    if (ENFEITES[perfil.username.toLowerCase()]) {
+      this.capaPath.set(null);
+      return EMPTY;
+    }
+
     const { tipo, backdropPath, media } = perfil.capa;
     if (tipo === 'titulo' && backdropPath) {
       this.capaPath.set(backdropPath);

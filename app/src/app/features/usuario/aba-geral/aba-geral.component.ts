@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { LucideArrowRight, LucidePlus } from '@lucide/angular';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
+import { Enfeite } from '../../../core/config/enfeites';
 import { mensagemDeErro } from '../../../core/errors/mensagens';
 import { AvaliacaoUsuario, Midia } from '../../../core/models/catalogo.models';
 import { AvaliacaoService } from '../../../core/services/avaliacao.service';
@@ -23,6 +24,8 @@ export class AbaGeralComponent implements OnInit, OnDestroy {
   readonly username = input.required<string>();
   readonly souEu = input(false);
   readonly favoritos = input<Midia[]>([]);
+  // foto do perfil enfeitado: abre os favoritos e não sai pelo "Trocar"
+  readonly fixa = input<Enfeite['fixa'] | null>(null);
   readonly escolherFavoritos = output<void>();
   readonly verAba = output<AbaPerfil>();
 
@@ -35,6 +38,7 @@ export class AbaGeralComponent implements OnInit, OnDestroy {
     () =>
       !this.carregando() &&
       !this.erro() &&
+      !this.fixa() &&
       this.favoritos().length === 0 &&
       this.assistidos().length === 0 &&
       this.escritas().length === 0,

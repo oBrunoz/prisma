@@ -1,0 +1,60 @@
+/* O bloco escala pela largura: anéis, foto e ramo dividem a mesma caixa 560:514.
+   No celular ele fica no canto de cima, ao lado do avatar (o nome desce para a
+   linha de baixo); a partir de sm vai para a direita da capa. */
+:host {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  aspect-ratio: 560 / 514;
+  width: 13rem;
+  top: 4rem;
+  right: -1rem;
+  opacity: 0.85;
+}
+
+@media (min-width: 640px) {
+  :host {
+    width: 22rem;
+    top: 2.5rem;
+    right: 3%;
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  :host {
+    width: 30rem;
+    top: -0.5rem;
+    right: 6%;
+  }
+}
+
+@media (min-width: 1280px) {
+  :host {
+    width: 35rem;
+    top: -2rem;
+    right: 8%;
+  }
+}
+
+.coracao {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-12deg);
+}
+
+.coracao svg,
+.ramo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* os fios seguem as listras do site: meia tinta e se apagando para o lado do texto */
+.fios {
+  opacity: 0.5;
+  -webkit-mask-image: linear-gradient(to bottom left, #000 0%, rgba(0, 0, 0, 0.7) 55%, transparent 95%);
+  mask-image: linear-gradient(to bottom left, #000 0%, rgba(0, 0, 0, 0.7) 55%, transparent 95%);
+}

@@ -1,0 +1,115 @@
+/* Quem usa posiciona (absolute por baixo do conteúdo). As peças crescem com a
+   tela e no celular só ficam o topo direito e o rodapé: as laterais lá quase não
+   existem e a flor ficaria inteira atrás dos cards. */
+:host {
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* mesma pegada das listras do site: meia tinta e o grão de impressão abrindo
+   furos pela máscara (ladrilho, não filtro: a camada tem a altura do perfil);
+   o --fade de cada peça apaga o lado que encosta no conteúdo */
+.peca {
+  position: absolute;
+  display: block;
+  overflow: visible;
+  opacity: 0.4;
+  --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 3.7'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--fade), var(--grao);
+  mask-image: var(--fade), var(--grao);
+  -webkit-mask-size: 100% 100%, 240px 240px;
+  mask-size: 100% 100%, 240px 240px;
+  -webkit-mask-repeat: no-repeat, repeat;
+  mask-repeat: no-repeat, repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.topo-direita {
+  top: 0;
+  right: 0;
+  width: 12.5rem;
+  aspect-ratio: 360 / 620;
+  --fade: linear-gradient(to left, #000 45%, transparent);
+}
+
+.topo-esquerda {
+  display: none;
+  top: 0;
+  left: 0;
+  aspect-ratio: 200 / 640;
+  --fade: linear-gradient(to right, #000 30%, transparent);
+}
+
+.meio-direita {
+  display: none;
+  top: 45%;
+  right: 0;
+  aspect-ratio: 140 / 360;
+  --fade: linear-gradient(to left, #000 40%, transparent);
+}
+
+.rodape-esquerda {
+  bottom: 0;
+  left: 0;
+  width: 10.5rem;
+  aspect-ratio: 280 / 264;
+  --fade: linear-gradient(to top right, #000 35%, transparent 90%);
+}
+
+.rodape-direita {
+  bottom: 0;
+  right: 0;
+  width: 10rem;
+  aspect-ratio: 260 / 264;
+  --fade: linear-gradient(to top left, #000 35%, transparent 90%);
+}
+
+@media (min-width: 768px) {
+  .topo-direita {
+    width: 17rem;
+  }
+
+  .topo-esquerda {
+    display: block;
+    width: 9.5rem;
+  }
+
+  .rodape-esquerda {
+    width: 14rem;
+  }
+
+  .rodape-direita {
+    width: 12.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .meio-direita {
+    display: block;
+    width: 7rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .topo-direita {
+    width: 22.5rem;
+  }
+
+  .topo-esquerda {
+    width: 12.5rem;
+  }
+
+  .meio-direita {
+    width: 8.75rem;
+  }
+
+  .rodape-esquerda {
+    width: 17.5rem;
+  }
+
+  .rodape-direita {
+    width: 16.25rem;
+  }
+}
