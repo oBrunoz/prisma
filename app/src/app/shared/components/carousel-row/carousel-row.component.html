@@ -1,11 +1,12 @@
 <div class="relative group/row">
 
-  <!-- setas e pontos só com mouse: no toque a fileira desliza, e um botão invisível roubaria o tap do card -->
+  <!-- setas e pontos só com mouse: no toque a fileira desliza, e um botão invisível roubaria o tap do card.
+       Centradas na borda só a partir de sm: o gutter do celular (20px) é menor que meia seta. -->
   <button
     type="button"
     (click)="scrollBy(-1)"
     [class.invisible]="!transborda() || (!loop && !canScrollLeft())"
-    class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-11 h-11 hidden mouse:flex items-center justify-center rounded-full bg-[#111111]/90 border border-white/10 text-white shadow-lg backdrop-blur-sm transition duration-300 hover:bg-[#1f1f1f] hover:border-white/25 opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100"
+    class="absolute left-0 top-1/2 -translate-y-1/2 sm:-translate-x-1/2 z-20 w-11 h-11 hidden mouse:flex items-center justify-center rounded-full bg-[#111111]/90 border border-white/10 text-white shadow-lg backdrop-blur-sm transition duration-300 hover:bg-[#1f1f1f] hover:border-white/25 opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100"
     aria-label="Anterior">
     <svg lucideChevronLeft [size]="22" strokeWidth="2"></svg>
   </button>
@@ -26,7 +27,7 @@
     type="button"
     (click)="scrollBy(1)"
     [class.invisible]="!transborda() || (!loop && !canScrollRight())"
-    class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 w-11 h-11 hidden mouse:flex items-center justify-center rounded-full bg-[#111111]/90 border border-white/10 text-white shadow-lg backdrop-blur-sm transition duration-300 hover:bg-[#1f1f1f] hover:border-white/25 opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100"
+    class="absolute right-0 top-1/2 -translate-y-1/2 sm:translate-x-1/2 z-20 w-11 h-11 hidden mouse:flex items-center justify-center rounded-full bg-[#111111]/90 border border-white/10 text-white shadow-lg backdrop-blur-sm transition duration-300 hover:bg-[#1f1f1f] hover:border-white/25 opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100"
     aria-label="Próximo">
     <svg lucideChevronRight [size]="22" strokeWidth="2"></svg>
   </button>
