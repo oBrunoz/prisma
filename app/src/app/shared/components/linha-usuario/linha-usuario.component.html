@@ -1,7 +1,6 @@
 <div class="flex items-center gap-4 py-4 border-b border-white/5">
   <a
     [routerLink]="['/username', usuario().username]"
-    (click)="abriu.emit()"
     class="group flex flex-1 items-center gap-4 min-w-0">
     <app-user-avatar [nome]="usuario().username" [avatarUrl]="usuario().avatarUrl" tamanho="md"></app-user-avatar>
     <span class="min-w-0">

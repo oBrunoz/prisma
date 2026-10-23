@@ -42,8 +42,9 @@
     <div data-lenis-prevent class="flex-1 min-h-0 overflow-y-auto px-6 pb-4">
       @let estado = estados()[aba()];
 
+      <!-- não fechar no clique: o link já tira o ?lista da URL, e fechar navegaria de volta cancelando a ida -->
       @for (usuario of estado.itens; track usuario.id) {
-        <app-linha-usuario [usuario]="usuario" (abriu)="fechar()"></app-linha-usuario>
+        <app-linha-usuario [usuario]="usuario"></app-linha-usuario>
       } @empty {
         @if (!estado.carregando && !estado.erro) {
           <p class="py-10 text-center text-gray-400">

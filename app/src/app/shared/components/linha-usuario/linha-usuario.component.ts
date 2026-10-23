@@ -20,8 +20,6 @@ export class LinhaUsuarioComponent {
   private readonly toast = inject(ToastService);
 
   readonly usuario = input.required<UsuarioResumo>();
-  // quem abre a linha (ex.: a janela de seguidores) fecha ao navegar
-  readonly abriu = output<void>();
   readonly mudouSeguindo = output<boolean>();
 
   readonly seguindo = linkedSignal(() => this.usuario().seguindo ?? false);
