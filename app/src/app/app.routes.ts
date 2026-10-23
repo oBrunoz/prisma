@@ -137,6 +137,13 @@ export const routes: Routes = [
       import('./features/legal/termos/termos.component').then((m) => m.TermosComponent),
   },
   {
+    path: 'sobre',
+    title: 'Sobre',
+    data: { descricao: 'O que é o Prisma, por que o nome e quem faz: um diário de filmes e séries feito no Brasil, com dados da TMDB.' },
+    loadComponent: () =>
+      import('./features/legal/sobre/sobre.component').then((m) => m.SobreComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
