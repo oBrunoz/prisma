@@ -9,6 +9,7 @@ import { PerfilPublico } from '../../core/models/auth.models';
 import { Midia } from '../../core/models/catalogo.models';
 import { AuthService } from '../../core/services/auth.service';
 import { MovieService } from '../../core/services/movie.service';
+import { SeoService } from '../../core/services/seo.service';
 import { ToastService } from '../../core/services/toast.service';
 import { UsuarioService } from '../../core/services/usuario.service';
 import {
@@ -53,6 +54,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly movieService = inject(MovieService);
+  private readonly seo = inject(SeoService);
   private readonly toast = inject(ToastService);
 
   perfil = signal<PerfilPublico | null>(null);
@@ -123,6 +125,13 @@ export class UsuarioComponent implements OnInit, OnDestroy {
         switchMap((perfil) => {
           this.perfil.set(perfil);
           this.carregando.set(false);
+          this.seo.definir({
+            titulo: `${perfil.name} (@${perfil.username})`,
+            descricao:
+              perfil.bio ||
+              `Filmes e séries que ${perfil.name} assistiu e avaliou no Prisma: ${perfil.contagem.avaliacoes} avaliações, favoritos e watchlist.`,
+            tipo: 'profile',
+          });
           return merge(this.carregarCapa(perfil), this.carregarFollow(perfil.id));
         }),
         takeUntil(this.destroy$),

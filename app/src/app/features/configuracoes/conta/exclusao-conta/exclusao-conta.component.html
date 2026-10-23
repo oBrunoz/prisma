@@ -1,0 +1,57 @@
+<form class="bg-[#1a1a1a] rounded-xl p-5 sm:p-6 space-y-5" (ngSubmit)="excluir()" novalidate>
+  <div>
+    <h3 class="text-base font-semibold text-white">Excluir conta</h3>
+    <p class="mt-2 text-sm text-gray-400">
+      Apaga na hora o perfil, a foto, as avaliações e resenhas, o diário, a watchlist, os favoritos,
+      quem você segue e as partidas. Não dá para desfazer. Se quiser guardar alguma coisa, baixe seus
+      dados antes.
+    </p>
+  </div>
+
+  <div>
+    <label for="exclusao-senha" class="block text-sm text-gray-300 mb-2">Sua senha, para confirmar</label>
+    <div class="relative">
+      <input
+        id="exclusao-senha"
+        [type]="verSenha() ? 'text' : 'password'"
+        [ngModel]="senha()"
+        (ngModelChange)="editar($event)"
+        (blur)="campos.tocar('senha')"
+        name="senha"
+        maxlength="128"
+        autocomplete="current-password"
+        [attr.aria-invalid]="!!campos.erro('senha')"
+        [attr.aria-describedby]="campos.erro('senha') ? 'erro-exclusao-senha' : null"
+        [class.ring-1]="!!campos.erro('senha')"
+        [class.ring-coral]="!!campos.erro('senha')"
+        class="w-full bg-[#111111] text-white text-base sm:text-sm px-4 pr-11 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <button
+        type="button"
+        (click)="verSenha.set(!verSenha())"
+        [attr.aria-label]="verSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-300 cursor-pointer">
+        @if (verSenha()) {
+          <svg lucideEyeOff [size]="16" strokeWidth="1.75"></svg>
+        } @else {
+          <svg lucideEye [size]="16" strokeWidth="1.75"></svg>
+        }
+      </button>
+    </div>
+    @if (campos.erro('senha'); as erro) {
+      <p id="erro-exclusao-senha" class="mt-2 text-xs text-coral">{{ erro }}</p>
+    }
+  </div>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button
+      type="submit"
+      [disabled]="enviando()"
+      class="px-6 py-3 rounded-full transition duration-300 flex items-center text-sm font-medium bg-red-600 hover:bg-red-700 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+      {{ enviando() ? 'Excluindo...' : 'Excluir para sempre' }}
+    </button>
+    <button type="button" (click)="fechou.emit()" class="text-sm text-gray-400 hover:text-white transition duration-300 cursor-pointer">
+      Cancelar
+    </button>
+  </div>
+</form>

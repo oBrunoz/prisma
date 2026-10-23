@@ -26,6 +26,7 @@ import { TextoRecolhivelComponent } from '../../shared/components/texto-recolhiv
 import { AvaliacaoService } from '../../core/services/avaliacao.service';
 import { FichaSyncService } from '../../core/services/ficha-sync.service';
 import { SmoothScrollService } from '../../core/services/smooth-scroll.service';
+import { SeoService } from '../../core/services/seo.service';
 import { AvaliacaoUsuario, EstatisticasMidia } from '../../core/models/catalogo.models';
 import { mensagemDeErro } from '../../core/errors/mensagens';
 import {
@@ -121,7 +122,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private movieService: MovieService,
     private avaliacaoService: AvaliacaoService,
     private fichaSync: FichaSyncService,
-    private smoothScroll: SmoothScrollService
+    private smoothScroll: SmoothScrollService,
+    private seo: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -190,6 +192,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
           this.logoSrcset.set(logo ? (srcsetDeLogo(logoUrl, logo.width) ?? '') : '');
 
           this.isLoading.set(false);
+          if (details) this.definirSeo(details, fundoUrl);
 
           // veio do convite de avaliar em outro banner
           if (this.route.snapshot.fragment === 'sua-avaliacao') {
@@ -238,6 +241,41 @@ export class DetailsComponent implements OnInit, OnDestroy {
           this.carregandoPrisma.set(false);
         },
       });
+  }
+
+  // título com "onde assistir": é como a maioria procura um filme no Google
+  private definirSeo(details: ContentDetails, fundoUrl: string): void {
+    const serie = this.isSeries();
+    const ano = this.releaseYear;
+    const nome = ano ? `${this.title} (${ano})` : this.title;
+    const diretores = (details.credits?.crew ?? [])
+      .filter((p) => p.job === 'Director')
+      .map((p) => p.name);
+    const criadores = (details.created_by ?? []).map((p) => p.name);
+    const autoria = serie ? criadores : diretores;
+    const poster = details.poster_path ? `${environment.tmdbImageUrl}/w500${details.poster_path}` : null;
+
+    this.seo.definir({
+      titulo: `${nome}: onde assistir, elenco e avaliações`,
+      descricao:
+        details.overview ||
+        `Veja onde assistir ${this.title}, elenco, trailer e o que estão achando no Prisma.`,
+      imagem: fundoUrl || poster,
+      tipo: serie ? 'video.tv_show' : 'video.movie',
+      dados: {
+        '@type': serie ? 'TVSeries' : 'Movie',
+        name: this.title,
+        description: details.overview || undefined,
+        image: poster ?? undefined,
+        datePublished: details.release_date || details.first_air_date || undefined,
+        genre: details.genres?.map((g) => g.name),
+        [serie ? 'creator' : 'director']: autoria.length
+          ? autoria.map((name) => ({ '@type': 'Person', name }))
+          : undefined,
+        actor: details.credits?.cast?.slice(0, 5).map((p) => ({ '@type': 'Person', name: p.name })),
+        ...(serie && details.number_of_seasons ? { numberOfSeasons: details.number_of_seasons } : {}),
+      },
+    });
   }
 
   /** Prioriza logo em português, depois inglês. */

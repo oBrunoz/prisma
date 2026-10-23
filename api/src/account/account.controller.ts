@@ -13,6 +13,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
+import { REFRESH_COOKIE, REFRESH_COOKIE_PATH } from '../auth/auth.constants.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { gravarRefreshCookie } from '../auth/refresh-cookie.js';
@@ -21,7 +22,8 @@ import { LIMITE_ENVIO_EMAIL, LIMITE_LOGIN } from '../common/rate-limit.js';
 import { PublicUserDto } from '../user/dto/public-user.dto.js';
 import { AccountService } from './account.service.js';
 import { ConfirmacaoEmailDto } from './dto/confirmacao-email.dto.js';
-import { ContaDto, TrocaPendenteDto } from './dto/conta.dto.js';
+import { ContaDto, ExportacaoDto, TrocaPendenteDto } from './dto/conta.dto.js';
+import { ExclusaoContaDto } from './dto/exclusao-conta.dto.js';
 import { PedidoTrocaEmailDto } from './dto/pedido-troca-email.dto.js';
 import { TrocaSenhaDto } from './dto/troca-senha.dto.js';
 
@@ -104,6 +106,23 @@ export class AccountController {
       res,
       await this.account.encerrarOutrasSessoes(quem.sub),
     );
+  }
+
+  @Get('export')
+  exportar(@CurrentUser() quem: AccessTokenPayload): Promise<ExportacaoDto> {
+    return this.account.exportar(quem.sub);
+  }
+
+  @Throttle({ default: LIMITE_LOGIN })
+  @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async excluir(
+    @CurrentUser() quem: AccessTokenPayload,
+    @Body() dto: ExclusaoContaDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.account.excluir(quem.sub, dto.currentPassword);
+    res.clearCookie(REFRESH_COOKIE, { path: REFRESH_COOKIE_PATH });
   }
 
   // todas as sessoes caem e so esta reabre, com cookie novo

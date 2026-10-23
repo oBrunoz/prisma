@@ -42,6 +42,16 @@ export class ContaService {
     return this.reabrir(this.http.post<SessionResponse>(`${this.base}/sessions/end-others`, {}, { withCredentials: true }));
   }
 
+  exportar(): Observable<unknown> {
+    return this.http.get<unknown>(`${this.base}/export`);
+  }
+
+  excluir(currentPassword: string): Observable<void> {
+    return this.http
+      .delete<void>(this.base, { body: { currentPassword }, withCredentials: true })
+      .pipe(tap(() => this.auth.limparSessao()));
+  }
+
   // a resposta traz o token novo e grava o cookie de refresh: sem withCredentials o cookie não pega
   private reabrir(pedido: Observable<SessionResponse>): Observable<void> {
     return pedido.pipe(

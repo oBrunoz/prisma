@@ -6,15 +6,16 @@ import { Conta } from '../../../core/models/conta.models';
 import { AuthService } from '../../../core/services/auth.service';
 import { ContaService } from '../../../core/services/conta.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { ExclusaoContaComponent } from './exclusao-conta/exclusao-conta.component';
 import { TrocaEmailComponent } from './troca-email/troca-email.component';
 import { TrocaSenhaComponent } from './troca-senha/troca-senha.component';
 
-type Painel = 'email' | 'senha' | null;
+type Painel = 'email' | 'senha' | 'exclusao' | null;
 
 @Component({
   selector: 'app-config-conta',
   standalone: true,
-  imports: [LucideLock, TrocaEmailComponent, TrocaSenhaComponent],
+  imports: [LucideLock, TrocaEmailComponent, TrocaSenhaComponent, ExclusaoContaComponent],
   templateUrl: './config-conta.component.html',
 })
 export class ConfigContaComponent implements OnInit, OnDestroy {
@@ -27,6 +28,7 @@ export class ConfigContaComponent implements OnInit, OnDestroy {
   erro = signal('');
   painel = signal<Painel>(null);
   encerrando = signal(false);
+  baixando = signal(false);
 
   private destroy$ = new Subject<void>();
 
@@ -92,6 +94,31 @@ export class ConfigContaComponent implements OnInit, OnDestroy {
         error: (falha) => {
           this.encerrando.set(false);
           this.toast.erro('Não encerramos as outras sessões', { detalhe: mensagemDeErro(falha), chave: 'conta' });
+        },
+      });
+  }
+
+  // o JSON vem da API e vira arquivo aqui, sem passar por e-mail
+  baixarDados(): void {
+    if (this.baixando()) return;
+    this.baixando.set(true);
+    this.contaService
+      .exportar()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (dados) => {
+          this.baixando.set(false);
+          const arquivo = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(arquivo);
+          link.download = `prisma-${this.auth.usuario()?.username ?? 'dados'}.json`;
+          link.click();
+          // revogar no mesmo tick cancela o download no Firefox
+          setTimeout(() => URL.revokeObjectURL(link.href));
+        },
+        error: (falha) => {
+          this.baixando.set(false);
+          this.toast.erro('Não baixamos seus dados', { detalhe: mensagemDeErro(falha), chave: 'conta' });
         },
       });
   }

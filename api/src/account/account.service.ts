@@ -23,7 +23,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service.js';
 import { PublicUserDto } from '../user/dto/public-user.dto.js';
 import { UserService } from '../user/user.service.js';
-import { ContaDto, TrocaPendenteDto } from './dto/conta.dto.js';
+import { ContaDto, ExportacaoDto, TrocaPendenteDto } from './dto/conta.dto.js';
 import { PedidoTrocaEmailDto } from './dto/pedido-troca-email.dto.js';
 import { TrocaSenhaDto } from './dto/troca-senha.dto.js';
 
@@ -236,6 +236,96 @@ export class AccountService {
 
   encerrarOutrasSessoes(userId: string): Promise<TokenPair> {
     return this.tokens.restart(userId);
+  }
+
+  async exportar(userId: string): Promise<ExportacaoDto> {
+    const titulo = { select: { tmdbId: true, type: true, title: true } };
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        avatar: { select: { userId: true } },
+        coverMedia: titulo,
+        favorites: { include: { media: titulo }, orderBy: { position: 'asc' } },
+        reviews: { include: { media: titulo }, orderBy: { createdAt: 'asc' } },
+        watchlist: { include: { media: titulo }, orderBy: { addedAt: 'asc' } },
+        following: {
+          include: { following: { select: { username: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
+        followers: {
+          include: { follower: { select: { username: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
+        gamePlays: {
+          include: {
+            challenge: { select: { kind: true, number: true, day: true } },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('Usuario nao encontrado');
+    }
+
+    const media = (m: { tmdbId: number; type: string; title: string }) => ({
+      tmdbId: m.tmdbId,
+      tipo: m.type,
+      titulo: m.title,
+    });
+
+    return {
+      exportadoEm: new Date(),
+      conta: {
+        nome: user.name,
+        usuario: user.username,
+        email: user.email,
+        bio: user.bio,
+        criadaEm: user.createdAt,
+        temFoto: !!user.avatar,
+        capa: {
+          tipo: user.coverKind,
+          titulo: user.coverMedia && media(user.coverMedia),
+          imagem: user.coverPath,
+        },
+      },
+      favoritos: user.favorites.map((f) => media(f.media)),
+      avaliacoes: user.reviews.map((r) => ({
+        ...media(r.media),
+        nota: r.rating,
+        resenha: r.content,
+        curtido: r.liked,
+        assistidoEm: r.watchedAt,
+        criadaEm: r.createdAt,
+      })),
+      watchlist: user.watchlist.map((w) => ({
+        ...media(w.media),
+        adicionadoEm: w.addedAt,
+      })),
+      seguindo: user.following.map((f) => ({
+        usuario: f.following.username,
+        desde: f.createdAt,
+      })),
+      seguidores: user.followers.map((f) => ({
+        usuario: f.follower.username,
+        desde: f.createdAt,
+      })),
+      partidas: user.gamePlays.map((p) => ({
+        jogo: p.challenge.kind,
+        desafio: p.challenge.number,
+        dia: p.challenge.day,
+        palpites: p.guesses,
+        resultado: p.result,
+      })),
+    };
+  }
+
+  // tudo que e da pessoa cai junto (cascade no schema): perfil, foto, avaliacoes,
+  // watchlist, favoritos, seguir, partidas, sessoes e pedido de troca de e-mail
+  async excluir(userId: string, senha: string): Promise<void> {
+    const user = await this.buscar(userId);
+    await this.exigirSenha(user, senha);
+    await this.prisma.user.delete({ where: { id: userId } });
   }
 
   private async buscar(userId: string): Promise<User> {

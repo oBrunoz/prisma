@@ -2,22 +2,64 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <title>Prisma</title>
+  <title>Prisma · Seu diário de filmes e séries</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Filmes. Séries. Histórias. Uma janela para novas histórias.">
+  <meta name="description" content="Guarde o que você assiste: marque os filmes e séries que viu, dê nota, escreva resenhas e monte sua watchlist. Veja onde assistir e jogue os desafios do dia. De graça e sem anúncios.">
+  <meta name="robots" content="index, follow">
+  <meta name="application-name" content="Prisma">
+  <meta name="apple-mobile-web-app-title" content="Prisma">
   <meta name="theme-color" content="#111111">
+  <link rel="canonical" href="https://prismadot.com.br/">
   <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="icon" type="image/svg+xml" href="brand/favicon.svg">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <meta property="og:title" content="Prisma">
-  <meta property="og:description" content="Filmes. Séries. Histórias. Uma janela para novas histórias.">
-  <meta property="og:image" content="brand/og-image.png">
+  <meta property="og:site_name" content="Prisma">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://prismadot.com.br/">
+  <meta property="og:title" content="Prisma · Seu diário de filmes e séries">
+  <meta property="og:description" content="Guarde o que você assiste: marque o que viu, dê nota, escreva resenhas e monte sua watchlist.">
+  <meta property="og:image" content="https://prismadot.com.br/brand/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Prisma">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Prisma · Seu diário de filmes e séries">
+  <meta name="twitter:description" content="Guarde o que você assiste: marque o que viu, dê nota, escreva resenhas e monte sua watchlist.">
+  <meta name="twitter:image" content="https://prismadot.com.br/brand/og-image.png">
+  <!-- nome do site no resultado do Google: "Prisma" é disputado, os alternativos ajudam a firmar -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://prismadot.com.br/#site",
+        "name": "Prisma",
+        "alternateName": ["Prismadot", "Prisma Dot", "prismadot.com.br"],
+        "url": "https://prismadot.com.br/",
+        "inLanguage": "pt-BR",
+        "description": "Diário de filmes e séries: marque o que viu, dê nota, escreva resenhas e monte sua watchlist.",
+        "publisher": { "@id": "https://prismadot.com.br/#org" }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://prismadot.com.br/#org",
+        "name": "Prisma",
+        "url": "https://prismadot.com.br/",
+        "logo": "https://prismadot.com.br/brand/prisma-icone-512.png",
+        "sameAs": ["https://github.com/oBrunoz/prisma"]
+      }
+    ]
+  }
+  </script>
 </head>
 <body class="bg-[#111111] text-white">
   <app-root></app-root>
+  <noscript>
+    <h1>Prisma · Seu diário de filmes e séries</h1>
+    <p>Guarde o que você assiste: marque o que viu, dê nota, escreva resenhas e monte sua watchlist. Ative o JavaScript para usar o Prisma.</p>
+  </noscript>
 </body>
 </html>

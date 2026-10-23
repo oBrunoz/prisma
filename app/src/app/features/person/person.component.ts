@@ -8,6 +8,7 @@ import { MovieCardComponent } from '../../shared/components/movie-card/movie-car
 import { CarouselRowComponent } from '../../shared/components/carousel-row/carousel-row.component';
 import { PersonCredit, PersonDetails } from '../../core/models/tmdb.models';
 import { environment } from '../../../environments/environment';
+import { SeoService } from '../../core/services/seo.service';
 import { MediaFallbackComponent } from '../../shared/components/media-fallback/media-fallback.component';
 import { DEPARTAMENTOS } from '../../core/busca/busca';
 
@@ -21,6 +22,7 @@ import { DEPARTAMENTOS } from '../../core/busca/busca';
 export class PersonComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private movieService = inject(MovieService);
+  private seo = inject(SeoService);
 
   person = signal<PersonDetails | null>(null);
   isLoading = signal(true);
@@ -46,7 +48,27 @@ export class PersonComponent implements OnInit, OnDestroy {
       .subscribe((person) => {
         this.person.set(person);
         this.isLoading.set(false);
+        if (person) this.definirSeo(person);
       });
+  }
+
+  private definirSeo(person: PersonDetails): void {
+    const foto = person.profile_path ? `${environment.tmdbImageUrl}/h632${person.profile_path}` : null;
+    this.seo.definir({
+      titulo: `${person.name}: filmes e séries`,
+      descricao: person.biography || `Filmes e séries com ${person.name}: filmografia completa, papéis e onde assistir.`,
+      imagem: foto,
+      tipo: 'profile',
+      dados: {
+        '@type': 'Person',
+        name: person.name,
+        image: foto ?? undefined,
+        birthDate: person.birthday ?? undefined,
+        deathDate: person.deathday ?? undefined,
+        birthPlace: person.place_of_birth ?? undefined,
+        description: person.biography || undefined,
+      },
+    });
   }
 
   ngOnDestroy(): void {

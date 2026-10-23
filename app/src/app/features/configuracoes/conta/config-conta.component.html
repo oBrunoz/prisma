@@ -93,5 +93,40 @@
         </button>
       }
     </div>
+
+    <div class="flex items-center gap-4 py-4">
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-gray-400">Seus dados</p>
+        <p class="text-white font-medium">Uma cópia de tudo que o Prisma guarda de você</p>
+        <p class="mt-1 text-xs text-gray-500">Arquivo JSON com perfil, avaliações, watchlist, quem você segue e partidas.</p>
+      </div>
+      <button
+        type="button"
+        (click)="baixarDados()"
+        [disabled]="baixando()"
+        class="px-5 py-2 rounded-full transition duration-300 text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed">
+        {{ baixando() ? 'Baixando...' : 'Baixar' }}
+      </button>
+    </div>
+
+    <div class="py-4">
+      <div class="flex items-center gap-4">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-gray-400">Excluir conta</p>
+          <p class="text-white font-medium">Apaga a conta e tudo que você registrou</p>
+        </div>
+        @if (painel() !== 'exclusao') {
+          <button
+            type="button"
+            (click)="abrir('exclusao')"
+            class="px-5 py-2 rounded-full transition duration-300 text-sm font-medium bg-white/10 hover:bg-white/20 text-white cursor-pointer">
+            Excluir
+          </button>
+        }
+      </div>
+      @if (painel() === 'exclusao') {
+        <app-exclusao-conta class="block mt-4" (fechou)="fecharPainel()"></app-exclusao-conta>
+      }
+    </div>
   }
 </div>

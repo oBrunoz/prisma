@@ -395,4 +395,58 @@ describe('Account (e2e)', () => {
       1,
     );
   });
+
+  it('exporta os dados da propria pessoa, sem senha nem sessoes', async () => {
+    const conta = await novaConta();
+    const res = await como(conta).get('/account/export').expect(200);
+
+    expect(res.body.conta).toMatchObject({
+      nome: 'Conta E2E',
+      email: conta.email,
+      temFoto: false,
+    });
+    expect(res.body).toMatchObject({
+      favoritos: [],
+      avaliacoes: [],
+      watchlist: [],
+      seguindo: [],
+      seguidores: [],
+      partidas: [],
+    });
+    const texto = JSON.stringify(res.body);
+    expect(texto).not.toContain('passwordHash');
+    expect(texto).not.toContain('tokenHash');
+  });
+
+  describe('exclusao da conta', () => {
+    it('recusa sem a senha certa', async () => {
+      const conta = await novaConta();
+      await como(conta).delete('/account').send({}).expect(400);
+      await como(conta)
+        .delete('/account')
+        .send({ currentPassword: 'senhaerrada123' })
+        .expect(403);
+      await como(conta).get('/account').expect(200);
+    });
+
+    it('apaga a conta, derruba as sessoes e libera o e-mail', async () => {
+      const conta = await novaConta();
+      const outroAparelho = await entrar(conta.email);
+
+      const res = await como(conta)
+        .delete('/account')
+        .send({ currentPassword: SENHA })
+        .expect(204);
+      expect(String(res.headers['set-cookie'])).toContain('boxd_refresh=;');
+
+      await renovar(outroAparelho).expect(401);
+      await server()
+        .post('/auth/login')
+        .send({ email: conta.email, password: SENHA })
+        .expect(401);
+      expect(
+        await prisma.user.findUnique({ where: { email: conta.email } }),
+      ).toBeNull();
+    });
+  });
 });
