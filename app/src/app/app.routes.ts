@@ -14,21 +14,21 @@ export const routes: Routes = [
   {
     path: 'movies',
     title: 'Filmes',
-    data: { descricao: 'Filmes em alta, nos cinemas, populares e por gênero, década ou streaming. Descubra o que ver hoje e onde assistir.' },
+    data: { descricao: 'Filmes em alta, nos cinemas, populares e por gÃªnero, dÃ©cada ou streaming. Descubra o que ver hoje e onde assistir.' },
     loadComponent: () =>
       import('./features/movies/movies.component').then((m) => m.MoviesComponent),
   },
   {
     path: 'series',
-    title: 'Séries',
-    data: { descricao: 'Séries em alta, populares e por gênero. Acompanhe temporadas e episódios, veja onde assistir e o que estão achando.' },
+    title: 'SÃ©ries',
+    data: { descricao: 'SÃ©ries em alta, populares e por gÃªnero. Acompanhe temporadas e episÃ³dios, veja onde assistir e o que estÃ£o achando.' },
     loadComponent: () =>
       import('./features/series/series.component').then((m) => m.SeriesComponent),
   },
   {
     path: 'jogos',
     title: 'Jogos de cinema',
-    data: { descricao: 'Adivinhe o filme do dia por sete cenas ou pelo pôster em listras. Um desafio novo por dia, igual para todo mundo.' },
+    data: { descricao: 'Adivinhe o filme do dia por sete cenas ou pelo pÃ´ster em listras. Um desafio novo por dia, igual para todo mundo.' },
     loadComponent: () =>
       import('./features/jogos/jogos.component').then((m) => m.JogosComponent),
     children: [
@@ -64,13 +64,13 @@ export const routes: Routes = [
   {
     path: 'register',
     title: 'Criar conta',
-    data: { descricao: 'Crie sua conta grátis no Prisma e comece seu diário: marque o que assiste, dê nota, escreva resenhas e monte sua watchlist.' },
+    data: { descricao: 'Crie sua conta grÃ¡tis no Prisma e comece seu diÃ¡rio: marque o que assiste, dÃª nota, escreva resenhas e monte sua watchlist.' },
     canActivate: [visitanteGuard],
     loadComponent: () =>
       import('./features/register/register.component').then((m) => m.RegisterComponent),
   },
   {
-    // o perfil é um só: o seu é o mesmo que os outros veem, com o que dá para editar
+    // o perfil Ã© um sÃ³: o seu Ã© o mesmo que os outros veem, com o que dÃ¡ para editar
     path: 'perfil',
     pathMatch: 'full',
     redirectTo: ({ queryParams }) => {
@@ -83,7 +83,7 @@ export const routes: Routes = [
   },
   {
     path: 'configuracoes',
-    title: 'Configurações',
+    title: 'ConfiguraÃ§Ãµes',
     data: { indexar: false },
     canActivate: [authGuard],
     loadComponent: () =>
@@ -126,7 +126,7 @@ export const routes: Routes = [
   },
   {
     path: 'privacidade',
-    title: 'Política de privacidade',
+    title: 'PolÃ­tica de privacidade',
     loadComponent: () =>
       import('./features/legal/privacidade/privacidade.component').then((m) => m.PrivacidadeComponent),
   },
