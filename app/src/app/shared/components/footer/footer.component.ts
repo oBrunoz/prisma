@@ -26,6 +26,5 @@ export class FooterComponent {
   conta: FooterLink[] = [
     { label: 'Entrar', route: '/login' },
     { label: 'Criar conta', route: '/register' },
-    { label: 'Sobre o Prisma', route: '/' },
   ];
 }

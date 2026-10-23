@@ -22,8 +22,8 @@
       [detailsRoute]="spotlightDetailsRoute"
       [tmdbId]="currentSpotlight?.movie?.id ?? null"
       mediaType="movie"
-      (conviteVisivel)="segurarDestaque($event)",
-      (trailerOpened)="pauseAutoPlay()",
+      (conviteVisivel)="segurarDestaque($event)"
+      (trailerOpened)="pauseAutoPlay()"
       (trailerClosed)="resumeAutoPlay()"
       (retryClicked)="retry()">
     </app-hero-section>
