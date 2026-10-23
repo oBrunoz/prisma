@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /configuracoes
+Disallow: /busca
+Disallow: /jogos/*/aleatorio
+
+Sitemap: https://prismadot.com.br/sitemap.xml
