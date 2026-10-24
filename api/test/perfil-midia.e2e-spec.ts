@@ -86,6 +86,56 @@ describe('Foto enviada e capa do perfil (e2e)', () => {
       await enviar(Buffer.alloc(5 * 1024 * 1024 + 1, 1)).expect(413);
     });
 
+    it('guarda a original e o enquadramento so para a dona', async () => {
+      const grande = await sharp({ create: { width: 3000, height: 2000, channels: 3, background: '#78c4c4' } })
+        .jpeg()
+        .toBuffer();
+      const recorte = await sharp({ create: { width: 640, height: 640, channels: 3, background: '#78c4c4' } })
+        .jpeg()
+        .toBuffer();
+      const enquadramento = { zoom: 1.5, x: 0.2, y: -0.1, giro: 90 };
+
+      await server()
+        .post('/user/me/avatar')
+        .set(auth())
+        .attach('foto', recorte, 'foto.jpg')
+        .attach('original', grande, 'original.jpg')
+        .field('enquadramento', JSON.stringify(enquadramento))
+        .expect(201);
+
+      const original = await server().get('/user/me/avatar/original').set(auth()).buffer(true).expect(200);
+      expect(original.headers['cache-control']).toBe('private, no-store');
+      const meta = await sharp(original.body as Buffer).metadata();
+      expect(meta).toMatchObject({ format: 'webp', width: 2048 });
+
+      const guardado = await server().get('/user/me/avatar/enquadramento').set(auth()).expect(200);
+      expect(guardado.body).toEqual(enquadramento);
+
+      await server().get('/user/me/avatar/original').expect(401);
+      await server().get('/user/me/avatar/enquadramento').expect(401);
+    });
+
+    it('recusa original sem enquadramento e enquadramento invalido', async () => {
+      const png = await sharp({ create: { width: 50, height: 50, channels: 3, background: '#eca352' } })
+        .png()
+        .toBuffer();
+      const comOriginal = () =>
+        server().post('/user/me/avatar').set(auth()).attach('foto', png, 'foto.png').attach('original', png, 'original.png');
+
+      await comOriginal().expect(400);
+      await comOriginal().field('enquadramento', JSON.stringify({ zoom: 1, x: 0, y: 0, giro: 45 })).expect(400);
+      await comOriginal().field('enquadramento', 'nao e json').expect(400);
+    });
+
+    it('foto enviada sem original esquece a anterior', async () => {
+      const png = await sharp({ create: { width: 50, height: 50, channels: 3, background: '#d85057' } })
+        .png()
+        .toBuffer();
+      await enviar(png).expect(201);
+      await server().get('/user/me/avatar/original').set(auth()).expect(404);
+      await server().get('/user/me/avatar/enquadramento').set(auth()).expect(404);
+    });
+
     it('tira a foto e apaga o arquivo guardado', async () => {
       const res = await server().delete('/user/me/avatar').set(auth()).expect(200);
       expect(res.body.avatarUrl).toBeNull();

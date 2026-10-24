@@ -12,11 +12,11 @@ import {
   Put,
   Query,
   Res,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { LIMITE_FOTO } from '../common/rate-limit.js';
@@ -29,6 +29,7 @@ import { AvatarService, TAMANHO_MAXIMO_FOTO } from './avatar.service.js';
 import { BuscaUsuarioQueryDto } from './dto/busca-usuario.dto.js';
 import { CapaDto } from './dto/capa.dto.js';
 import { FavoritosDto } from './dto/favoritos.dto.js';
+import { EnquadramentoDto, FotoDto } from './dto/foto.dto.js';
 import { PerfilPublicoDto } from './dto/perfil-publico.dto.js';
 import { PublicUserDto } from './dto/public-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -52,22 +53,63 @@ export class UserController {
     return this.userService.updateMe(user.sub, dto);
   }
 
-  // o limite de tamanho corta no recebimento: acima dele vira 413 sem ler o resto
+  // o limite corta no recebimento (413); "original" + "enquadramento" deixam reabrir o ajuste
   @Post('me/avatar')
   @UseGuards(JwtAuthGuard)
   @Throttle({ default: LIMITE_FOTO })
   @UseInterceptors(
-    FileInterceptor('foto', { limits: { fileSize: TAMANHO_MAXIMO_FOTO, files: 1 } }),
+    FileFieldsInterceptor(
+      [
+        { name: 'foto', maxCount: 1 },
+        { name: 'original', maxCount: 1 },
+      ],
+      { limits: { fileSize: TAMANHO_MAXIMO_FOTO, files: 2 } },
+    ),
   )
   async enviarFoto(
     @CurrentUser() user: AccessTokenPayload,
-    @UploadedFile() arquivo?: { buffer: Buffer },
+    @Body() corpo: FotoDto,
+    @UploadedFiles() arquivos: { foto?: { buffer: Buffer }[]; original?: { buffer: Buffer }[] } = {},
   ): Promise<PublicUserDto> {
-    if (!arquivo) {
+    const foto = arquivos.foto?.[0];
+    const original = arquivos.original?.[0];
+    if (!foto) {
       throw new BadRequestException('Envie a imagem no campo "foto"');
     }
-    const url = await this.avatars.salvar(user.sub, arquivo.buffer);
+    if (!original !== !corpo.enquadramento) {
+      throw new BadRequestException('A original e o enquadramento vao juntos');
+    }
+    const ajuste =
+      original && corpo.enquadramento
+        ? { original: original.buffer, enquadramento: corpo.enquadramento }
+        : undefined;
+    const url = await this.avatars.salvar(user.sub, foto.buffer, ajuste);
     return this.userService.definirAvatar(user.sub, url);
+  }
+
+  // so a dona ve a original: pode ter algo que ela cortou de proposito
+  @Get('me/avatar/original')
+  @UseGuards(JwtAuthGuard)
+  async fotoOriginal(
+    @CurrentUser() user: AccessTokenPayload,
+    @Res() res: Response,
+  ): Promise<void> {
+    const original = await this.avatars.lerOriginal(user.sub);
+    if (!original) {
+      throw new NotFoundException('Sem foto original guardada');
+    }
+    res.set({ 'Content-Type': 'image/webp', 'Cache-Control': 'private, no-store' });
+    res.send(original);
+  }
+
+  @Get('me/avatar/enquadramento')
+  @UseGuards(JwtAuthGuard)
+  async enquadramento(@CurrentUser() user: AccessTokenPayload): Promise<EnquadramentoDto> {
+    const enquadramento = await this.avatars.lerEnquadramento(user.sub);
+    if (!enquadramento) {
+      throw new NotFoundException('Sem foto original guardada');
+    }
+    return enquadramento;
   }
 
   @Delete('me/avatar')

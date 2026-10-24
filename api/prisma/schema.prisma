@@ -185,9 +185,12 @@ model Favorite {
 
 // a foto enviada, ja regravada pelo servidor (webp quadrado, sem metadados)
 model Avatar {
-  userId    String   @id
-  data      Bytes
-  updatedAt DateTime @updatedAt
+  userId        String   @id
+  data          Bytes
+  // a foto inteira (ate 2048px, webp) e o enquadramento: so a dona ve, serve para reabrir o ajuste
+  original      Bytes?
+  enquadramento Json?
+  updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
