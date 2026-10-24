@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   BuscaUsuarios,
   Capa,
+  EnquadramentoFoto,
   EnvioCapa,
   NovosSeguidores,
   PerfilPublico,
@@ -45,10 +46,32 @@ export class UsuarioService {
     return this.http.put<Midia[]>(`${this.base}/user/me/favorites`, { itens });
   }
 
-  enviarFoto(arquivo: File): Observable<PublicUser> {
+  // com a original e o enquadramento, o ajuste reabre de onde parou
+  enviarFoto(
+    recorte: Blob,
+    ajuste?: { original: Blob; enquadramento: EnquadramentoFoto },
+  ): Observable<PublicUser> {
     const corpo = new FormData();
-    corpo.append('foto', arquivo);
+    corpo.append('foto', recorte, 'foto.jpg');
+    if (ajuste) {
+      corpo.append('original', ajuste.original, 'original');
+      corpo.append('enquadramento', JSON.stringify(ajuste.enquadramento));
+    }
     return this.http.post<PublicUser>(`${this.base}/user/me/avatar`, corpo);
+  }
+
+  fotoOriginal(): Observable<Blob> {
+    return this.http.get(`${this.base}/user/me/avatar/original`, { responseType: 'blob' });
+  }
+
+  enquadramentoDaFoto(): Observable<EnquadramentoFoto> {
+    return this.http.get<EnquadramentoFoto>(`${this.base}/user/me/avatar/enquadramento`);
+  }
+
+  // foto de antes da original guardada: reabre o próprio recorte
+  fotoAtual(avatarUrl: string): Observable<Blob> {
+    const url = avatarUrl.startsWith('/') ? `${this.base}${avatarUrl}` : avatarUrl;
+    return this.http.get(url, { responseType: 'blob' });
   }
 
   tirarFoto(): Observable<PublicUser> {

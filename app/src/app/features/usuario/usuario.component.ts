@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { LucidePencil, LucideUserCheck, LucideUserPlus } from '@lucide/angular';
+import { LucideCamera, LucidePencil, LucideUserCheck, LucideUserPlus } from '@lucide/angular';
 import { EMPTY, Subject, catchError, map, merge, switchMap, takeUntil, tap } from 'rxjs';
 import { ENFEITES } from '../../core/config/enfeites';
 import { mensagemDeErro } from '../../core/errors/mensagens';
-import { PerfilPublico } from '../../core/models/auth.models';
+import { PerfilPublico, PublicUser } from '../../core/models/auth.models';
 import { Midia } from '../../core/models/catalogo.models';
 import { AuthService } from '../../core/services/auth.service';
 import { FundoService } from '../../core/services/fundo.service';
@@ -14,6 +14,11 @@ import { MovieService } from '../../core/services/movie.service';
 import { SeoService } from '../../core/services/seo.service';
 import { ToastService } from '../../core/services/toast.service';
 import { UsuarioService } from '../../core/services/usuario.service';
+import {
+  AjustarFotoComponent,
+  TIPOS_DE_FOTO,
+  problemaNaFoto,
+} from '../../shared/components/ajustar-foto/ajustar-foto.component';
 import {
   AbaSeguidores,
   SeguidoresModalComponent,
@@ -43,6 +48,7 @@ const LISTAS: AbaSeguidores[] = ['seguidores', 'seguindo'];
     StripesBannerComponent,
     SeguidoresModalComponent,
     FavoritosModalComponent,
+    AjustarFotoComponent,
     AbaGeralComponent,
     AbaDiarioComponent,
     AbaAvaliacoesComponent,
@@ -54,6 +60,7 @@ const LISTAS: AbaSeguidores[] = ['seguidores', 'seguindo'];
     LucideUserPlus,
     LucideUserCheck,
     LucidePencil,
+    LucideCamera,
   ],
   templateUrl: './usuario.component.html',
 })
@@ -78,7 +85,8 @@ export class UsuarioComponent implements OnInit, OnDestroy {
   aba = signal<AbaPerfil>('geral');
   listaAberta = signal<AbaSeguidores | null>(null);
   favoritosAbertos = signal(false);
-  // o caminho na TMDB: o template monta as larguras para o navegador escolher
+  fotoParaAjustar = signal<File | null>(null);
+  readonly tiposDeFoto = TIPOS_DE_FOTO.join(',');
   capaPath = signal<string | null>(null);
 
   readonly souEu = computed(() => {
@@ -200,6 +208,25 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     this.favoritosAbertos.set(false);
     const perfil = this.perfil();
     if (perfil) this.carregarCapa(perfil).pipe(takeUntil(this.destroy$)).subscribe();
+  }
+
+  escolherFoto(entrada: HTMLInputElement): void {
+    const arquivo = entrada.files?.[0];
+    // limpa para que escolher o mesmo arquivo de novo dispare outra vez
+    entrada.value = '';
+    if (!arquivo) return;
+
+    const problema = problemaNaFoto(arquivo);
+    if (problema) {
+      this.toast.erro('Não abrimos essa foto', { detalhe: problema, chave: 'foto' });
+      return;
+    }
+    this.fotoParaAjustar.set(arquivo);
+  }
+
+  aoSalvarFoto(usuario: PublicUser): void {
+    this.fotoParaAjustar.set(null);
+    this.perfil.update((p) => p && { ...p, avatarUrl: usuario.avatarUrl });
   }
 
   aoExcluirAvaliacao(): void {

@@ -1,29 +1,32 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, inject, signal } from '@angular/core';
-import { LucideImageUp } from '@lucide/angular';
-import { Subject, takeUntil } from 'rxjs';
+import { LucideImageUp, LucidePencil } from '@lucide/angular';
+import { Subject, catchError, forkJoin, map, takeUntil, throwError } from 'rxjs';
 import { mensagemDeErro } from '../../../../core/errors/mensagens';
-import { PublicUser } from '../../../../core/models/auth.models';
+import { EnquadramentoFoto, PublicUser } from '../../../../core/models/auth.models';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
+import {
+  AjustarFotoComponent,
+  TIPOS_DE_FOTO,
+  problemaNaFoto,
+} from '../../../../shared/components/ajustar-foto/ajustar-foto.component';
 import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
 
-// o mesmo teto da API; aqui ele só poupa o envio de algo que seria recusado
-const TAMANHO_MAXIMO = 5 * 1024 * 1024;
-const TIPOS_ACEITOS = ['image/jpeg', 'image/png', 'image/webp'];
-
-// a foto é enviada assim que escolhida: não depende do "Salvar perfil"
+// a foto escolhida abre no ajuste e vai de lá: não depende do "Salvar perfil"
 @Component({
   selector: 'app-campo-foto',
   standalone: true,
-  imports: [UserAvatarComponent, LucideImageUp],
+  imports: [UserAvatarComponent, AjustarFotoComponent, LucideImageUp, LucidePencil],
   templateUrl: './campo-foto.component.html',
 })
 export class CampoFotoComponent implements OnDestroy {
   readonly auth = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
 
-  readonly tiposAceitos = TIPOS_ACEITOS.join(',');
+  readonly tiposAceitos = TIPOS_DE_FOTO.join(',');
+  readonly ajustando = signal<{ imagem: Blob; enquadramento: EnquadramentoFoto | null } | null>(null);
+  readonly abrindo = signal(false);
   readonly arrastando = signal(false);
   readonly enviando = signal(false);
   readonly erro = signal('');
@@ -56,14 +59,49 @@ export class CampoFotoComponent implements OnDestroy {
     this.profundidade = 0;
     this.arrastando.set(false);
     const arquivo = evento.dataTransfer?.files?.[0];
-    if (arquivo) this.enviar(arquivo);
+    if (arquivo) this.ajustar(arquivo);
   }
 
   aoEscolher(entrada: HTMLInputElement): void {
     const arquivo = entrada.files?.[0];
     // limpa para que escolher o mesmo arquivo de novo dispare outra vez
     entrada.value = '';
-    if (arquivo) this.enviar(arquivo);
+    if (arquivo) this.ajustar(arquivo);
+  }
+
+  editar(entrada: HTMLInputElement): void {
+    const avatarUrl = this.auth.usuario()?.avatarUrl;
+    if (!avatarUrl) {
+      entrada.click();
+      return;
+    }
+    if (this.abrindo() || this.enviando()) return;
+    this.abrindo.set(true);
+    this.erro.set('');
+
+    forkJoin({
+      imagem: this.usuarioService.fotoOriginal(),
+      enquadramento: this.usuarioService.enquadramentoDaFoto(),
+    })
+      .pipe(
+        // foto enviada antes de guardarmos a original: reabre o próprio recorte
+        catchError((falha) =>
+          falha instanceof HttpErrorResponse && falha.status === 404
+            ? this.usuarioService.fotoAtual(avatarUrl).pipe(map((imagem) => ({ imagem, enquadramento: null })))
+            : throwError(() => falha),
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: (ajuste) => {
+          this.abrindo.set(false);
+          this.ajustando.set(ajuste);
+        },
+        error: (falha) => {
+          this.abrindo.set(false);
+          this.erro.set(mensagemDeErro(falha));
+        },
+      });
   }
 
   tirar(): void {
@@ -88,39 +126,11 @@ export class CampoFotoComponent implements OnDestroy {
     this.destroy$.complete();
   }
 
-  private enviar(arquivo: File): void {
+  private ajustar(arquivo: File): void {
     if (this.enviando()) return;
-
-    if (!TIPOS_ACEITOS.includes(arquivo.type)) {
-      this.erro.set('Use uma imagem JPG, PNG ou WebP.');
-      return;
-    }
-    if (arquivo.size > TAMANHO_MAXIMO) {
-      this.erro.set(`Essa imagem tem ${this.megas(arquivo.size)}. O limite é 5 MB.`);
-      return;
-    }
-
-    this.enviando.set(true);
-    this.erro.set('');
-
-    this.usuarioService
-      .enviarFoto(arquivo)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        // a foto nova aparece na hora, aqui e na navbar: não precisa de aviso
-        next: (usuario) => this.aplicar(usuario),
-        error: (falha) => {
-          this.enviando.set(false);
-          const status = falha instanceof HttpErrorResponse ? falha.status : -1;
-          this.erro.set(
-            mensagemDeErro(falha, {
-              400: 'Não conseguimos ler essa imagem. Use um JPG, PNG ou WebP.',
-              413: 'A imagem passa de 5 MB.',
-            }),
-          );
-          if (status === 401) this.auth.pedirLogin('Entre de novo para trocar a foto');
-        },
-      });
+    const problema = problemaNaFoto(arquivo);
+    this.erro.set(problema);
+    if (!problema) this.ajustando.set({ imagem: arquivo, enquadramento: null });
   }
 
   private aplicar(usuario: PublicUser): void {
@@ -130,9 +140,5 @@ export class CampoFotoComponent implements OnDestroy {
 
   private temArquivo(evento: DragEvent): boolean {
     return !!evento.dataTransfer?.types.includes('Files');
-  }
-
-  private megas(bytes: number): string {
-    return `${(bytes / 1024 / 1024).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} MB`;
   }
 }

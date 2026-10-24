@@ -26,6 +26,14 @@ export interface PerfilPublico extends PublicUser {
 
 export type TipoDeCapa = 'favorito' | 'titulo' | 'nenhuma';
 
+// como a foto foi enquadrada no círculo: zoom e deslocamento em diâmetros do círculo
+export interface EnquadramentoFoto {
+  zoom: number;
+  x: number;
+  y: number;
+  giro: number;
+}
+
 // com tipo favorito, a cena vem do primeiro favorito e o front busca a imagem
 export interface Capa {
   tipo: TipoDeCapa;

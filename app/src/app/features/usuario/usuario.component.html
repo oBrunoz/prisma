@@ -38,14 +38,30 @@
     <div class="relative px-gutter">
       @if (perfil(); as perfil) {
         <div class="flex flex-wrap items-end gap-5 sm:gap-8">
-          @if (enfeite()) {
-            <div class="relative shrink-0">
+          <div class="relative shrink-0">
+            @if (souEu()) {
+              <label
+                class="group relative block rounded-full cursor-pointer has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-red-500 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[#111111]">
+                <input
+                  type="file"
+                  class="sr-only"
+                  [accept]="tiposDeFoto"
+                  (change)="escolherFoto($any($event.target))"
+                  aria-label="Trocar foto" />
+                <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+                <span
+                  class="absolute -bottom-0.5 -right-0.5 w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/15 flex items-center justify-center text-gray-300 group-hover:text-white group-hover:bg-[#2a2a2a] transition duration-300"
+                  aria-hidden="true">
+                  <svg lucideCamera [size]="15" strokeWidth="2"></svg>
+                </span>
+              </label>
+            } @else {
               <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
+            }
+            @if (enfeite()) {
               <app-coroa-lirios></app-coroa-lirios>
-            </div>
-          } @else {
-            <app-user-avatar [nome]="perfil.username" [avatarUrl]="perfil.avatarUrl" tamanho="lg"></app-user-avatar>
-          }
+            }
+          </div>
 
           <div class="flex-1 min-w-[14rem]">
             <h1 class="text-3xl sm:text-5xl font-bold text-white">{{ perfil.username }}</h1>
@@ -196,6 +212,14 @@
       [aba]="lista"
       (fechou)="fecharLista()">
     </app-seguidores-modal>
+  }
+
+  @if (fotoParaAjustar(); as arquivo) {
+    <app-ajustar-foto
+      [imagem]="arquivo"
+      (fechou)="fotoParaAjustar.set(null)"
+      (salvou)="aoSalvarFoto($event)">
+    </app-ajustar-foto>
   }
 
   @if (favoritosAbertos()) {

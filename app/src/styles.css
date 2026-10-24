@@ -100,6 +100,31 @@
     @apply text-[0.875em] text-gray-200 bg-white/10 px-1.5 py-0.5 rounded;
   }
 
+  .controle-faixa {
+    @apply h-11 min-w-0 flex-1 cursor-pointer appearance-none bg-transparent;
+  }
+  .controle-faixa::-webkit-slider-runnable-track {
+    @apply h-1 rounded-full bg-white/20;
+  }
+  .controle-faixa::-moz-range-track {
+    @apply h-1 rounded-full bg-white/20;
+  }
+  .controle-faixa::-webkit-slider-thumb {
+    @apply -mt-[7px] h-[18px] w-[18px] appearance-none rounded-full border-0 bg-white;
+  }
+  .controle-faixa::-moz-range-thumb {
+    @apply h-[18px] w-[18px] rounded-full border-0 bg-white;
+  }
+  .controle-faixa:focus-visible {
+    @apply outline-none;
+  }
+  .controle-faixa:focus-visible::-webkit-slider-thumb {
+    @apply ring-2 ring-red-500 ring-offset-2 ring-offset-[#1a1a1a];
+  }
+  .controle-faixa:focus-visible::-moz-range-thumb {
+    @apply ring-2 ring-red-500 ring-offset-2 ring-offset-[#1a1a1a];
+  }
+
   /* abaixo de lg a fileira sangra até a borda da tela: o card cortado convida a deslizar */
   @media (max-width: 1023.98px) {
     .trilho-sangria {
