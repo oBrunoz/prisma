@@ -3,7 +3,7 @@ import { LucideSearch } from '@lucide/angular';
 import { Subject, catchError, debounceTime, distinctUntilChanged, map, of, switchMap, takeUntil } from 'rxjs';
 import { TituloBusca, filmeParaTitulo, serieParaTitulo } from '../../../../core/busca/busca';
 import { mensagemDeErro } from '../../../../core/errors/mensagens';
-import { Capa, TipoDeCapa } from '../../../../core/models/auth.models';
+import { Capa, FOCO_PADRAO, FocoCapa, TipoDeCapa } from '../../../../core/models/auth.models';
 import { Midia } from '../../../../core/models/catalogo.models';
 import { Movie, TvShow } from '../../../../core/models/tmdb.models';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -12,11 +12,14 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
 import { MediaFallbackComponent } from '../../../../shared/components/media-fallback/media-fallback.component';
 import { StripesBannerComponent } from '../../../../shared/components/stripes-banner/stripes-banner.component';
+import { EnquadrarCapaComponent } from '../enquadrar-capa/enquadrar-capa.component';
 
 interface Cena {
   titulo: TituloBusca;
   backdropPath: string;
 }
+
+const mesmoFoco = (a: FocoCapa, b: FocoCapa) => a.x === b.x && a.y === b.y && a.zoom === b.zoom;
 
 const OPCOES: { tipo: TipoDeCapa; rotulo: string }[] = [
   { tipo: 'favorito', rotulo: 'Primeiro favorito' },
@@ -27,11 +30,11 @@ const OPCOES: { tipo: TipoDeCapa; rotulo: string }[] = [
 @Component({
   selector: 'app-escolher-capa',
   standalone: true,
-  imports: [MediaFallbackComponent, StripesBannerComponent, LucideSearch],
+  imports: [MediaFallbackComponent, StripesBannerComponent, EnquadrarCapaComponent, LucideSearch],
   templateUrl: './escolher-capa.component.html',
 })
 export class EscolherCapaComponent implements OnInit, OnDestroy {
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly movieService = inject(MovieService);
   private readonly toast = inject(ToastService);
@@ -44,6 +47,7 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
 
   readonly tipo = signal<TipoDeCapa>('favorito');
   readonly cena = signal<Cena | null>(null);
+  readonly foco = signal<FocoCapa>(FOCO_PADRAO);
 
   readonly termo = signal('');
   readonly resultados = signal<TituloBusca[]>([]);
@@ -58,8 +62,11 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
   readonly mudou = computed(() => {
     const salva = this.salva();
     if (!salva) return false;
-    if (this.tipo() !== salva.tipo) return this.tipo() !== 'titulo' || !!this.cena();
-    return this.tipo() === 'titulo' && !!this.cena() && this.cena()!.backdropPath !== salva.backdropPath;
+    const tipo = this.tipo();
+    const cena = this.cena();
+    if (tipo !== salva.tipo) return tipo !== 'titulo' || !!cena;
+    if (tipo === 'titulo' && cena && cena.backdropPath !== salva.backdropPath) return true;
+    return tipo !== 'nenhuma' && !mesmoFoco(this.foco(), salva.foco);
   });
 
   private busca$ = new Subject<string>();
@@ -77,6 +84,7 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
           this.salva.set(perfil.capa);
           this.primeiroFavorito.set(perfil.favoritos[0] ?? null);
           this.tipo.set(perfil.capa.tipo);
+          this.foco.set(perfil.capa.foco);
           if (perfil.capa.tipo === 'titulo' && perfil.capa.media && perfil.capa.backdropPath) {
             this.cena.set({ titulo: this.deMidia(perfil.capa.media), backdropPath: perfil.capa.backdropPath });
           }
@@ -121,6 +129,7 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
 
   escolherTipo(tipo: TipoDeCapa): void {
     this.tipo.set(tipo);
+    this.foco.set(this.focoDaCena());
     this.atualizarPrevia();
   }
 
@@ -151,6 +160,7 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
     const titulo = this.tituloAberto();
     if (!titulo) return;
     this.cena.set({ titulo, backdropPath });
+    this.foco.set(this.focoDaCena());
     this.atualizarPrevia();
   }
 
@@ -168,8 +178,11 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
               tmdbId: cena.titulo.id,
               mediaType: cena.titulo.tipo === 'movies' ? 'movie' : 'tv',
               backdropPath: cena.backdropPath,
+              foco: this.foco(),
             }
-          : { tipo },
+          : tipo === 'favorito'
+            ? { tipo, foco: this.foco() }
+            : { tipo },
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -200,7 +213,13 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
     return this.cena()?.backdropPath === caminho;
   }
 
-  // a prévia mostra o que vai aparecer no perfil depois de salvar
+  private focoDaCena(): FocoCapa {
+    const salva = this.salva();
+    if (!salva || this.tipo() !== salva.tipo || this.tipo() === 'nenhuma') return FOCO_PADRAO;
+    if (this.tipo() === 'titulo' && this.cena()?.backdropPath !== salva.backdropPath) return FOCO_PADRAO;
+    return salva.foco;
+  }
+
   private atualizarPrevia(): void {
     const tipo = this.tipo();
     if (tipo === 'titulo') {

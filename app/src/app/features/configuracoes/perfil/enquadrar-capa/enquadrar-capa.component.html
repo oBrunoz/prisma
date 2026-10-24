@@ -1,0 +1,74 @@
+<div
+  #origem
+  (pointerdown)="aoTocar($event)"
+  (pointermove)="aoMover($event)"
+  (pointerup)="soltar()"
+  (pointercancel)="soltar()"
+  class="relative max-w-xl rounded-xl overflow-hidden touch-none select-none cursor-crosshair bg-[#0d0d0d]">
+  <img [src]="imagem()" alt="" draggable="false" class="block w-full h-auto pointer-events-none" />
+  <div class="absolute inset-0 bg-black/25 pointer-events-none"></div>
+  <button
+    type="button"
+    (keydown)="aoTeclar($event)"
+    [style.left.%]="foco().x"
+    [style.top.%]="foco().y"
+    class="absolute w-11 h-11 -ml-[22px] -mt-[22px] rounded-full cursor-grab focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+    aria-label="Ponto de foco da capa. Use as setas para mover.">
+    <span class="absolute inset-[11px] rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.5),0_2px_10px_rgba(0,0,0,0.6)]"></span>
+    <span class="absolute inset-5 rounded-full bg-white"></span>
+  </button>
+</div>
+
+<div class="mt-3 max-w-xl flex items-center gap-3">
+  <label for="zoom-capa" class="text-sm text-gray-400">Aproximar</label>
+  <input
+    id="zoom-capa"
+    type="range"
+    min="1"
+    [max]="zoomMaximo"
+    step="0.01"
+    [value]="foco().zoom"
+    (input)="aproximar(+$any($event.target).value)"
+    class="controle-faixa" />
+</div>
+
+<!-- a faixa do perfil nos dois formatos: 1440 × 512 no computador, 375 × 320 no celular -->
+<div class="mt-5 grid gap-4 sm:grid-cols-[minmax(0,3.4fr)_minmax(0,1fr)] sm:items-end">
+  <figure class="min-w-0">
+    <div class="relative aspect-[1440/624] overflow-hidden rounded-lg bg-[#111111] [container-type:inline-size]">
+      <div class="absolute inset-x-0 top-0 h-[35.6cqw] overflow-hidden">
+        <img [src]="imagem()" alt="" [style]="estilo()" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/75 via-30% to-transparent to-70%"></div>
+      </div>
+      <div class="absolute inset-x-0 top-0 h-[13.3cqw] bg-gradient-to-b from-[#111111]/85 to-transparent"></div>
+      <div class="absolute left-[5.5cqw] right-[5.5cqw] top-[31.1cqw] flex items-end gap-[2.2cqw]">
+        @if (avatar(); as src) {
+          <img [src]="src" alt="" class="w-[6.7cqw] aspect-square rounded-full object-cover" />
+        } @else {
+          <span class="w-[6.7cqw] aspect-square rounded-full bg-[#1a1a1a] flex items-center justify-center text-[2.1cqw] font-semibold text-white">{{ inicial() }}</span>
+        }
+        <span class="min-w-0 truncate text-[3.3cqw] font-bold text-white">{{ username() }}</span>
+      </div>
+    </div>
+    <figcaption class="mt-2 text-xs text-gray-500">Computador</figcaption>
+  </figure>
+
+  <figure class="min-w-0 w-[62%] sm:w-auto">
+    <div class="relative aspect-[375/452] overflow-hidden rounded-lg bg-[#111111] [container-type:inline-size]">
+      <div class="absolute inset-x-0 top-0 h-[85.3cqw] overflow-hidden">
+        <img [src]="imagem()" alt="" [style]="estilo()" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/75 via-30% to-transparent to-70%"></div>
+      </div>
+      <div class="absolute inset-x-0 top-0 h-[51.2cqw] bg-gradient-to-b from-[#111111]/85 to-transparent"></div>
+      <div class="absolute left-[5.3cqw] right-[5.3cqw] top-[64cqw] flex flex-col items-start gap-[4cqw]">
+        @if (avatar(); as src) {
+          <img [src]="src" alt="" class="w-[25.6cqw] aspect-square rounded-full object-cover" />
+        } @else {
+          <span class="w-[25.6cqw] aspect-square rounded-full bg-[#1a1a1a] flex items-center justify-center text-[8cqw] font-semibold text-white">{{ inicial() }}</span>
+        }
+        <span class="max-w-full truncate text-[8cqw] font-bold text-white">{{ username() }}</span>
+      </div>
+    </div>
+    <figcaption class="mt-2 text-xs text-gray-500">Celular</figcaption>
+  </figure>
+</div>

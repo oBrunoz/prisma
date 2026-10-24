@@ -34,11 +34,28 @@ export interface EnquadramentoFoto {
   giro: number;
 }
 
+// o ponto da cena que fica à vista (%, como object-position) e a aproximação
+export interface FocoCapa {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export const FOCO_PADRAO: FocoCapa = { x: 50, y: 30, zoom: 1 };
+export const ZOOM_MAXIMO_CAPA = 2;
+
+// object-cover + o mesmo ponto como origem do scale: o foco nunca sai do quadro
+export function estiloDaCapa(foco: FocoCapa): Record<string, string> {
+  const ponto = `${foco.x}% ${foco.y}%`;
+  return { 'object-position': ponto, 'transform-origin': ponto, transform: `scale(${foco.zoom})` };
+}
+
 // com tipo favorito, a cena vem do primeiro favorito e o front busca a imagem
 export interface Capa {
   tipo: TipoDeCapa;
   backdropPath: string | null;
   media: Midia | null;
+  foco: FocoCapa;
 }
 
 export interface EnvioCapa {
@@ -46,6 +63,7 @@ export interface EnvioCapa {
   tmdbId?: number;
   mediaType?: TipoMidia;
   backdropPath?: string;
+  foco?: FocoCapa;
 }
 
 export interface UsuarioResumo {
