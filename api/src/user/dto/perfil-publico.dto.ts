@@ -1,5 +1,5 @@
 import type { Media } from '../../generated/prisma/client.js';
-import type { TipoDeCapa } from './capa.dto.js';
+import type { FocoDto, TipoDeCapa } from './capa.dto.js';
 import { PublicUserDto } from './public-user.dto.js';
 
 export class PerfilPublicoDto extends PublicUserDto {
@@ -18,5 +18,6 @@ export class PerfilPublicoDto extends PublicUserDto {
     tipo: TipoDeCapa;
     backdropPath: string | null;
     media: Media | null;
+    foco: FocoDto;
   };
 }

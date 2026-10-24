@@ -55,6 +55,10 @@ model User {
   coverMediaId    String?
   // caminho da imagem na TMDB, conferido contra as cenas do titulo
   coverPath       String?
+  // enquadramento da capa: o ponto que fica a vista (%, como object-position) e a aproximacao
+  coverX          Float     @default(50)
+  coverY          Float     @default(30)
+  coverZoom       Float     @default(1)
 
   watchlist     WatchlistItem[]
   favorites     Favorite[]

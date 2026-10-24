@@ -286,6 +286,7 @@ export class AccountService {
           tipo: user.coverKind,
           titulo: user.coverMedia && media(user.coverMedia),
           imagem: user.coverPath,
+          foco: { x: user.coverX, y: user.coverY, zoom: user.coverZoom },
         },
       },
       favoritos: user.favorites.map((f) => media(f.media)),

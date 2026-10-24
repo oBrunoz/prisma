@@ -98,7 +98,12 @@ describe('Foto enviada e capa do perfil (e2e)', () => {
     const perfil = async () => (await server().get(`/user/username/${username}`).expect(200)).body;
 
     it('comeca no primeiro favorito', async () => {
-      expect((await perfil()).capa).toEqual({ tipo: 'favorito', backdropPath: null, media: null });
+      expect((await perfil()).capa).toEqual({
+        tipo: 'favorito',
+        backdropPath: null,
+        media: null,
+        foco: { x: 50, y: 30, zoom: 1 },
+      });
     });
 
     it('aceita uma cena do titulo e guarda o credito', async () => {
@@ -126,6 +131,21 @@ describe('Foto enviada e capa do perfil (e2e)', () => {
         .send({ tipo: 'titulo', tmdbId: FILME, mediaType: 'movie', backdropPath: '/../../etc/passwd' })
         .expect(400);
       await capa().send({ tipo: 'titulo', tmdbId: FILME, mediaType: 'movie' }).expect(400);
+    });
+
+    it('guarda o enquadramento e volta ao padrao sem ele', async () => {
+      const foco = { x: 72.5, y: 40, zoom: 1.4 };
+      await capa().send({ tipo: 'favorito', foco }).expect(200);
+      expect((await perfil()).capa.foco).toEqual(foco);
+
+      await capa().send({ tipo: 'favorito' }).expect(200);
+      expect((await perfil()).capa.foco).toEqual({ x: 50, y: 30, zoom: 1 });
+    });
+
+    it('recusa enquadramento fora da cena', async () => {
+      await capa().send({ tipo: 'favorito', foco: { x: 120, y: 40, zoom: 1 } }).expect(400);
+      await capa().send({ tipo: 'favorito', foco: { x: 50, y: 40, zoom: 5 } }).expect(400);
+      await capa().send({ tipo: 'favorito', foco: { x: 50, y: 40 } }).expect(400);
     });
 
     it('volta para as listras ou para o favorito', async () => {

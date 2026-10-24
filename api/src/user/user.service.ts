@@ -11,7 +11,7 @@ import { TmdbService } from '../tmdb/tmdb.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
-import { CapaDto } from './dto/capa.dto.js';
+import { CapaDto, FOCO_PADRAO } from './dto/capa.dto.js';
 import { FavoritosDto } from './dto/favoritos.dto.js';
 import { PerfilPublicoDto } from './dto/perfil-publico.dto.js';
 import {
@@ -153,6 +153,9 @@ export class UserService {
   }
 
   async definirCapa(userId: string, dto: CapaDto): Promise<PerfilPublicoDto['capa']> {
+    const foco = dto.tipo === 'nenhuma' ? FOCO_PADRAO : (dto.foco ?? FOCO_PADRAO);
+    const enquadramento = { coverX: foco.x, coverY: foco.y, coverZoom: foco.zoom };
+
     if (dto.tipo !== 'titulo') {
       const user = await this.prisma.user.update({
         where: { id: userId },
@@ -160,6 +163,7 @@ export class UserService {
           coverKind: dto.tipo === 'nenhuma' ? 'NONE' : 'FAVORITE',
           coverMediaId: null,
           coverPath: null,
+          ...enquadramento,
         },
         include: {
           coverMedia: true,
@@ -184,9 +188,14 @@ export class UserService {
     const media = await this.media.resolve(tmdbId, mediaType);
     await this.prisma.user.update({
       where: { id: userId },
-      data: { coverKind: 'TITLE', coverMediaId: media.id, coverPath: dto.backdropPath },
+      data: {
+        coverKind: 'TITLE',
+        coverMediaId: media.id,
+        coverPath: dto.backdropPath,
+        ...enquadramento,
+      },
     });
-    return { tipo: 'titulo', backdropPath: dto.backdropPath!, media };
+    return { tipo: 'titulo', backdropPath: dto.backdropPath!, media, foco };
   }
 
   async definirAvatar(userId: string, avatarUrl: string | null): Promise<PublicUserDto> {
@@ -201,16 +210,20 @@ export class UserService {
   private static capa(user: {
     coverKind: 'FAVORITE' | 'TITLE' | 'NONE';
     coverPath: string | null;
+    coverX: number;
+    coverY: number;
+    coverZoom: number;
     coverMedia: Media | null;
     favorites: { media: Media }[];
   }): PerfilPublicoDto['capa'] {
+    const foco = { x: user.coverX, y: user.coverY, zoom: user.coverZoom };
     if (user.coverKind === 'NONE') {
-      return { tipo: 'nenhuma', backdropPath: null, media: null };
+      return { tipo: 'nenhuma', backdropPath: null, media: null, foco: FOCO_PADRAO };
     }
     if (user.coverKind === 'TITLE' && user.coverPath && user.coverMedia) {
-      return { tipo: 'titulo', backdropPath: user.coverPath, media: user.coverMedia };
+      return { tipo: 'titulo', backdropPath: user.coverPath, media: user.coverMedia, foco };
     }
-    return { tipo: 'favorito', backdropPath: null, media: user.favorites[0]?.media ?? null };
+    return { tipo: 'favorito', backdropPath: null, media: user.favorites[0]?.media ?? null, foco };
   }
 
   async definirFavoritos(userId: string, dto: FavoritosDto): Promise<Media[]> {

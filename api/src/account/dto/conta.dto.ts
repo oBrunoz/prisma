@@ -31,6 +31,7 @@ export class ExportacaoDto {
       tipo: string;
       titulo: TituloExportado | null;
       imagem: string | null;
+      foco: { x: number; y: number; zoom: number };
     };
   };
   favoritos: TituloExportado[];
