@@ -53,7 +53,6 @@ const MIN_VOTOS = 300;
 const LOTE = 10;
 const ESTREIAS = 5;
 
-// sagas curadas para a fileira de maratonas, na ordem em que aparecem
 const COLECOES = [119, 1241, 264, 10, 2344, 10194, 263, 84, 131635, 8091, 87359, 2150];
 const UM_DIA = 24 * 60 * 60 * 1000;
 

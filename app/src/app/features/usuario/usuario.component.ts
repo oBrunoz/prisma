@@ -33,7 +33,6 @@ import { FavoritosModalComponent } from './favoritos-modal/favoritos-modal.compo
 const ABAS: AbaPerfil[] = ['geral', 'diario', 'avaliacoes', 'watchlist'];
 const LISTAS: AbaSeguidores[] = ['seguidores', 'seguindo'];
 
-// o mesmo perfil para todo mundo; no seu aparecem a watchlist e o que dá para editar
 @Component({
   selector: 'app-usuario',
   standalone: true,
@@ -195,7 +194,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
         p && {
           ...p,
           favoritos,
-          // a capa que segue o favorito muda junto com ele
           capa: p.capa.tipo === 'favorito' ? { ...p.capa, media: favoritos[0] ?? null } : p.capa,
         },
     );
@@ -293,7 +291,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
       });
   }
 
-  // cena escolhida, ou a do primeiro favorito; sem nenhuma das duas, ficam as listras
   private carregarCapa(perfil: PerfilPublico) {
     if (ENFEITES[perfil.username.toLowerCase()]) {
       this.capaPath.set(null);
@@ -319,7 +316,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     );
   }
 
-  // deslogado ou no próprio perfil não há o que perguntar
   private carregarFollow(userId: string) {
     if (!this.auth.autenticado() || this.souEu()) return EMPTY;
 

@@ -53,7 +53,6 @@ export class HeroSectionComponent implements OnChanges {
   @Input() genres: Genre[] = [];
   @Input() overview = '';
   @Input() trailerUrl = '#';
-  // provedores do Brasil e a estreia (filme) viram o item de onde assistir no fio de metadados
   @Input() provedores: WatchProviderCountry | null = null;
   @Input() estreia: string | null = null;
 
@@ -61,7 +60,6 @@ export class HeroSectionComponent implements OnChanges {
   
   @Input() detailsRoute: unknown[] | null = null;
 
-  // com os dois, o hero ganha os atalhos de assistido, curtido e watchlist
   @Input() tmdbId: number | null = null;
   @Input() mediaType: TipoMidia | null = null;
 
@@ -78,11 +76,9 @@ export class HeroSectionComponent implements OnChanges {
   isTrailerVisible = signal(false);
   isBgLoaded = signal(false);
 
-  // controle do hint para fechar trailer
   isCloseHintVisible = signal(false);
   private closeHintTimer?: ReturnType<typeof setTimeout>;
 
-  // destaque novo: volta à prévia até a imagem boa chegar
   ngOnChanges(mudancas: SimpleChanges): void {
     if (mudancas['backgroundUrl']) this.isBgLoaded.set(false);
     if (mudancas['provedores'] || mudancas['estreia']) {

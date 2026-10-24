@@ -1,15 +1,11 @@
-<!-- altura mínima de uma tela (svh: sem pular com a barra do navegador no celular);
-     se o conteúdo for maior, o hero cresce em vez de cortar -->
 <section
   class="hero relative flex flex-col overflow-hidden bg-black rounded-b-3xl sm:rounded-b-[2rem] border-b border-white/10 hero-edge">
 
-  <!-- Background Image -->
   <div
     class="absolute inset-0 w-full h-full transition-opacity duration-700"
     [class.opacity-0]="isTrailerVisible()"
     [class.pointer-events-none]="isTrailerVisible()">
     <div class="absolute inset-0 bg-black bg-opacity-60 z-10">
-      <!-- Skeleton da imagem de fundo enquanto o destaque carrega -->
       @if (isLoading || !backgroundUrl) {
         <div class="absolute inset-0 skeleton bg-[#1a1a1a]"></div>
       }
@@ -36,25 +32,21 @@
     </div>
   </div>
 
-  <!-- vinheta -->
   <div
     class="absolute inset-0 pointer-events-none"
     style="background: radial-gradient(ellipse at center, transparent 75%, rgba(0, 0, 0, 0.397) 100%); z-index: 11;">
   </div>
 
-  <!-- fade -->
   <div
     class="absolute bottom-0 left-0 right-0 h-56 pointer-events-none"
     style="background: linear-gradient(to bottom, transparent, rgba(17,17,17,0.92)); z-index: 11;">
   </div>
 
-  <!-- Content -->
   <div
     class="px-gutter relative z-20 flex-1 flex items-end md:items-center pt-28 pb-16 md:pt-28 md:pb-20 transition-opacity duration-700"
     [class.opacity-0]="isTrailerVisible()"
     [class.pointer-events-none]="isTrailerVisible()">
 
-    <!-- Skeleton -->
     @if (isLoading) {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center animate-pulse w-full max-w-2xl lg:max-w-none">
         <div class="space-y-6">
@@ -88,7 +80,6 @@
       </div>
     }
 
-    <!-- Erro de API -->
     @if (!isLoading && hasError) {
       <div class="text-center w-full">
         <div class="text-red-500 flex justify-center mb-6">
@@ -102,9 +93,7 @@
       </div>
     }
 
-    <!-- Real Content -->
     @if (!isLoading && !hasError && title) {
-      <!-- celular: conteúdo embaixo, sobre a imagem; tablet em pé: uma coluna larga; lg+: metade esquerda -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-2xl lg:max-w-none">
         <div class="space-y-5 sm:space-y-6 min-w-0">
           <div>
@@ -145,7 +134,6 @@
             }
           </div>
 
-          <!-- Genres -->
           @if (genres.length) {
             <div class="flex flex-wrap gap-2 sm:my-3">
               @for (genre of genres; track genre.id) {
@@ -156,10 +144,8 @@
             </div>
           }
 
-          <!-- Overview -->
           @if (overview) {
-            <!-- justificado só em coluna larga: no celular abre rios entre as palavras.
-                 Até xl corta em 3-4 linhas; daí em diante mostra até 6 e o resto rola dentro -->
+            <!-- sem justificar no celular: abre rios entre as palavras -->
             <div
               data-lenis-prevent
               tabindex="0"
@@ -169,7 +155,6 @@
             </div>
           }
 
-          <!-- Buttons -->
           <div class="flex flex-wrap items-center gap-3 sm:gap-x-4">
             <button
               (click)="openTrailer()"
@@ -200,20 +185,17 @@
     }
   </div>
 
-  <!-- Trailer Container -->
   <div
     class="trailer-box absolute inset-0 w-full h-full transition-opacity duration-700 overflow-hidden opacity-0 pointer-events-none"
     [class.opacity-100]="isTrailerVisible()"
     [class.pointer-events-auto]="isTrailerVisible()">
 
-    <!-- isso aqui seria para "remover" aqueles negocio do youtube (tentaiva de deixar o trailer clean) style="top: -10%; left: -10%; width: 120%; height: 120%;" -->
     <iframe
       #trailerPlayer
       class="trailer-iframe"
       allow="autoplay; encrypted-media">
    </iframe>
 
-    <!-- Overlay no trailer -->
     <div
       class="absolute inset-0 z-10 cursor-pointer flex items-center justify-center"
       (click)="closeTrailer()">

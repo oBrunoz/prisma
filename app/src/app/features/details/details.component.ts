@@ -90,7 +90,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   erroPrisma = signal('');
   estatisticas = signal<EstatisticasMidia | null>(null);
 
-  // altura de cada barra em relação à nota mais votada
   readonly barras = computed(() => {
     const dist = this.estatisticas()?.distribuicao ?? [];
     const pico = Math.max(...dist, 0);
@@ -110,7 +109,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   skeletonCast = Array(6).fill(0);
 
-  /** Pessoa aberta no modal; `null` mantém o modal fora do DOM. */
   selectedPersonId = signal<number | null>(null);
   skeletonSimilar = Array(6).fill(0);
 
@@ -127,7 +125,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // a ficha do usuário entra nas avaliações e na contagem de curtidas
     this.fichaSync
       .todas()
       .pipe(takeUntil(this.destroy$))
@@ -278,7 +275,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** Prioriza logo em português, depois inglês. */
   private pickLogo(details: ContentDetails | null): ImageBackdrop | null {
     const logos = details?.images?.logos ?? [];
     const escolhido =
@@ -288,7 +284,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
     return escolhido ?? null;
   }
 
-  /** Trailer em pt quando existir; senão qualquer trailer, senão teaser. */
   private pickTrailerUrl(details: ContentDetails | null): string {
     const videos = (details?.videos?.results ?? []).filter((v) => v.site === 'YouTube');
     const escolhido =

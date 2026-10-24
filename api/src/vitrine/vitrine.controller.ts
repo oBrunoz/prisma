@@ -3,7 +3,6 @@ import { TitulosDto } from '../marks/dto/titulos.dto.js';
 import { PlataformasService } from './plataformas.service.js';
 import { VitrineService } from './vitrine.service.js';
 
-// secoes da home que juntam muitas consultas a TMDB: montadas aqui e guardadas
 @Controller('vitrine')
 export class VitrineController {
   constructor(

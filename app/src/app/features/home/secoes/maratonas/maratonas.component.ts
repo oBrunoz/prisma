@@ -8,7 +8,6 @@ import { CarouselRowComponent } from '../../../../shared/components/carousel-row
 
 const NA_PILHA = 5;
 
-// sagas inteiras com o tempo de sofá; o card abre o primeiro filme
 @Component({
   selector: 'app-maratonas',
   standalone: true,
@@ -25,7 +24,7 @@ export class MaratonasComponent implements OnDestroy {
   readonly maratonas = signal<Maratona[] | null>(null);
   readonly esqueleto = Array(5).fill(0);
 
-  // guardada na API e pequena: vem logo na abertura, antes da pessoa chegar aqui
+  // pequena e guardada na API: vem logo na abertura
   constructor() {
     this.vitrine
       .maratonas()
@@ -33,7 +32,6 @@ export class MaratonasComponent implements OnDestroy {
       .subscribe({ next: (m) => this.maratonas.set(m), error: () => this.maratonas.set([]) });
   }
 
-  // os pôsteres em leque, da esquerda para a direita na ordem da saga
   pilha(m: Maratona): { src: string; esquerda: number; giro: number }[] {
     const posters = m.posters.slice(0, NA_PILHA);
     const passo = 58 / Math.max(posters.length - 1, 1);

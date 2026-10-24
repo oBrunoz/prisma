@@ -1,5 +1,4 @@
-/* o creme no meio é o mais claro da paleta: sem o fade ele brigaria com o
-   texto branco que passa por cima */
+/* sem o fade o creme brigaria com o texto branco por cima */
 .faixa svg {
   opacity: 0.45;
   -webkit-mask-image: linear-gradient(

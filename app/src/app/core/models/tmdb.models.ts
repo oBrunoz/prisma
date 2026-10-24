@@ -145,7 +145,7 @@ export interface SpotlightData {
   movie: Movie;
   details: ContentDetails;
   backgroundUrl: string;
-  // os tamanhos que cada tela pode pedir (vazio se não houver)
+  // vazio se não houver
   backgroundSrcset: string;
   trailerUrl: string;
   logoUrl: string;

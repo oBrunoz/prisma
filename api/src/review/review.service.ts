@@ -22,8 +22,7 @@ export class ReviewService {
     private readonly media: MediaService,
   ) {}
 
-  // o corpo carrega a ficha inteira do usuario no titulo, nao um campo isolado:
-  // desmarcar tudo apaga a ficha em vez de deixar uma linha vazia no banco
+  // o corpo traz a ficha inteira: desmarcar tudo apaga a linha em vez de deixa-la vazia
   async upsert(userId: string, dto: UpsertReviewDto) {
     const media = await this.media.resolve(dto.tmdbId, dto.mediaType);
     const where = { userId_mediaId: { userId, mediaId: media.id } };

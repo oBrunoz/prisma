@@ -10,10 +10,8 @@ interface Casa {
 }
 
 const LETRA = /[\p{L}\p{N}]/u;
-// a letra acesa por dica leva o fio creme da janela
 const CREME = '#F3EAD6';
 
-// o letreiro: o título em casas, palavra por palavra; a letra apagada é a casa vazia
 @Component({
   selector: 'app-letreiro',
   standalone: true,
@@ -48,7 +46,6 @@ export class LetreiroComponent implements OnChanges {
     return `${p.length} ${p.length === 1 ? 'palavra' : 'palavras'}, ${letras} letras`;
   });
 
-  // a casa encolhe para a palavra mais longa caber na linha do celular
   readonly maior = computed(() => Math.max(1, ...this.palavras().map((p) => p.length)));
 
   ngOnChanges(mudou: SimpleChanges): void {

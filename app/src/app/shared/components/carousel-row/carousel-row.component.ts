@@ -28,7 +28,6 @@ export class CarouselRowComponent implements AfterViewInit, OnDestroy {
 
   canScrollLeft = signal(false);
   canScrollRight = signal(false);
-  // sem conteúdo além da largura não há o que passar: setas somem mesmo com loop
   transborda = signal(false);
 
   pageCount = signal(1);

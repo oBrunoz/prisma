@@ -3,7 +3,6 @@
   min-height: 100svh;
 }
 
-/* o trailer cobre o hero inteiro, qualquer que seja a altura dele */
 .trailer-box {
   container-type: size;
 }
@@ -31,7 +30,6 @@
   box-shadow: 0 20px 32px 0 rgba(0, 0, 0, 0.45);
 }
 
-/* rolagem da sinopse longa: barra fina e discreta, no tom do texto de apoio */
 .sinopse {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.25) transparent;

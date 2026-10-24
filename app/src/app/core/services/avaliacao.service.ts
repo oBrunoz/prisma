@@ -34,7 +34,7 @@ export class AvaliacaoService {
     });
   }
 
-  // as resenhas com texto mais novas da comunidade, uma por pessoa
+  // só com texto, uma por pessoa
   recentes(limite = 6): Observable<AvaliacaoUsuario[]> {
     return this.http.get<AvaliacaoUsuario[]>(`${this.base}/recentes`, { params: { limit: limite } });
   }

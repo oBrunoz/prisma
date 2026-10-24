@@ -40,7 +40,6 @@ export interface EnvioCapa {
   backdropPath?: string;
 }
 
-// o jeito curto de mostrar alguém: busca, seguidores, seguindo
 export interface UsuarioResumo {
   id: string;
   username: string;

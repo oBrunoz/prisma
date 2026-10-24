@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Ou
 
 const CASAS = 6;
 
-// seis casas de um dígito; colar o código inteiro preenche todas
 @Component({
   selector: 'app-campo-codigo',
   standalone: true,
@@ -22,7 +21,6 @@ export class CampoCodigoComponent {
   @Input() desativado = false;
   @Input() descricao: string | null = null;
   @Output() valorChange = new EventEmitter<string>();
-  // dispara quando a sexta casa é preenchida
   @Output() completo = new EventEmitter<string>();
 
   @ViewChildren('casa') private casas!: QueryList<ElementRef<HTMLInputElement>>;
@@ -43,13 +41,11 @@ export class CampoCodigoComponent {
     const campo = evento.target as HTMLInputElement;
     const digitos = campo.value.replace(/\D/g, '');
 
-    // o que não é dígito nem entra
     if (!digitos) {
       campo.value = this.digito(i);
       return;
     }
 
-    // digitar adiante de uma casa vazia escreve na primeira vazia
     const inicio = Math.min(i, this.valor.length);
     const casas = this.valor.padEnd(CASAS, ' ').split('');
     digitos

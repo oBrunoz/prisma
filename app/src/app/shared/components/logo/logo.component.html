@@ -1,5 +1,4 @@
-<!-- Geometria em coordenadas do Figma (Prisma / Janela e Prisma / Logo espectral).
-     O lettering são os contornos da Montserrat Bold com tracking de -0.035em; o I leva o espectro. -->
+<!-- coordenadas do Figma (Prisma / Janela e Prisma / Logo espectral) -->
 <ng-template #janela>
   <svg:path class="caixilho" fill-rule="evenodd" d="M18 53H120V63H29V212H119V224H18V53Z" />
   <svg:path class="folha" fill-rule="evenodd" d="M116 57L186 18V249L116 216V57ZM123 62L179 30V238L123 211V62Z" />
@@ -10,7 +9,6 @@
 
 <ng-template #lettering>
   <svg:defs>
-    <!-- o I: as sete cores do espectro, em faixas inclinadas como o feixe -->
     <svg:linearGradient [attr.id]="uid + '-i'" gradientUnits="userSpaceOnUse" x1="1317.4" y1="-47.5" x2="1638.6" y2="747.5">
       <svg:stop offset="0" stop-color="#45417C"/><svg:stop offset="0.1429" stop-color="#45417C"/>
       <svg:stop offset="0.1429" stop-color="#2880A8"/><svg:stop offset="0.2857" stop-color="#2880A8"/>
@@ -41,13 +39,11 @@
   @case ('spectral') {
     <svg viewBox="380 150 1292 580" role="img" [attr.aria-label]="label">
       <defs>
-        <!-- grão de impressão: ruído vira buracos no alfa das faixas -->
         <filter [attr.id]="uid + '-grao'" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="7" stitchTiles="stitch" result="ruido" />
           <feColorMatrix in="ruido" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.5 2.9" result="poros" />
           <feComposite in="SourceGraphic" in2="poros" operator="in" />
         </filter>
-        <!-- Prisma / Luz suave -->
         <filter [attr.id]="uid + '-luz'" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
           <feGaussianBlur in="SourceAlpha" stdDeviation="9" />
           <feColorMatrix values="0 0 0 0 1  0 0 0 0 0.89  0 0 0 0 0.68  0 0 0 0.3 0" />

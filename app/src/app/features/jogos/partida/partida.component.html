@@ -113,7 +113,6 @@
           }
         </div>
 
-        <!-- a trilha dos jogos de imagem: cada tentativa com o seu fio; gasto apaga, erro queima -->
         @if (p.kind === 'FRAMES' || p.kind === 'POSTER') {
           <div class="grid grid-cols-7 gap-1.5">
             @for (t of trilha(); track t.i) {
@@ -285,7 +284,6 @@
     <app-como-jogar [info]="jogo" (fechar)="fecharComoJogar()"></app-como-jogar>
   }
 
-  <!-- as sete faixas cruzam a área do jogo, sem passar pela navbar -->
   @if (varrendo(); as sentido) {
     <div class="varredura fixed inset-x-0 bottom-0 top-16 z-50 grid pointer-events-none" style="grid-template-rows: repeat(7, 1fr)" [class]="sentido" aria-hidden="true">
       @for (cor of espectro; track $index) {

@@ -1,4 +1,3 @@
-<!-- entra quando a câmera termina de atravessar a janela -->
 @if (estado.atravessou()) {
   <div class="menu min-h-[calc(100svh-4rem)] px-gutter pt-8 pb-10 flex flex-col gap-8">
     <div class="flex-1 flex flex-col items-center justify-center gap-8">
@@ -25,7 +24,6 @@
         <div class="escolhas w-full max-w-[1536px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 max-sm:max-w-md">
           @for (card of cards(); track card.info.tipo; let i = $index) {
             <div class="vaga flex flex-col gap-1" [style.animation-delay.ms]="i * 50">
-              <!-- só com conta: o card fica, mas abre o convite em vez da partida -->
               <a
                 [routerLink]="card.partida && !card.trancado ? ['/jogos', card.info.slug] : null"
                 [attr.aria-disabled]="!card.partida || null"
@@ -84,7 +82,6 @@
                   </div>
                 </div>
               </a>
-              <!-- fora do diário: desafio antigo ao acaso, o que a conta destrava -->
               <button
                 type="button"
                 (click)="jogarAleatorio(card.info.slug)"

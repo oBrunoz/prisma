@@ -15,12 +15,10 @@ let seq = 0;
   host: { '[class.intro]': 'intro' },
 })
 export class LogoComponent {
-  // mark: só a janela; horizontal: janela + lettering; spectral: com o feixe de luz
   @Input() variant: LogoVariant = 'horizontal';
 
   @Input() label = 'Prisma';
 
-  // abertura: a janela abre e o lettering entra (uma vez, ao montar)
   @Input() intro = false;
 
   protected readonly uid = `prisma-${++seq}`;

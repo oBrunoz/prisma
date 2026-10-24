@@ -25,7 +25,6 @@ import { FichaSyncService } from '../../../core/services/ficha-sync.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { WatchlistService } from '../../../core/services/watchlist.service';
 
-// atalhos do banner: assistido, curtido e watchlist gravam na hora
 @Component({
   selector: 'app-quick-actions',
   standalone: true,
@@ -59,7 +58,6 @@ export class QuickActionsComponent implements OnInit, OnChanges, OnDestroy {
   semFicha = signal(false);
   salvando = signal(false);
 
-  // id do convite no rolo; o pai segura o banner enquanto ele está aberto
   private conviteId: number | null = null;
 
   private cancelarCarga$ = new Subject<void>();
@@ -97,7 +95,6 @@ export class QuickActionsComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.exigirLogin('Entre para marcar o que já assistiu')) return;
     const atual = this.ficha();
     const assistido = !atual.assistido;
-    // nota sem ter assistido não faz sentido, igual ao formulário
     this.gravar(
       { ...atual, assistido, nota: assistido ? atual.nota : null },
       assistido ? CONVITES_ASSISTIDO : null,
@@ -152,7 +149,6 @@ export class QuickActionsComponent implements OnInit, OnChanges, OnDestroy {
     const id = this.toast.info(texto, {
       chave: `convite-${this.tmdbId}`,
       acao: { rotulo: 'Avaliar agora', executar: () => this.irParaAvaliacao() },
-      // saiu pelo tempo ou pelo X: o banner pode voltar a girar
       aoFechar: () => {
         if (this.conviteId !== id) return;
         this.conviteId = null;
@@ -187,7 +183,6 @@ export class QuickActionsComponent implements OnInit, OnChanges, OnDestroy {
         next: () => {
           this.salvando.set(false);
           this.sync.avisar(this.tmdbId, this.mediaType, this);
-          // só convida quem ainda não deu nota nem escreveu
           if (convites && nova.nota === null && nova.texto === '') {
             this.mostrarConvite(sortear(convites));
           }

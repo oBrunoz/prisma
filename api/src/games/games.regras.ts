@@ -1,8 +1,6 @@
 import type { GameKind } from '../generated/prisma/enums.js';
 import { TENTATIVAS } from './games.constants.js';
 
-// as regras de cada jogo, sem banco: o que a jogada pode ser, quando termina e o que a tela pode ver
-
 export type Situacao = 'PLAYING' | 'WON' | 'LOST';
 
 export const MAX_DICAS = 3;
@@ -84,7 +82,6 @@ export interface FilmeDaResposta {
   releaseDate: Date | null;
 }
 
-// o desafio do jeito que as regras precisam: o tipo, o conteúdo e o filme, se houver
 export interface DesafioDoJogo {
   kind: GameKind;
   images: string[];
@@ -100,7 +97,6 @@ export interface RespostaDoDesafio {
   year: number | null;
 }
 
-// a jogada não serve para esse desafio (palavra fora da lista, escolha fora do duelo…)
 export class JogadaInvalida extends Error {}
 
 const TITULO: GameKind[] = [
@@ -116,7 +112,6 @@ const comDicas = (kind: GameKind) => kind === 'LETREIRO' || kind === 'LEGENDA';
 
 const dados = <T>(d: DesafioDoJogo) => d.data as T;
 
-// sem acento e sem cedilha, para comparar letra com letra
 export const semAcento = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
 const letraDe = (c: string) => semAcento(c).toUpperCase();
 const ehLetra = (c: string) => /^[A-Z0-9]$/.test(letraDe(c));
@@ -126,8 +121,6 @@ function respostaPorId(d: DesafioDoJogo): number {
   if (!d.media) throw new Error(`Desafio de ${d.kind} sem filme`);
   return d.media.tmdbId;
 }
-
-/* ---------- legenda ---------- */
 
 export type Cor = 'certo' | 'lugar' | 'ausente';
 
@@ -150,8 +143,6 @@ export function avaliarPalavra(tentativa: string, alvo: string): Cor[] {
 
 export const normalizarPalavra = (s: string) =>
   semAcento(s).toLowerCase().trim();
-
-/* ---------- linha do tempo ---------- */
 
 export interface CartaNaLinha extends FilmeDoJogo {
   // null na âncora
@@ -176,8 +167,6 @@ export function simularLinha(d: DadosLinha, vagas: number[]) {
   return { linha, resultados };
 }
 
-/* ---------- carreira ---------- */
-
 function pedacos(guesses: number[]): number[][] {
   const lista: number[][] = [];
   for (let i = 0; i < guesses.length; i += FILMES_DA_CARREIRA) {
@@ -195,16 +184,12 @@ export function conferidasDaCarreira(
   );
 }
 
-/* ---------- duelo ---------- */
-
 const maiorDoDuelo = ([a, b]: [FilmeComNota, FilmeComNota]) =>
   a.nota >= b.nota ? a.tmdbId : b.tmdbId;
 
 function acertosDoDuelo(d: DadosDuelo, guesses: number[]): boolean[] {
   return guesses.map((id, i) => maiorDoDuelo(d.duelos[i]) === id);
 }
-
-/* ---------- dicas ---------- */
 
 // letreiro: a letra apagada que mais aparece; empate, a que acenderia por último
 function proximaLetraDoLetreiro(
@@ -227,7 +212,6 @@ function proximaLetraDoLetreiro(
   return apagadas[0] ?? null;
 }
 
-// legenda: a primeira casa que ainda não se sabe
 function proximaCasaDaLegenda(
   d: DadosLegenda,
   palavras: string[],
@@ -297,8 +281,6 @@ function resolverDicas(d: DesafioDoJogo, jogada: Jogada): string[] {
   return saida;
 }
 
-/* ---------- normalizar e situação ---------- */
-
 // corta o que vem depois do fim e recusa o que não cabe no desafio
 export function normalizarJogada(
   d: DesafioDoJogo,
@@ -366,7 +348,6 @@ export function normalizarJogada(
     return { guesses, words: [], hints: [] };
   }
 
-  // carreira
   const c = dados<DadosCarreira>(d);
   if (jogada.guesses.length % FILMES_DA_CARREIRA)
     throw new JogadaInvalida('Cada conferida manda a ordem inteira');
@@ -376,7 +357,6 @@ export function normalizarJogada(
   for (const ordem of pedacos(jogada.guesses).slice(0, TENTATIVAS)) {
     if ([...ordem].sort((a, b) => a - b).join() !== todos)
       throw new JogadaInvalida('A ordem precisa ter os sete filmes');
-    // o que já travou não sai do lugar
     for (const pos of travados) {
       if (ordem[pos] !== c.filmes[pos].tmdbId)
         throw new JogadaInvalida('Filme travado saiu do lugar');
@@ -411,7 +391,6 @@ export function situacaoDaJogada(d: DesafioDoJogo, j: Jogada): Situacao {
   return conferidas.length >= TENTATIVAS ? 'LOST' : 'PLAYING';
 }
 
-// duelo e linha: quantos acertos; os outros não têm placar
 export function placar(d: DesafioDoJogo, j: Jogada): number | null {
   if (d.kind === 'DUELO')
     return acertosDoDuelo(dados<DadosDuelo>(d), j.guesses).filter(Boolean)
@@ -441,8 +420,6 @@ export function posicaoNaDistribuicao(
   if (p !== null) return p;
   return venceu ? tentativasUsadas(d, j) - 1 : TENTATIVAS;
 }
-
-/* ---------- o que a tela vê ---------- */
 
 export function imagensLiberadas(
   d: DesafioDoJogo,

@@ -38,8 +38,7 @@ export interface SessaoReaberta {
 
 @Injectable()
 export class AccountService {
-  // chave propria para os codigos: com o banco vazado, um hash simples de 6
-  // digitos cairia em segundos
+  // chave propria: com o banco vazado, um hash simples de 6 digitos cairia em segundos
   private readonly chaveDoCodigo: Buffer;
 
   constructor(
@@ -320,8 +319,7 @@ export class AccountService {
     };
   }
 
-  // tudo que e da pessoa cai junto (cascade no schema): perfil, foto, avaliacoes,
-  // watchlist, favoritos, seguir, partidas, sessoes e pedido de troca de e-mail
+  // o resto da pessoa cai junto pelo cascade do schema
   async excluir(userId: string, senha: string): Promise<void> {
     const user = await this.buscar(userId);
     await this.exigirSenha(user, senha);
@@ -336,8 +334,7 @@ export class AccountService {
     return user;
   }
 
-  // 403, nao 401: a sessao vale, so a prova falhou. Com 401 o front tentaria
-  // renovar o token e trataria a senha errada como sessao vencida
+  // 403, nao 401: com 401 o front renovaria o token e leria a senha errada como sessao vencida
   private async exigirSenha(user: User, senha: string): Promise<void> {
     if (!(await argon2.verify(user.passwordHash, senha))) {
       throw new ForbiddenException('Senha atual incorreta');

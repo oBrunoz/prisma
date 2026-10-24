@@ -3,7 +3,6 @@ import type { Response } from 'express';
 import { REFRESH_COOKIE, REFRESH_COOKIE_PATH } from './auth.constants.js';
 import type { TokenPair } from './token.service.js';
 
-// quem reabre a sessao (login, troca de senha, de e-mail) grava o mesmo cookie
 export function gravarRefreshCookie(
   res: Response,
   tokens: TokenPair,

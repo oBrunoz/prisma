@@ -12,7 +12,6 @@ import { MediaFallbackComponent } from '../media-fallback/media-fallback.compone
 import { PlataformasComponent } from '../plataformas/plataformas.component';
 import { SeloMarcasComponent } from '../selo-marcas/selo-marcas.component';
 
-// só o pôster e a nota; o hover (ou o ⋯ no toque) traz título e ações
 @Component({
   selector: 'app-movie-card',
   standalone: true,

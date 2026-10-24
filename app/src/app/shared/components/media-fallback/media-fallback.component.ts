@@ -11,12 +11,9 @@ export type FallbackKind = 'poster' | 'person' | 'logo';
   templateUrl: './media-fallback.component.html',
 })
 export class MediaFallbackComponent {
-  // que ícone aparece: claquete para título, silhueta para gente
   @Input() kind: FallbackKind = 'poster';
 
-  // nome do título ou da pessoa; some nas molduras pequenas
   @Input() label = '';
 
-  // molduras miúdas (avatar de busca, logo de streaming) ficam só com o ícone
   @Input() compact = false;
 }

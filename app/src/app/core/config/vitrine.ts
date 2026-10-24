@@ -1,5 +1,3 @@
-// Curadoria das seções da home
-
 // um por semana, em rodízio
 export const DIRETORES_DA_SEMANA = [
   137427, // Denis Villeneuve
@@ -38,7 +36,6 @@ export const decadaParams = (inicio: number): Record<string, string> => ({
   'primary_release_date.lte': `${inicio + 9}-12-31`,
 });
 
-// "quanto tempo você tem": a duração vira filtro de discover
 export const FAIXAS_DE_DURACAO: { id: string; rotulo: string; params: Record<string, number> }[] = [
   { id: 'curto', rotulo: 'Até 1h35', params: { 'with_runtime.gte': 60, 'with_runtime.lte': 95 } },
   { id: 'medio', rotulo: 'Umas 2 horas', params: { 'with_runtime.gte': 96, 'with_runtime.lte': 130 } },

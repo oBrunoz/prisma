@@ -24,7 +24,6 @@ import { environment } from '../../../../environments/environment';
 
 type Aba = 'videos' | 'backdrops' | 'posters';
 
-// item normalizado: vídeo e imagem na mesma lista
 export interface MediaItem {
   kind: 'video' | 'image';
   id: string;
@@ -35,7 +34,6 @@ export interface MediaItem {
   key: string;
 }
 
-// só divulgação oficial
 const TIPOS_RELEVANTES = ['Trailer'];
 
 const ROTULO_TIPO: Record<string, string> = {
@@ -43,7 +41,6 @@ const ROTULO_TIPO: Record<string, string> = {
   Teaser: 'Teaser',
 };
 
-// arraste mínimo para trocar de item
 const SWIPE_MINIMO = 60;
 
 @Component({
@@ -80,13 +77,7 @@ export class MediaGalleryComponent implements OnDestroy {
 
   activeTab = signal<Aba>('videos');
 
-  /**
-   * O painel só bloqueia o Lenis quando de fato tem o que rolar.
-   *
-   * `data-lenis-prevent` fixo fazia a área engolir a rolagem mesmo com poucos
-   * itens, quando não há barra nenhuma — e a página travava ao passar o mouse
-   * por ali.
-   */
+  // data-lenis-prevent só com o que rolar: sem barra, ele travava a página sob o mouse
   isScrollable = signal(false);
 
   private scrollEl?: HTMLElement;
@@ -113,10 +104,8 @@ export class MediaGalleryComponent implements OnDestroy {
     this.isScrollable.set(el.scrollHeight - el.clientHeight > 1);
   }
 
-  // null mantém o lightbox fora do DOM
   openIndex = signal<number | null>(null);
 
-  // peso menor aparece antes
   private pesoVideo(video: Video): number {
     return TIPOS_RELEVANTES.indexOf(video.type) * 4
       + (video.iso_639_1 === 'pt' ? 0 : 2)
@@ -164,14 +153,12 @@ export class MediaGalleryComponent implements OnDestroy {
 
   hasMedia = computed(() => this.tabs().length > 0);
 
-  // primeira aba com conteúdo até o usuário escolher outra
   resolvedTab = computed<Aba | null>(() => {
     const disponiveis = this.tabs().map((t) => t.id);
     if (!disponiveis.length) return null;
     return disponiveis.includes(this.activeTab()) ? this.activeTab() : disponiveis[0];
   });
 
-  // lista que o lightbox percorre
   items = computed<MediaItem[]>(() => {
     switch (this.resolvedTab()) {
       case 'videos':
@@ -230,7 +217,6 @@ export class MediaGalleryComponent implements OnDestroy {
     this.smoothScroll.start();
   }
 
-  // navega em ciclo
   step(delta: number): void {
     const total = this.items().length;
     const atual = this.openIndex();
@@ -240,7 +226,6 @@ export class MediaGalleryComponent implements OnDestroy {
     this.preloadVizinhos(proximo);
   }
 
-  // pré-carrega vizinhos para a troca não piscar
   private preloadVizinhos(index: number): void {
     const total = this.items().length;
     if (total < 2) return;

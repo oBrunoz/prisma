@@ -7,13 +7,11 @@ export const CAIXILHO = [
 
 type Ponto = [number, number];
 
-// a folha aberta são dois quadros, cada um com contorno e furo
 const QUADROS: [Ponto[], Ponto[]][] = [
   [[[116, 57], [186, 18], [186, 249], [116, 216]], [[123, 62], [179, 30], [179, 238], [123, 211]]],
   [[[125, 65], [176, 36], [176, 233], [125, 208]], [[127, 66], [174, 40], [174, 229], [127, 207]]],
 ];
 
-// fechada, a folha deita reta sobre o vão; cada ponto vai dessa posição até a aberta
 function pontoDaFolha([x, y]: Ponto, abertura: number): Ponto {
   const f = (x - 116) / 70;
   const topo = 57 + (18 - 57) * f;
@@ -33,7 +31,6 @@ export function folhaD(abertura: number): string[] {
 export interface Cena {
   largura: number;
   altura: number;
-  // a mesma curva do stripes-backdrop, desenhada para o enquadramento
   curva: string;
   janela: { tx: number; ty: number; s: number };
 }
@@ -55,7 +52,6 @@ export const CENAS: Record<VarianteTravessia, Cena> = {
   },
 };
 
-// vão do caixilho (x 29–116, y 63–212) na escala da cena
 export function vaoDaJanela({ tx, ty, s }: Cena['janela']) {
   const x0 = tx + 29 * s;
   const x1 = tx + 116 * s;

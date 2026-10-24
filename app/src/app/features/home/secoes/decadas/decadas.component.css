@@ -7,7 +7,6 @@
   display: none;
 }
 
-/* no celular e no tablet a fileira desliza; a partir de lg as sete cabem lado a lado */
 .decada {
   position: relative;
   display: block;
@@ -89,7 +88,6 @@
   transform: rotate(9deg);
 }
 
-/* o leque abre com o mouse; no toque fica como está */
 @media (hover: hover) and (pointer: fine) {
   .decada:hover .leque img:nth-child(1) {
     transform: rotate(-13deg) translateX(-6%);

@@ -2,8 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CreateUserDto } from './create-user.dto.js';
 
-// as regras do username sao validacao pura: cobrir por HTTP so gastaria o
-// orcamento do rate limit de /auth/register, que e por rota
+// validacao pura: cobrir por HTTP gastaria o rate limit de /auth/register
 async function errosDe(username: unknown): Promise<string[]> {
   const dto = plainToInstance(CreateUserDto, {
     name: 'Fulano',

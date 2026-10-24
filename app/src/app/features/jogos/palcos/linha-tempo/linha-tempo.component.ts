@@ -17,7 +17,6 @@ import { environment } from '../../../../../environments/environment';
 import { ConteudoLinha } from '../../../../core/models/jogos.models';
 import { ESPECTRO } from '../../../../core/models/espectro';
 
-// a linha do tempo: a carta da vez em cima e a linha embaixo, com uma vaga entre cada filme
 @Component({
   selector: 'app-linha-tempo',
   standalone: true,
@@ -38,7 +37,6 @@ export class LinhaTempoComponent implements OnChanges, AfterViewChecked {
   readonly nova = signal<number | null>(null);
   readonly tremendo = signal(false);
   private readonly dados = signal<ConteudoLinha | null>(null);
-  // depois de desenhar, rola até a vaga escolhida ou a carta que acabou de entrar
   private rolarPara: string | null = null;
 
   readonly acertos = computed(() => this.dados()?.resultados.filter(Boolean).length ?? 0);

@@ -18,7 +18,6 @@ import { Movie, TvShow } from '../../../core/models/tmdb.models';
 
 type ShelfItem = Movie & TvShow;
 
-// Uma fileira do catálogo
 @Component({
   selector: 'app-content-shelf',
   standalone: true,
@@ -30,7 +29,6 @@ export class ContentShelfComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() params: Record<string, string | number> = {};
 
-  // a home usa títulos maiores que as páginas de catálogo
   @Input() large = false;
 
   @Input()

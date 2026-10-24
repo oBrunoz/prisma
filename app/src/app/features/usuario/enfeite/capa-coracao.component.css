@@ -1,6 +1,4 @@
-/* O bloco escala pela largura: anéis, foto e ramo dividem a mesma caixa 560:514.
-   No celular ele fica no canto de cima, ao lado do avatar (o nome desce para a
-   linha de baixo); a partir de sm vai para a direita da capa. */
+/* escala pela largura: anéis, foto e ramo dividem a mesma caixa 560:514 */
 :host {
   position: absolute;
   display: block;
@@ -52,7 +50,6 @@
   overflow: visible;
 }
 
-/* os fios seguem as listras do site: meia tinta e se apagando para o lado do texto */
 .fios {
   opacity: 0.5;
   -webkit-mask-image: linear-gradient(to bottom left, #000 0%, rgba(0, 0, 0, 0.7) 55%, transparent 95%);

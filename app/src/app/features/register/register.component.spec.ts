@@ -48,7 +48,7 @@ describe('RegisterComponent', () => {
     preencher();
     falhar(400, ['username aceita apenas letras minusculas, numeros e underscore']);
 
-    // "username" contém "name": antes os dois campos acendiam juntos
+    // "username" contém "name": os dois campos não podem acender juntos
     expect(componente.campos.erro('username')).toBeTruthy();
     expect(componente.campos.erro('name')).toBe('');
   });

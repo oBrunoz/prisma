@@ -28,8 +28,6 @@ import { CampoCodigoComponent } from '../../../../shared/components/campo-codigo
 
 type Campo = 'email' | 'senha';
 
-// duas etapas: senha + e-mail novo, depois o código que chegou nele.
-// Até o código voltar, o e-mail antigo continua valendo
 @Component({
   selector: 'app-troca-email',
   standalone: true,
@@ -54,7 +52,6 @@ export class TrocaEmailComponent implements OnInit, AfterViewInit, OnDestroy {
   senha = signal('');
   verSenha = signal(false);
   enviando = signal(false);
-  // por que voltou para a primeira etapa (código vencido, tentativas esgotadas)
   avisoPedido = signal('');
 
   troca = signal<TrocaPendente | null>(null);
@@ -167,7 +164,6 @@ export class TrocaEmailComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  // volta com o e-mail já digitado; o pedido novo substitui o anterior
   usarOutroEmail(): void {
     this.voltarAoPedido('');
   }
@@ -201,7 +197,6 @@ export class TrocaEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.depoisDeDesenhar(() => document.getElementById(aviso ? 'troca-senha' : 'troca-email')?.focus());
   }
 
-  // o foco espera a etapa nova estar na tela
   private depoisDeDesenhar(acao: () => void): void {
     afterNextRender(acao, { injector: this.injector });
   }
@@ -258,7 +253,6 @@ export class TrocaEmailComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // tentativas esgotadas ou código vencido: o pedido acabou
     this.voltarAoPedido(
       typeof restantes === 'number'
         ? 'O código errou vezes demais. Confirme a senha para receber outro.'

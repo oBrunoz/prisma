@@ -67,7 +67,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   trendingSeries = signal<TvShow[]>([]);
   lastRecommendation = signal<SpotlightData | undefined>(undefined);
 
-  // prateleiras que se carregam sozinhas quando o usuário chega nelas
   shelfNosCinemas = this.shelf('nos-cinemas');
   shelfEmBreve = this.shelf('em-breve');
   shelfEpisodiosDaSemana = this.shelf('episodios-da-semana');
@@ -96,7 +95,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly auth = inject(AuthService);
   readonly srcsetDeFundo = srcsetDeFundo;
 
-  // a estante do convite se enche com os filmes que já carregaram nas fileiras
   postersDaEstante = computed(() => {
     const caminhos = [...this.popularMovies(), ...this.trendingMovies()]
       .map((m) => m.poster_path)

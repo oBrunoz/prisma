@@ -98,7 +98,6 @@ export class ConfigContaComponent implements OnInit, OnDestroy {
       });
   }
 
-  // o JSON vem da API e vira arquivo aqui, sem passar por e-mail
   baixarDados(): void {
     if (this.baixando()) return;
     this.baixando.set(true);

@@ -5,7 +5,6 @@ export const TENTATIVAS = 7;
 // o dia vira a meia-noite de Brasilia para todo mundo
 export const FUSO_DO_JOGO = 'America/Sao_Paulo';
 
-// palpite que so passa a vez
 export const PULO = 0;
 
 // os jogos que pedem conta; o front marca os mesmos com soComConta (jogos.models.ts)

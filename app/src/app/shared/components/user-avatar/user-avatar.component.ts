@@ -23,7 +23,6 @@ export class UserAvatarComponent {
   @Input() avatarUrl: string | null = null;
   @Input() tamanho: Tamanho = 'md';
 
-  // a foto enviada é servida pela API: o endereço vem relativo a ela
   get src(): string | null {
     if (!this.avatarUrl) return null;
     return this.avatarUrl.startsWith('/') ? `${environment.apiUrl}${this.avatarUrl}` : this.avatarUrl;
@@ -33,7 +32,6 @@ export class UserAvatarComponent {
     return MEDIDAS[this.tamanho];
   }
 
-  // ninguém tem avatar ainda: a inicial é o estado normal, não o de exceção
   get inicial(): string {
     return (this.nome.trim() || '?').charAt(0).toUpperCase();
   }

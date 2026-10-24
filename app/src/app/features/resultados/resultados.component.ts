@@ -181,7 +181,6 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     return daTmdb(this.movieService.searchPeople(termo, pagina), (p) => pessoaParaBusca(p, termo));
   }
 
-  // as quatro listas têm a mesma forma; só o tipo do item muda
   private lista(tipo: TipoLista): WritableSignal<Lista<unknown>> {
     const listas = { filmes: this.filmes, series: this.series, elenco: this.elenco, usuarios: this.usuarios };
     return listas[tipo] as unknown as WritableSignal<Lista<unknown>>;

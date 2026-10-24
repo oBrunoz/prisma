@@ -84,7 +84,6 @@ export class PersonModalComponent implements OnDestroy {
     this.movieService.getPersonCredits(this.person()).slice(0, 15)
   );
 
-  /** Idade atual, ou idade com que morreu. */
   age = computed<number | null>(() => {
     const birthday = this.person()?.birthday;
     if (!birthday) return null;
@@ -127,7 +126,6 @@ export class PersonModalComponent implements OnDestroy {
     return credit.media_type === 'tv' ? 'series' : 'movies';
   }
 
-  // personagem para elenco, função para quem estava atrás da câmera
   getCreditRole(credit: PersonCredit): string {
     return credit.character || credit.job || '';
   }

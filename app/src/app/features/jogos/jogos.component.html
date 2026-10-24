@@ -1,6 +1,5 @@
 <section class="relative min-h-svh overflow-hidden">
   <app-travessia variante="tela" class="absolute inset-0" (atravessou)="estado.atravessou.set(true)"></app-travessia>
-  <!-- na partida as listras recuam para não disputar com a imagem -->
   <div class="veu absolute inset-0 bg-[#111111] pointer-events-none" [class.ativo]="emPartida()"></div>
 
   <div class="relative z-10 min-h-svh pt-16">

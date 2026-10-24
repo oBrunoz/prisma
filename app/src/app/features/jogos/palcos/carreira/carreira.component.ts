@@ -14,7 +14,6 @@ import { environment } from '../../../../../environments/environment';
 import { ConteudoCarreira, TENTATIVAS } from '../../../../core/models/jogos.models';
 import { ESPECTRO } from '../../../../core/models/espectro';
 
-// a carreira: a lista que a pessoa reordena com as setas; o que já está no lugar trava e mostra o ano
 @Component({
   selector: 'app-carreira',
   standalone: true,
@@ -32,10 +31,9 @@ export class CarreiraComponent implements OnChanges {
 
   readonly imagens = environment.tmdbImageUrl;
   readonly espectro = ESPECTRO;
-  // a ordem que a pessoa está montando; volta a ser a da API a cada conferida
+  // volta a ser a da API a cada conferida
   readonly ordem = signal<number[]>([]);
   readonly moveu = signal<number | null>(null);
-  // a conferida que acabou de chegar: pisca o que errou e acende o que travou
   readonly conferiu = signal(false);
   readonly tremendo = signal(false);
   private readonly dados = signal<ConteudoCarreira | null>(null);
@@ -54,7 +52,6 @@ export class CarreiraComponent implements OnChanges {
         travou: this.conferiu() && !!ultima && ultima[i],
         sobe: this.destino(i, -1) >= 0,
         desce: this.destino(i, 1) >= 0,
-        // no fim, o ano certo em ciano e o fora do lugar em coral
         foraDoLugar: this.fim && !!c.gabarito && c.gabarito[i]?.tmdbId !== id,
       };
     });

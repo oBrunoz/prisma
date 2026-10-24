@@ -22,7 +22,6 @@ module.exports = {
         // erro de campo e de toast: o trecho quente do espectro, sem brigar com o vermelho de ação
         coral: '#D85057',
       },
-      // margem lateral das seções, definida em styles.css (--gutter) por breakpoint
       spacing: {
         gutter: 'var(--gutter)',
       },

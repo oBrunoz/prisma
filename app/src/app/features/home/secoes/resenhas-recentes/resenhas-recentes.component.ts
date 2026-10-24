@@ -5,7 +5,6 @@ import { AvaliacaoService } from '../../../../core/services/avaliacao.service';
 import { CartaoAvaliacaoComponent } from '../../../../shared/components/cartao-avaliacao/cartao-avaliacao.component';
 import { CarouselRowComponent } from '../../../../shared/components/carousel-row/carousel-row.component';
 
-// as resenhas mais novas da comunidade; sem nenhuma, a seção não aparece
 @Component({
   selector: 'app-resenhas-recentes',
   standalone: true,
@@ -19,7 +18,7 @@ export class ResenhasRecentesComponent implements OnDestroy {
 
   readonly resenhas = signal<AvaliacaoUsuario[]>([]);
 
-  // pequena e decide se a seção existe: vem logo na abertura, para não aparecer de repente na rolagem
+  // pequena e decide se a seção existe: vem logo na abertura
   constructor() {
     this.avaliacoes
       .recentes(8)

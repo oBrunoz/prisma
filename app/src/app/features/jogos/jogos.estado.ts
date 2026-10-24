@@ -8,7 +8,6 @@ import { ToastService } from '../../core/services/toast.service';
 // o servidor aceita até 50; os mais antigos saem primeiro
 const LEMBRAR_SORTEADOS = 40;
 
-// o dia carregado uma vez para a escolha e as partidas; vive enquanto a aba está aberta
 @Injectable()
 export class JogosEstado implements OnDestroy {
   private readonly jogos = inject(JogosService);
@@ -18,10 +17,8 @@ export class JogosEstado implements OnDestroy {
   readonly dia = signal<DesafiosDoDia | null>(null);
   readonly carregando = signal(false);
   readonly erro = signal<string | null>(null);
-  // a abertura da janela terminou (ou foi pulada)
   readonly atravessou = signal(false);
 
-  // fora do diário: um desafio antigo por jogo, só na memória
   readonly sorteadas = signal<Partial<Record<TipoJogo, Partida>>>({});
   readonly sorteando = signal(false);
   readonly erroDoSorteio = signal<string | null>(null);

@@ -19,7 +19,6 @@ export interface Marca {
 export class MarksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // o que o usuário marcou em cada título de uma fileira, numa consulta só;
   // título sem marca nenhuma fica de fora
   async doUsuario(userId: string, titulos: RefTitulo[]): Promise<Marca[]> {
     const midias = await this.prisma.media.findMany({

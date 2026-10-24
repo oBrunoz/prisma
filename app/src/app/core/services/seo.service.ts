@@ -17,7 +17,6 @@ export interface DadosSeo {
   dados?: object | null;
 }
 
-// título, descrição, canonical, Open Graph e JSON-LD da página aberta
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly title = inject(Title);

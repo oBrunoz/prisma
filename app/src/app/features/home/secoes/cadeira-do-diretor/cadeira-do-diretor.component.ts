@@ -14,7 +14,6 @@ const SEMANA = 7 * 24 * 60 * 60 * 1000;
 // abaixo disso de votos costuma ser curta ou trabalho de estudante
 const MIN_VOTOS = 50;
 
-// um diretor por semana, com os longas em linha do tempo
 @Component({
   selector: 'app-cadeira-do-diretor',
   standalone: true,
@@ -30,7 +29,6 @@ export class CadeiraDoDiretorComponent implements OnDestroy {
   readonly carregado = signal(false);
   readonly esqueleto = Array(6).fill(0);
 
-  // longas dirigidos, sem repetir e em ordem de lançamento
   readonly filmes = computed(() => {
     const vistos = new Set<number>();
     return (this.pessoa()?.combined_credits?.crew ?? [])
@@ -44,7 +42,6 @@ export class CadeiraDoDiretorComponent implements OnDestroy {
     return f.length ? f.reduce((s, c) => s + c.vote_average, 0) / f.length : 0;
   });
 
-  // o fundo é o filme mais visto dele
   readonly fundo = computed(() => {
     const maisVisto = [...this.filmes()].sort((a, b) => b.vote_count - a.vote_count)[0];
     return maisVisto?.backdrop_path ? this.movies.getImageUrl(maisVisto.backdrop_path, 'w1280') : '';

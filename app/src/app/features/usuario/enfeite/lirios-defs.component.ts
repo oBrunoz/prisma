@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-// os desenhos do buquê (lírio, botão, folha, rosinha, alstroeméria, gérbera, solidago) e os
-// lírios de aquarela do fundo; montado uma vez no perfil, os enfeites usam por <use href>
+// montado uma vez no perfil; os enfeites usam os desenhos por <use href>
 @Component({
   selector: 'app-lirios-defs',
   standalone: true,

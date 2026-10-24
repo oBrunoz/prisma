@@ -22,7 +22,6 @@ interface Vaga {
 
 const TOTAL = 30;
 const NITIDO = 6;
-// a cortina que abre a vaga e a passagem das listras ao pôster
 const CORTINA = 900;
 const REVELA = 1600;
 // cada vaga animando redesenha o canvas inteiro a cada quadro: poucas por vez, a 30 quadros
@@ -35,7 +34,6 @@ const FOLGA_DA_ROLAGEM = 400;
 const CHEIA = 0.7;
 const INICIAL = 0.5;
 
-// a grade do perfil em perspectiva: as vagas se enchem de pôsteres que surgem em listras
 @Component({
   selector: 'app-estante-listras',
   standalone: true,
@@ -45,7 +43,6 @@ const INICIAL = 0.5;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDestroy {
-  // URLs completas dos pôsteres
   @Input() posters: string[] = [];
 
   @ViewChild('grade', { static: true }) private grade!: ElementRef<HTMLElement>;
@@ -57,8 +54,7 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zona = inject(NgZone);
-  // anima só em tela grande de aparelho capaz; no resto (e com movimento reduzido) aparece cheia e parada.
-  // no celular ela fica atrás do texto, sob o véu: a animação mal apareceria e custaria caro
+  // no celular fica sob o véu: a animação mal apareceria e custaria caro
   private readonly parada =
     matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(min-width: 1024px)').matches || aparelhoModesto();
   private rolouEm = 0;
@@ -96,7 +92,6 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
     this.timers.forEach(clearTimeout);
   }
 
-  // monta a estante na primeira vez que aparece e só anima com ela na tela
   private acompanhar(): void {
     if (!this.naTela || !this.posters.length) {
       this.parar();
@@ -111,7 +106,6 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
     this.relogio = null;
   }
 
-  // alguns filmes já na estante, para a seção não abrir vazia
   private montar(): void {
     const visiveis = this.visiveis();
     if (!visiveis.length) return;
@@ -133,7 +127,6 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
     if (candidatas.length) this.encher(candidatas[Math.floor(Math.random() * candidatas.length)]);
   }
 
-  // vaga cheia volta às listras e fecha; depois a cortina abre outro filme em listras, que afinam até o pôster
   private async encher(i: number): Promise<void> {
     this.ocupadas.add(i);
     if (this.vagas()[i].src) {
@@ -152,7 +145,6 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
     this.ocupadas.delete(i);
   }
 
-  // as vagas inteiras na largura, à direita do texto, com o centro longe do véu de cima e de baixo
   private visiveis(): number[] {
     const r = this.host.nativeElement.getBoundingClientRect();
     const filhos = Array.from(this.grade.nativeElement.children);
@@ -179,7 +171,6 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
     this.vagas.update((vagas) => vagas.map((v, j) => (j === i ? { ...v, ...mudanca } : v)));
   }
 
-  // timers somem com o componente; a sequência simplesmente não continua
   private esperar(ms: number): Promise<void> {
     return new Promise((ok) => {
       const t = setTimeout(() => {
@@ -191,7 +182,7 @@ export class EstanteListrasComponent implements AfterViewInit, OnChanges, OnDest
   }
 }
 
-// poucos núcleos, pouca memória ou economia de dados ligada (deviceMemory e saveData só existem no Chromium)
+// deviceMemory e saveData só existem no Chromium
 function aparelhoModesto(): boolean {
   const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
   return (nav.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4 || !!nav.connection?.saveData;

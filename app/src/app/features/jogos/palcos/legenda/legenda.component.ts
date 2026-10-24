@@ -21,13 +21,11 @@ const semAcento = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
 interface Casa {
   l: string;
   cor: CorDaLetra | '';
-  // letra dada por dica, de leve, até a pessoa digitar por cima
   dada: boolean;
   cheia: boolean;
   cursor: boolean;
 }
 
-// a legenda: a grade de sete linhas, o teclado (da tela e o físico) e as dicas
 @Component({
   selector: 'app-legenda',
   standalone: true,
@@ -40,7 +38,7 @@ export class LegendaComponent implements OnChanges {
   @Input({ required: true }) conteudo!: ConteudoLegenda;
   @Input() fim = false;
   @Input() ocupado = false;
-  // a API recusou a palavra; cada recusa traz um número novo para o aviso tocar de novo
+  // número novo a cada recusa, para o aviso tocar de novo
   @Input() recusa: { texto: string; vez: number } | null = null;
 
   @Output() palavra = new EventEmitter<string>();
@@ -102,7 +100,6 @@ export class LegendaComponent implements OnChanges {
 
   ngOnChanges(mudou: SimpleChanges): void {
     const antes = mudou['conteudo']?.previousValue as ConteudoLegenda | undefined;
-    // a palavra entrou: a linha vira e o campo esvazia
     if (antes && this.conteudo.linhas.length > antes.linhas.length) {
       this.atual.set('');
       this.aviso.set(null);

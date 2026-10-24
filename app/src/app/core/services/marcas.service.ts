@@ -55,8 +55,7 @@ const ERROS: Record<CampoMarca, [marcar: string, desmarcar: string]> = {
 
 const chave = (tmdbId: number, tipo: TipoMidia) => `${tipo}-${tmdbId}`;
 
-// o que o usuário marcou em cada card da tela: os cards pedem, o service junta
-// num pedido só por fileira e grava os atalhos sem apagar nota e texto da ficha
+// os cards pedem e o service junta num pedido por fileira; o atalho grava sem apagar nota e texto
 @Injectable({ providedIn: 'root' })
 export class MarcasService {
   private readonly http = inject(HttpClient);

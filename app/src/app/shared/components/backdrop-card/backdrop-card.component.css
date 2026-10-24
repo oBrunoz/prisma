@@ -12,7 +12,6 @@
   opacity: 1;
 }
 
-/* no hover a logo sobe um pouco junto com a entrada das ações */
 @media (hover: hover) and (pointer: fine) {
   :host:hover .marca,
   :host:focus-within .marca {

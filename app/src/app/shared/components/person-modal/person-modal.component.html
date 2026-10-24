@@ -1,4 +1,3 @@
-<!-- Fundo: fecha ao clicar; z acima da navbar (z-50) -->
 <div
   class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 md:p-8"
   (click)="close()">
@@ -79,11 +78,7 @@
               }
             </div>
 
-            <!--
-              Biografia inteira, em caixa de altura fixa com scroll próprio: o
-              texto varia muito de tamanho entre pessoas e, solto, esticaria o
-              modal de forma imprevisível.
-            -->
+            <!-- altura fixa: solta, a biografia esticaria o modal -->
             @if (person()!.biography) {
               <div data-lenis-prevent class="mt-5 max-h-[7.1rem] overflow-y-auto pr-2">
                 <p class="text-gray-300 text-sm text-justify leading-relaxed whitespace-pre-line">

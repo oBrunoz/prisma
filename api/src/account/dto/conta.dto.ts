@@ -1,7 +1,6 @@
 export class TrocaPendenteDto {
   email: string;
   expiraEm: Date;
-  // antes disso o reenvio e recusado
   reenvioEm: Date;
 }
 
@@ -18,8 +17,7 @@ interface TituloExportado {
   titulo: string;
 }
 
-// a copia que a pessoa baixa em Configuracoes > Conta: tudo que o banco guarda
-// dela, menos senha e sessoes, que sao hashes e nao dizem nada
+// tudo que o banco guarda da pessoa, menos senha e sessoes (sao hashes)
 export class ExportacaoDto {
   exportadoEm: Date;
   conta: {

@@ -7,7 +7,6 @@ import { environment } from '../../../../../environments/environment';
 import { NesteDia } from '../../../../core/models/vitrine.models';
 import { VitrineService } from '../../../../core/services/vitrine.service';
 
-// o filme que faz aniversário de estreia hoje, e mais quatro do mesmo dia em outros anos
 @Component({
   selector: 'app-neste-dia',
   standalone: true,
@@ -30,7 +29,7 @@ export class NesteDiaComponent implements OnDestroy {
     return dia ? formatDate(`${dia}T12:00:00`, "d 'de' MMMM", 'pt-BR') : '';
   });
 
-  // pequeno e guardado na API: vem logo na abertura, e a seção nasce com a altura final
+  // pequeno e guardado na API: vem logo na abertura
   constructor() {
     this.vitrine
       .nesteDia()

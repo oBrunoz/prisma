@@ -7,8 +7,7 @@ import { UserController } from './user.controller.js';
 import { UserService } from './user.service.js';
 
 @Module({
-  // o guard precisa do JwtService, e o AuthModule ja depende daqui: forwardRef
-  // quebra o ciclo sem duplicar a configuracao do JWT
+  // forwardRef: o guard precisa do JwtService e o AuthModule ja depende daqui
   imports: [forwardRef(() => AuthModule), MediaModule, TmdbModule],
   controllers: [UserController],
   providers: [UserService, AvatarService],

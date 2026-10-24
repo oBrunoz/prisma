@@ -1,6 +1,5 @@
 import { AfterViewInit, Directive, ElementRef, EventEmitter, NgZone, OnDestroy, Output, inject } from '@angular/core';
 
-// avisa uma vez quando o elemento chega perto da tela: a seção só carrega quando vai ser vista
 @Directive({
   selector: '[appAparecer]',
   standalone: true,

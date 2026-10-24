@@ -36,7 +36,6 @@ export const ZONA_DO_TIPO: Record<TipoToast, number[]> = {
   erro: [5, 6],
 };
 
-// cor do ícone: a principal de cada trecho
 export const COR_DO_TIPO: Record<TipoToast, string> = {
   info: ESPECTRO[1],
   sucesso: ESPECTRO[2],

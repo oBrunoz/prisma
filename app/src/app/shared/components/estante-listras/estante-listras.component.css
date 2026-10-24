@@ -9,7 +9,6 @@
   perspective: 1400px;
 }
 
-/* no celular a estante fica atrás do texto; sobe para a direita conforme a tela abre */
 .estante {
   position: absolute;
   top: -10%;
@@ -43,7 +42,6 @@
   overflow: hidden;
 }
 
-/* a cortina abre da esquerda para a direita, na direção da varredura do toast */
 .cortina {
   width: 100%;
   height: 100%;

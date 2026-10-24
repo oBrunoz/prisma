@@ -1,10 +1,4 @@
-/* A camada acompanha a altura do documento (o app-root é o bloco de
-   referência), então a fita é uma composição única ancorada às seções,
-   e não algo que se repete ou viaja.
-
-   Começa em 100vh, não em 0: o hero é opaco e ocupa exatamente a primeira
-   tela, então qualquer traçado ali seria desperdiçado. Assim o percurso
-   inteiro se distribui pela parte da página em que ele realmente aparece. */
+/* começa em 100vh: o hero é opaco e cobre a primeira tela */
 :host {
   position: absolute;
   top: 100vh;
@@ -17,21 +11,14 @@
   overflow: hidden;
 }
 
-/* min-height: em páginas curtas (login, cadastro) a camada tem só a altura do
-   footer e o traçado inteiro se achataria nela. Com a proporção travada, a fita
-   mantém as curvas e o :host corta o que passar do fim da página. */
+/* min-height: em páginas curtas a fita se achataria na altura do footer */
 .ribbon {
   width: 100%;
   height: 100%;
   min-height: 350vw;
   opacity: 0.45;
 
-  /* duas camadas de máscara, intersectadas:
-     1. fade curto no topo (a fita surge logo abaixo do hero, como se viesse de
-        trás dele) e longo embaixo, para morrer suavemente no footer;
-     2. grão: um ladrilho de ruído de 240px que abre furos na tinta, como
-        serigrafia gasta. Ladrilho em vez de filtro no SVG: a camada tem a
-        altura do documento e um feTurbulence nela custaria caro. */
+  /* grão por ladrilho de ruído: um feTurbulence na altura do documento custaria caro */
   --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 3.7'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
   --fade: linear-gradient(to bottom, transparent 0%, #000 3%, #000 90%, transparent 99%);
   -webkit-mask-image: var(--fade), var(--grao);
@@ -44,16 +31,14 @@
   mask-composite: intersect;
 }
 
-/* --passo é a largura de cada faixa em % da tela: o deslocamento usa unidades
-   do viewBox (1 = 1% da largura) e a espessura usa vw, então as duas andam
-   juntas. O +1px cobre o arredondamento; a fita fica centrada no traçado. */
+/* deslocamento em unidades do viewBox e espessura em vw andam juntos; o +1px cobre o arredondamento */
 .wire {
   --passo: 2.4;
   stroke-width: calc(var(--passo) * 1vw + 1px);
   transform: translateX(calc((var(--i) - 3) * var(--passo) * 1px));
 }
 
-/* Mobile: faixas proporcionalmente mais largas, senão viram fios. */
+/* no celular faixas mais largas, senão viram fios */
 @media (max-width: 639px) {
   .wire {
     --passo: 3.6;

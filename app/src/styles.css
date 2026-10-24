@@ -60,7 +60,6 @@
     @apply w-[min(72vw,18rem)] flex-none snap-start md:w-80 lg:w-[22rem] xl:w-96;
   }
 
-  /* grade de pôsteres (catálogo, watchlist, perfis) */
   .grade-posters {
     @apply grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6;
   }
@@ -69,7 +68,6 @@
     @apply text-2xl sm:text-3xl font-bold text-white;
   }
 
-  /* texto corrido das páginas legais (privacidade, termos) */
   .texto-legal {
     @apply text-base text-gray-300 leading-relaxed break-words;
   }
@@ -119,7 +117,7 @@
 }
 
 :root {
-  /* margem lateral das seções (px-gutter); com viewport-fit=cover, respeita o notch no landscape */
+  /* com viewport-fit=cover, respeita o notch no landscape */
   --gutter: max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right));
   --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 3.7'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
 }

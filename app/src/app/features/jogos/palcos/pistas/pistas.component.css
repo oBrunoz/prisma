@@ -1,4 +1,3 @@
-/* o fio de cada linha: a meia luz fechada, aceso quando abre */
 .linha {
   display: grid;
   grid-template-columns: 3px minmax(0, 1fr);

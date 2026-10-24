@@ -4,7 +4,6 @@ import { LucideChevronDown } from '@lucide/angular';
 import { SmoothScrollService } from '../../../core/services/smooth-scroll.service';
 import { OutraPagina, SecaoLegal } from '../legal.config';
 
-// a moldura de leitura das páginas legais: título, data, índice e o texto projetado
 @Component({
   selector: 'app-pagina-legal',
   standalone: true,
@@ -18,16 +17,13 @@ export class PaginaLegalComponent {
   readonly rota = input.required<string>();
   readonly secoes = input.required<SecaoLegal[]>();
   readonly outras = input.required<OutraPagina[]>();
-  // linha embaixo do título: a data da versão nas páginas legais
   readonly apoio = input('');
 
   readonly indiceAberto = signal(false);
-  // a seção que está na tela; o índice acende ela
   readonly atual = signal('');
   readonly tituloAtual = computed(() => this.secoes().find((s) => s.id === this.atual())?.titulo ?? '');
 
-  // depois de um clique no índice, a escolhida fica marcada até a pessoa rolar com a mão:
-  // seção curta no fim da página nunca chega à linha e o índice acenderia a vizinha
+  // seção curta no fim da página nunca chega à linha: a clicada no índice fica marcada até a pessoa rolar
   private escolhida = '';
 
   constructor() {
@@ -79,7 +75,6 @@ export class PaginaLegalComponent {
     requestAnimationFrame(() => this.scroll.scrollTo(alvo, -16));
   }
 
-  // a última seção que já passou da linha de leitura (um terço da tela); no fim da página, a última
   private secaoNaTela(): string {
     const secoes = this.secoes();
     const fim = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;

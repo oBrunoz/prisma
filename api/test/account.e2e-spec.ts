@@ -51,8 +51,7 @@ describe('Account (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
-      // o guard do limite e global (APP_GUARD), e o overrideGuard nao chega
-      // nele; esta suite cadastra e entra bem mais que 5 vezes por minuto
+      // o guard do limite e global (APP_GUARD) e o overrideGuard nao chega nele
       .overrideProvider(getOptionsToken())
       .useValue({ throttlers: [{ ttl: 60_000, limit: 1 }], skipIf: () => true })
       .overrideProvider(MailService)

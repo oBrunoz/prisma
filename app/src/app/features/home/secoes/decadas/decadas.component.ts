@@ -15,7 +15,6 @@ interface Decada {
   posters: string[];
 }
 
-// sete décadas, sete cores do espectro na mesma ordem; o clique abre o catálogo recortado
 @Component({
   selector: 'app-decadas',
   standalone: true,

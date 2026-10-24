@@ -29,7 +29,6 @@ const TEMPOS: Record<VarianteTravessia, [number, number, number]> = {
 
 const vaiEVolta =(t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-// a folha abre, a câmera atravessa a janela e as listras viram o fundo
 @Component({
   selector: 'app-travessia',
   standalone: true,
@@ -38,7 +37,6 @@ const vaiEVolta =(t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t +
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TravessiaComponent implements AfterViewInit, OnDestroy {
-  // painel: lado da arte no login e no cadastro; tela: a página inteira, para uma abertura
   @Input() variante: VarianteTravessia = 'painel';
   @Output() atravessou = new EventEmitter<void>();
 
@@ -63,7 +61,6 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
     return `0 0 ${this.cena.largura} ${this.cena.altura}`;
   }
 
-  // sete listras paralelas do mesmo traçado
   protected deslocamento(indice: number): string {
     return `translate(0 ${(indice - 3) * 30})`;
   }
@@ -86,7 +83,6 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
     cancelAnimationFrame(this.quadro);
   }
 
-  // corta a entrada e já mostra a cena do outro lado
   pular(): void {
     if (this.pulou || jaAtravessou.has(this.variante)) return;
     this.pulou = true;
@@ -107,7 +103,6 @@ export class TravessiaComponent implements AfterViewInit, OnDestroy {
     this.zona.run(() => this.atravessou.emit());
   }
 
-  // k aproxima a câmera do centro do vão; o recorte das listras cresce junto com a janela
   private aplicar(k: number, abertura: number): void {
     const { tx, ty, s } = this.cena.janela;
     const { x0, x1, y0, y1, cx, cy } = vaoDaJanela(this.cena.janela);

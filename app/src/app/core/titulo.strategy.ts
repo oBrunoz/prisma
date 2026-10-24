@@ -2,8 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { SeoService } from './services/seo.service';
 
-// cada navegação volta ao SEO da rota (title + data.descricao/indexar); a estratégia padrão
-// deixaria o da página anterior. Páginas com dado da TMDB completam depois com o SeoService
+// a estratégia padrão deixaria o SEO da página anterior; o da TMDB vem depois pelo SeoService
 @Injectable({ providedIn: 'root' })
 export class TituloStrategy extends TitleStrategy {
   private readonly seo = inject(SeoService);

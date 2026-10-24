@@ -11,7 +11,6 @@ export type TipoJogo =
   | 'LINHA';
 export type SituacaoPartida = 'PLAYING' | 'WON' | 'LOST';
 
-// como se joga: adivinhar o filme ou a pessoa pela busca, ou cada um com a sua mecânica
 export type Mecanica = 'filme' | 'pessoa' | 'legenda' | 'duelo' | 'linha' | 'carreira';
 
 export const TENTATIVAS = 7;
@@ -26,8 +25,6 @@ export interface RespostaDesafio {
   posterPath: string | null;
   year: number | null;
 }
-
-/* ---------- o que cada jogo mostra (content da API) ---------- */
 
 export interface FilmeDoJogo {
   tmdbId: number;
@@ -116,7 +113,6 @@ export interface DesafiosDoDia {
   challenges: Partida[];
 }
 
-// um desafio antigo sorteado, fora do diário
 export interface SorteioJogo {
   challenge: Partida;
   // a pessoa já tinha visto todos os antigos desse jogo

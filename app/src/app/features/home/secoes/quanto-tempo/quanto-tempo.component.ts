@@ -7,7 +7,6 @@ import { CarouselRowComponent } from '../../../../shared/components/carousel-row
 import { MovieCardComponent } from '../../../../shared/components/movie-card/movie-card.component';
 import { AparecerDirective } from '../../../../shared/directives/aparecer.directive';
 
-// a duração como filtro: três faixas trocam a fileira
 @Component({
   selector: 'app-quanto-tempo',
   standalone: true,

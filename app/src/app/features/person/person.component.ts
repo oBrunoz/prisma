@@ -80,14 +80,12 @@ export class PersonComponent implements OnInit, OnDestroy {
     this.movieService.getImageUrl(this.person()?.profile_path ?? null, 'h632')
   );
 
-  // atuação e ofício técnico no mesmo balaio, já ordenados
   credits = computed<PersonCredit[]>(() => this.movieService.getPersonCredits(this.person()));
 
   readonly srcsetDeFundo = srcsetDeFundo;
 
   knownFor = computed(() => this.credits().slice(0, 20));
 
-  // o fundo do hero vem do título mais conhecido da pessoa
   backdropUrl = computed(() => {
     const comBackdrop = this.credits().find((c) => c.backdrop_path);
     return comBackdrop
@@ -100,7 +98,6 @@ export class PersonComponent implements OnInit, OnDestroy {
     return dept ? DEPARTAMENTOS[dept] ?? dept : '';
   });
 
-  // idade atual, ou idade com que morreu
   age = computed<number | null>(() => {
     const birthday = this.person()?.birthday;
     if (!birthday) return null;
@@ -117,7 +114,6 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   titleCount = computed(() => this.credits().length);
 
-  // primeiro e último ano creditados
   careerSpan = computed<string>(() => {
     const anos = this.credits()
       .map((c) => c.release_date || c.first_air_date)
@@ -131,7 +127,6 @@ export class PersonComponent implements OnInit, OnDestroy {
     return inicio === fim ? String(inicio) : `${inicio} – ${fim}`;
   });
 
-  // média das notas dos títulos já avaliados
   averageRating = computed<number | null>(() => {
     const notas = this.credits()
       .filter((c) => (c.vote_count ?? 0) > 0 && c.vote_average > 0)
@@ -158,7 +153,6 @@ export class PersonComponent implements OnInit, OnDestroy {
     return credit.media_type === 'tv' ? 'series' : 'movies';
   }
 
-  // personagem para elenco, função para quem estava atrás da câmera
   creditRole(credit: PersonCredit): string {
     return credit.character || credit.job || '';
   }

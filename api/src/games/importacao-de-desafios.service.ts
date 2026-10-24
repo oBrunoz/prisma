@@ -19,7 +19,6 @@ import {
 import { TENTATIVAS } from './games.constants.js';
 import type { Pista } from './games.regras.js';
 
-// o arquivo da curadoria: só o essencial de cada dia; o resto o importador busca na TMDB
 export interface DesafiosDoArquivo {
   frames?: { dia: string; tmdbId: number; imagens: string[] }[];
   poster?: { dia: string; tmdbId: number; imagem?: string }[];
@@ -66,11 +65,9 @@ interface ImagensDaTmdb {
 interface ItemDaImportacao {
   kind: GameKind;
   dia: string;
-  // o filme da resposta, quando há um
   tmdbId: number | null;
   images: string[];
   data: Prisma.InputJsonValue | null;
-  // para o relatório: o que entrou no dia
   rotulo: string;
 }
 
@@ -130,7 +127,6 @@ export class ImportacaoDeDesafiosService {
       });
     }
 
-    // os jogos de texto e de escolha: o construtor busca na TMDB e recusa o que não serve
     const montar = async (
       kind: GameKind,
       dia: string,

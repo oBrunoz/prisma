@@ -39,7 +39,6 @@ export class ConfigPerfilComponent implements OnDestroy {
     bio: '',
   }));
 
-  // só o que mudou vai para a API
   readonly mudancas = computed<AtualizacaoPerfil>(() => {
     const salvo = this.salvo();
     const atual: Record<Campo, string> = {

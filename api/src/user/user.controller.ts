@@ -109,8 +109,7 @@ export class UserController {
     return this.userService.findPerfilByUsername(username);
   }
 
-  // o site e a API ficam em origens diferentes: sem o CORP cross-origin o
-  // navegador recusa a imagem que o helmet marcou como same-origin
+  // site e API em origens diferentes: sem o CORP cross-origin o navegador recusa a imagem
   @Get(':id/avatar')
   async foto(
     @Param('id', ParseUUIDPipe) id: string,

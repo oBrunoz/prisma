@@ -104,7 +104,6 @@ describe('MediaActionsComponent', () => {
       watchlist.remover.and.returnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
       componente.alternarWatchlist();
 
-      // 404 no remover quer dizer que já saiu: o estado visual é que estava errado
       expect(componente.naWatchlist()).toBeFalse();
       expect(TestBed.inject(ToastService).itens()).toEqual([]);
       expect(componente.salvandoWatchlist()).toBeFalse();
@@ -233,7 +232,6 @@ describe('MediaActionsComponent', () => {
       componente.definirNota(10);
       componente.salvar();
 
-      // o usuário não perde a edição e pode tentar de novo
       expect(componente.nota()).toBe(10);
       expect(componente.alterada()).toBeTrue();
       expect(TestBed.inject(ToastService).itens().map((t) => t.tipo)).toEqual(['erro']);

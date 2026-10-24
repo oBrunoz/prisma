@@ -1,15 +1,11 @@
-/* Quem usa posiciona (absolute por baixo do conteúdo). As peças crescem com a
-   tela e no celular só ficam o topo direito e o rodapé: as laterais lá quase não
-   existem e a flor ficaria inteira atrás dos cards. */
+/* no celular só ficam o topo direito e o rodapé: nas laterais a flor ficaria atrás dos cards */
 :host {
   display: block;
   overflow: hidden;
   pointer-events: none;
 }
 
-/* mesma pegada das listras do site: meia tinta e o grão de impressão abrindo
-   furos pela máscara (ladrilho, não filtro: a camada tem a altura do perfil);
-   o --fade de cada peça apaga o lado que encosta no conteúdo */
+/* grão por ladrilho na máscara, não filtro: a camada tem a altura do perfil */
 .peca {
   position: absolute;
   display: block;

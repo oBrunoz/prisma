@@ -89,7 +89,6 @@ model Media {
   @@map("medias")
 }
 
-// o desafio do dia de um jogo: o filme e as imagens na ordem em que aparecem
 model GameChallenge {
   id        String   @id @default(uuid(7))
   kind      GameKind
@@ -119,7 +118,6 @@ model GamePlay {
   challengeId String
   // tmdbId de cada palpite na ordem; 0 e um pulo. Duelo: o escolhido; linha: a vaga; carreira: as ordens
   guesses     Int[]
-  // legenda: as palavras tentadas
   words       String[]    @default([])
   // letreiro e legenda: as dicas pedidas, ja resolvidas (pista, letra:X)
   hints       String[]    @default([])

@@ -17,7 +17,6 @@
       <stop offset="0.6" stop-color="#A3BE6A" />
       <stop offset="1" stop-color="#D6DBA4" />
     </linearGradient>
-    <!-- aquarela do fundo: rosa antigo e lilás, já desbotados -->
     <linearGradient id="enf-v-rosa" x1="0" y1="1" x2="0" y2="0">
       <stop offset="0" stop-color="#EBDCCB" />
       <stop offset="0.28" stop-color="#DDA2B1" />
@@ -37,7 +36,6 @@
       <stop offset="1" stop-color="#8E5C88" />
     </linearGradient>
 
-    <!-- lírio do buquê, visto de cima: três sépalas atrás, três pétalas pintadas na frente -->
     <symbol id="enf-lirio" viewBox="-100 -100 200 200">
       @for (a of sepalas; track a) {
         <path d="M0 0C-13 -18 -16 -54 -3 -86Q0 -93 3 -86C16 -54 13 -18 0 0Z" fill="url(#enf-petala-fora)" [attr.transform]="'rotate(' + a + ')'" />
@@ -152,7 +150,7 @@
       </g>
     </symbol>
 
-    <!-- lírio de aquarela do fundo: as pétalas herdam o fill do <use> (rosa antigo ou lilás) -->
+    <!-- as pétalas herdam o fill do <use> -->
     <symbol id="enf-lirio-v" viewBox="-110 -110 220 220">
       @for (a of sepalas; track a) {
         <path d="M0 0C-15 -18 -20 -58 -8 -90C-4 -100 6 -102 10 -94C4 -92 2 -86 6 -80C18 -50 15 -18 0 0Z" [attr.transform]="'rotate(' + a + ')'" />

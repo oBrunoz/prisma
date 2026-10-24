@@ -29,7 +29,6 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 export class NavbarComponent implements OnDestroy {
   sidebarOpen = signal(false);
   menuContaAberto = signal(false);
-  // abaixo de xl a busca fica recolhida no ícone
   buscaAberta = signal(false);
 
   isScrolled = signal(false);
@@ -112,7 +111,6 @@ export class NavbarComponent implements OnDestroy {
     this.busca?.fechar();
   }
 
-  /** "/" foca a busca, como em sites de catálogo. */
   @HostListener('document:keydown', ['$event'])
   onDocumentKeydown(event: KeyboardEvent): void {
     if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;

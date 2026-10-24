@@ -264,7 +264,6 @@ export class UserService {
     };
   }
 
-  // um "voce segue" por linha, numa consulta so
   async marcarSeguindo(
     usuarios: UsuarioResumoDto[],
     quemVe?: string,

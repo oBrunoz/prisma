@@ -33,10 +33,8 @@ export class CartaoAvaliacaoComponent {
   private readonly toast = inject(ToastService);
 
   readonly avaliacao = input.required<AvaliacaoUsuario>();
-  // resumido: texto cortado em três linhas, como na visão geral
   readonly resumido = input(false);
   readonly podeExcluir = input(false);
-  // fora do perfil (na home), o cartão diz quem escreveu
   readonly mostrarAutor = input(false);
   readonly excluida = output<void>();
 
@@ -58,7 +56,6 @@ export class CartaoAvaliacaoComponent {
       next: () => {
         this.excluindo.set(false);
         this.excluida.emit();
-        // o cartão some da tela: o resultado só aparece aqui
         this.toast.sucesso('Avaliação excluída', {
           detalhe: avaliacao.media?.title,
           chave: `avaliacao-${avaliacao.id}`,

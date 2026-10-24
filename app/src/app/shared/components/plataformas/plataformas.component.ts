@@ -3,7 +3,6 @@ import { LucideTicket } from '@lucide/angular';
 import { OndeAssistir } from '../../../core/models/onde-assistir';
 import { environment } from '../../../../environments/environment';
 
-// "logo Prime Video +3" ou "Nos cinemas"; cor e tamanho do texto vêm de quem usa
 @Component({
   selector: 'app-plataformas',
   standalone: true,

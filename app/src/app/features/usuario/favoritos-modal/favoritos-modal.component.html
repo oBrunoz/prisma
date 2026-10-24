@@ -1,4 +1,3 @@
-<!-- Fundo: fecha ao clicar; z acima da navbar (z-50) -->
 <div
   class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 md:p-8"
   (click)="fechar()">
@@ -24,7 +23,6 @@
       </button>
     </div>
 
-    <!-- as quatro vagas, na ordem -->
     <div class="grid grid-cols-4 gap-3 px-5 sm:px-6 pt-5">
       @for (titulo of escolhidos(); track titulo.tipo + titulo.id; let i = $index, primeiro = $first, ultimo = $last) {
         <div class="min-w-0">

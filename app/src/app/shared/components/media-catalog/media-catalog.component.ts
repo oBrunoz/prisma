@@ -26,7 +26,6 @@ import { STREAMINGS } from '../../../core/config/vitrine';
 
 type CatalogItem = Movie & TvShow;
 
-// Página de catálogo (filmes ou séries): destaque no topo, filtro de gênero e grid.
 @Component({
   selector: 'app-media-catalog',
   standalone: true,
@@ -44,12 +43,10 @@ type CatalogItem = Movie & TvShow;
 })
 export class MediaCatalogComponent implements OnInit, OnDestroy {
   @Input({ required: true }) type: 'movie' | 'tv' = 'movie';
-  // Título da seção quando nenhum gênero está selecionado.
   @Input() heading = '';
 
   genres = signal<Genre[]>([]);
   selectedGenreId = signal<number | null>(null);
-  // recorte que vem das seções da home: ?decada=1990 e ?streaming=8
   decada = signal<number | null>(null);
   streaming = signal<number | null>(null);
   items = signal<CatalogItem[]>([]);
@@ -72,7 +69,7 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
   private lastScrollY = 0;
   private observer?: IntersectionObserver;
 
-  // A sentinela só existe no DOM enquanto houver próxima página, então o
+  // a sentinela só existe no DOM enquanto houver próxima página
   @ViewChild('sentinel')
   set sentinel(el: ElementRef<HTMLElement> | undefined) {
     this.observer?.disconnect();
@@ -83,7 +80,6 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
         (entries) => {
           if (entries[0]?.isIntersecting) this.zone.run(() => this.loadMore());
         },
-        // Antecipa o carregamento para o grid não chegar a mostrar o fim
         { rootMargin: '600px 0px' }
       );
       this.observer.observe(el.nativeElement);
@@ -99,7 +95,6 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
     private navState: NavigationStateService
   ) {}
 
-  /** Fecha o dropdown ao clicar fora dele. */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.isGenreMenuOpen()) return;
@@ -108,9 +103,6 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
     }
   }
 
-  // A barra recua ao descer e volta ao subir. Sobre o hero ela fica sempre
-  // visível e transparente; só ganha fundo quando passa a cobrir o grid.
-  /** Realinha o rastreamento com a posição real da janela e mostra a barra. */
   private syncScrollState(): void {
     this.lastScrollY = window.scrollY;
     this.isBarVisible.set(true);
@@ -277,7 +269,6 @@ export class MediaCatalogComponent implements OnInit, OnDestroy {
           this.navState.savePages(url, responses.length);
           this.isLoading.set(false);
 
-          // O destaque é o primeiro da lista — muda junto com o gênero.
           const top = first.results[0];
           if (!top) return of(null);
 

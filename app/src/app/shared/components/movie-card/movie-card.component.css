@@ -3,7 +3,6 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent 40%);
 }
 
-/* com mouse o pé escurece mais alto no hover, para caber título e ações */
 @media (hover: hover) and (pointer: fine) {
   .veu {
     background: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.5) 38%, transparent 64%);

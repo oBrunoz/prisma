@@ -1,5 +1,4 @@
 <div class="app">
-  <!-- Barra de filtro -->
   <div
     class="fixed top-16 left-0 right-0 z-30 transition-all duration-300"
     [ngClass]="isBarSolid() ? 'bg-[#111111]/90 backdrop-blur-md border-b border-white/5' : ''"
@@ -20,7 +19,6 @@
         }
       </div>
 
-      <!-- Filtro de gênero -->
       <div class="relative shrink-0">
         <button
           type="button"
@@ -75,7 +73,6 @@
     </div>
   </div>
 
-  <!-- Destaque -->
   <app-hero-section
     [label]="selectedGenre()?.name ?? 'Em destaque'"
     [title]="spotlight()?.title ?? ''"
@@ -100,7 +97,7 @@
     (retryClicked)="retry()">
   </app-hero-section>
   <main id="content" class="pt-12 sm:pt-16 pb-16 sm:pb-24">
-    <!-- Prateleiras: com recorte da home (década, streaming) contradiriam o filtro -->
+    <!-- com recorte da home (década, streaming) as prateleiras contradiriam o filtro -->
     @if (!recorte()) {
       @for (shelf of shelves; track shelf.id) {
         <app-content-shelf
@@ -112,7 +109,6 @@
       }
     }
 
-    <!-- Lista de itens -->
     <section class="px-gutter pt-10 border-t border-white/5">
       <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Explorar tudo</h2>
       @if (isLoading()) {
@@ -143,7 +139,6 @@
           }
         </div>
 
-        <!-- Sentinela -->
         @if (canLoadMore()) {
           <div #sentinel class="h-px w-full"></div>
         }

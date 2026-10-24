@@ -54,8 +54,7 @@ describe('Segurança (e2e)', () => {
       await server().get('/tmdb/account/123').expect(400);
     });
 
-    // regressao: barra codificada escapava da allowlist e alcancava
-    // qualquer endpoint da TMDB com a nossa chave
+    // regressao: barra codificada escapava da allowlist e alcancava qualquer endpoint da TMDB
     it('recusa barra codificada no segmento', async () => {
       await server().get('/tmdb/movie/..%2fauthentication%2ftoken%2fnew').expect(400);
       await server().get('/tmdb/movie/%2e%2e%2fauthentication%2ftoken%2fnew').expect(400);
@@ -113,9 +112,7 @@ describe('Segurança (e2e)', () => {
   });
 
   describe('minha avaliação no título', () => {
-    // regressao: o front achava a propria review varrendo a lista publica
-    // paginada; num titulo com muitas reviews a dele sumia e salvar de novo
-    // apagava o texto ja escrito
+    // regressao: achando a propria review na lista publica paginada, salvar de novo apagava o texto
     it('acha a review do usuário mesmo atrás de outras mais novas', async () => {
       const filme = 78;
 

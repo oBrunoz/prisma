@@ -28,7 +28,6 @@
   transform: translateY(-6px);
 }
 
-/* só com conta: a capa recua, o texto continua lendo como convite */
 .escolha.trancada {
   cursor: pointer;
 }
@@ -50,7 +49,6 @@
   transform: scale(1.05);
 }
 
-/* os sete fios, na ordem: gasto apaga, sem jogar ficam a meia luz */
 .fio {
   display: block;
   width: 12px;

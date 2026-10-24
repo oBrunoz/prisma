@@ -15,7 +15,6 @@ import { environment } from '../../../../../environments/environment';
 import { ConteudoDuelo, FilmeDoDuelo } from '../../../../core/models/jogos.models';
 import { ESPECTRO } from '../../../../core/models/espectro';
 
-// o duelo: dois pôsteres, um toque; a nota aparece e só segue quando a pessoa pede
 @Component({
   selector: 'app-duelo',
   standalone: true,
@@ -32,7 +31,6 @@ export class DueloComponent implements OnChanges {
 
   readonly imagens = environment.tmdbImageUrl;
   readonly espectro = ESPECTRO;
-  // o duelo na tela: depois da escolha fica nele, com as notas, até tocar em Próximo
   readonly vendo = signal(0);
   readonly tremendo = signal(false);
   private readonly dados = signal<ConteudoDuelo | null>(null);
@@ -66,7 +64,6 @@ export class DueloComponent implements OnChanges {
     const duelos = this.conteudo.duelos;
     const feitos = duelos.filter((d) => d.escolhido !== null).length;
     if (!antes) {
-      // abrindo: o primeiro sem escolha, ou o último se já acabou
       this.vendo.set(Math.min(feitos, duelos.length - 1));
       return;
     }

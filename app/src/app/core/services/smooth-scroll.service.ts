@@ -124,7 +124,7 @@ export class SmoothScrollService {
     window.scrollTo({ top: y, behavior: 'auto' });
   }
 
-  /** Trava a página por trás de um overlay (modal). */
+  // trava a página por trás de um overlay (modal)
   stop(): void {
     this.lenis?.stop();
     document.body.style.overflow = 'hidden';

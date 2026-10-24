@@ -1,4 +1,4 @@
-/* acima da navbar (z-50) e dos modais (z-[60]); alinhado ao gutter das seções */
+/* acima da navbar (z-50) e dos modais (z-[60]) */
 :host {
   position: fixed;
   left: var(--gutter);
@@ -35,7 +35,6 @@
   grid-template-rows: 0fr;
 }
 
-/* folga lateral para a onda entrar e sair além do ingresso */
 .rolo-var {
   position: relative;
   min-height: 0;
@@ -44,7 +43,6 @@
   padding-inline: 22px;
 }
 
-/* ingressos colados pelo picote; meia-lua nas emendas e nas pontas do picote vertical */
 .rolo-item {
   --cheio: linear-gradient(#000, #000);
   --n1: var(--cheio);
@@ -101,7 +99,6 @@
   padding: 14px 12px 14px 16px;
 }
 
-/* ponto quadrado da logo, na cor do erro */
 .ponto {
   width: 8px;
   height: 8px;
@@ -110,7 +107,6 @@
   background: currentColor;
 }
 
-/* os sete fios ficam sempre, na ordem; só o trecho do tipo acende. Também são o relógio */
 .fios {
   display: flex;
   align-self: center;

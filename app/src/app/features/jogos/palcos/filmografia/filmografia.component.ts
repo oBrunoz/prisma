@@ -5,7 +5,6 @@ import { ESPECTRO } from '../../../../core/models/espectro';
 
 const LARGURAS = ['66%', '80%', '48%', '30%', '76%', '60%', '38%'];
 
-// a assinatura: a carreira do menos ao mais conhecido; o ano aparece desde o começo
 @Component({
   selector: 'app-filmografia',
   standalone: true,

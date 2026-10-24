@@ -88,8 +88,7 @@ export class MediaActionsComponent implements OnInit, OnChanges, OnDestroy {
   texto = signal('');
   avaliacaoId = signal<string | null>(null);
 
-  // referência estável: um getter devolveria objeto novo a cada ciclo de
-  // detecção e o Angular acusaria mudança depois de verificado
+  // referência estável: um getter daria objeto novo a cada ciclo e o Angular acusaria mudança
   destinoAposLogin: Record<string, string> = {};
 
   carregando = signal(false);
@@ -99,18 +98,15 @@ export class MediaActionsComponent implements OnInit, OnChanges, OnDestroy {
   confirmandoExclusao = signal(false);
   linkCopiado = signal(false);
 
-  // último estado que o servidor confirmou, base para saber se há o que salvar
   private confirmada = signal<Ficha>({ ...FICHA_VAZIA });
 
   alterada = computed(() => !fichasIguais(this.fichaAtual(), this.confirmada()));
   private pendentes = 0;
   private confirmacaoPendente = '';
 
-  // as gravações entram em fila: com switchMap o servidor poderia aplicar
-  // uma requisição antiga por último e o estado final sairia errado
+  // em fila: com switchMap uma requisição antiga poderia ser aplicada por último
   private fila$ = new Subject<Gravacao>();
 
-  // emite a cada troca de título para descartar respostas da carga anterior
   private cancelarCarga$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
@@ -143,7 +139,6 @@ export class MediaActionsComponent implements OnInit, OnChanges, OnDestroy {
     this.fila$.complete();
   }
 
-  // meia estrela vale 1, cinco cheias valem 10
   preenchimento(estrela: number): 'cheia' | 'meia' | 'vazia' {
     const valor = this.notaVisualizada() ?? this.nota() ?? 0;
     if (valor >= estrela * 2) return 'cheia';
@@ -235,7 +230,6 @@ export class MediaActionsComponent implements OnInit, OnChanges, OnDestroy {
     navigator.clipboard.writeText(window.location.href).then(() => this.linkCopiado.set(true), falhou);
   }
 
-  // mexer na ficha só muda a tela; quem grava é o botão de salvar
   private editar(): void {
     this.confirmandoExclusao.set(false);
   }
@@ -273,7 +267,6 @@ export class MediaActionsComponent implements OnInit, OnChanges, OnDestroy {
     this.sync.avisar(this.tmdbId, this.mediaType, this);
   }
 
-  // mantém o que o usuário preencheu para ele tentar de novo
   private falharGravacao(alvo: number, falha: unknown): void {
     this.encerrarPendente();
     this.confirmacaoPendente = '';

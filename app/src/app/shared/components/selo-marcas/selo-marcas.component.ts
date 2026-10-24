@@ -3,7 +3,6 @@ import { LucideBookmark, LucideEye, LucideHeart } from '@lucide/angular';
 import { TipoMidia } from '../../../core/models/catalogo.models';
 import { MarcasService } from '../../../core/services/marcas.service';
 
-// o que o usuário já marcou, visível sem hover: olho, coração, marcador
 @Component({
   selector: 'app-selo-marcas',
   standalone: true,

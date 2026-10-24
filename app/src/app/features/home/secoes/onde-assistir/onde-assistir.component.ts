@@ -9,7 +9,6 @@ import { CarouselRowComponent } from '../../../../shared/components/carousel-row
 import { MovieCardComponent } from '../../../../shared/components/movie-card/movie-card.component';
 import { AparecerDirective } from '../../../../shared/directives/aparecer.directive';
 
-// o que tem em cada streaming no Brasil: as pills trocam a fileira
 @Component({
   selector: 'app-onde-assistir',
   standalone: true,
@@ -50,7 +49,6 @@ export class OndeAssistirComponent implements OnDestroy {
 
   carregar(): void {
     this.troca$.next(this.escolhido());
-    // os logos vêm da TMDB; sem eles a pill fica só com o nome
     this.movies
       .getStreamingsDaRegiao('BR')
       .pipe(takeUntil(this.destroy$))

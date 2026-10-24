@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import { AccessTokenPayload } from '../token.service.js';
 
-// rota publica que muda um detalhe para quem esta logado (ex.: "voce segue")
 @Injectable()
 export class OptionalJwtAuthGuard implements CanActivate {
   constructor(private readonly jwt: JwtService) {}

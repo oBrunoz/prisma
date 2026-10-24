@@ -1,5 +1,4 @@
-/* posição e tamanho vêm de quem usa (absolute inset-0, h-screen...): o :host empataria
-   em especificidade com as utilities do Tailwind */
+/* o :host empataria em especificidade com as utilities do Tailwind */
 :host {
   display: block;
   overflow: hidden;
@@ -13,7 +12,6 @@ svg {
   display: block;
 }
 
-/* grão por máscara na camada inteira, como no stripes-backdrop */
 .listras {
   -webkit-mask-image: var(--grao);
   mask-image: var(--grao);

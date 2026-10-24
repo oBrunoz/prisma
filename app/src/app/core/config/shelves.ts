@@ -1,4 +1,3 @@
-// Prateleiras do catálogo
 export interface ShelfConfig {
   id: string;
   title: string;
@@ -7,7 +6,6 @@ export interface ShelfConfig {
 
 const currentYear = new Date().getFullYear();
 
-// Data deslocada em dias, no formato que a TMDB espera
 const daysFromNow = (days: number): string =>
   new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
@@ -96,7 +94,6 @@ export const TV_SHELVES: ShelfConfig[] = [
   },
 ];
 
-// Prateleiras da home, que precisam dizer de que tipo são
 export interface HomeShelfConfig extends ShelfConfig {
   type: 'movie' | 'tv';
 }

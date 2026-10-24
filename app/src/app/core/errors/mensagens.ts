@@ -5,8 +5,7 @@ const MUITAS_TENTATIVAS = 'Muitas tentativas seguidas. Aguarde um minuto e tente
 const INDISPONIVEL = 'O serviço está indisponível no momento. Tente novamente em instantes.';
 const GENERICA = 'Algo não saiu como esperado. Tente novamente em instantes.';
 
-// o usuário não tem o que fazer com status HTTP nem com nome de arquivo:
-// a mensagem diz o que aconteceu e o que ele pode fazer a respeito
+// o usuário não tem o que fazer com status HTTP: a mensagem diz o que houve e o que ele pode fazer
 export function mensagemDeErro(erro: unknown, porStatus: Record<number, string> = {}): string {
   const status = erro instanceof HttpErrorResponse ? erro.status : -1;
 
@@ -25,7 +24,7 @@ export function erroMenciona(erro: unknown, campo: string): boolean {
   return itens.some((item) => String(item).toLowerCase().includes(campo));
 }
 
-// sem conexão, excesso de tentativas ou servidor fora: não é o dado do usuário que está errado
+// não é o dado do usuário que está errado
 export function ehFalhaDeSistema(erro: unknown): boolean {
   const status = erro instanceof HttpErrorResponse ? erro.status : -1;
   return status === 0 || status === 429 || status >= 500;

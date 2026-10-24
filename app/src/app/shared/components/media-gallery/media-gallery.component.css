@@ -3,7 +3,6 @@
   --folga: 13rem;
 }
 
-/* largura derivada da altura livre: o trailer cabe na tela sem deformar */
 .stage-video {
   width: min(100%, calc((100dvh - var(--folga)) * 16 / 9));
   aspect-ratio: 16 / 9;
@@ -52,7 +51,6 @@
   display: none;
 }
 
-/* celular deitado: sem miniaturas e com a barra enxuta, o palco fica com quase toda a altura */
 @media (max-height: 500px) {
   :host {
     --folga: 4.5rem;

@@ -1,5 +1,4 @@
-/* posicionada pelo centro do avatar de 96px: o viewBox tem 125 de folga à
-   esquerda e 120 acima do centro, na escala 96/112 */
+/* o viewBox tem 125 de folga à esquerda e 120 acima do centro do avatar, na escala 96/112 */
 :host {
   position: absolute;
   left: -59px;

@@ -32,7 +32,6 @@ interface SessaoNova {
   accessToken: string;
 }
 
-// tudo que muda como a pessoa entra; o perfil publico fica em /user/me
 @Controller('account')
 @UseGuards(JwtAuthGuard)
 export class AccountController {

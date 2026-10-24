@@ -84,7 +84,6 @@
   align-items: center;
 }
 
-/* abaixo de xl a busca é uma barra por cima da navbar inteira, aberta pelo ícone */
 @media (max-width: 1279.98px) {
   .busca {
     position: absolute;

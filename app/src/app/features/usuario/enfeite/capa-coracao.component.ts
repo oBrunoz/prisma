@@ -5,7 +5,6 @@ import { ESPECTRO } from '../../../core/models/espectro';
 const ESCALAS = [1, 0.92, 0.84, 0.76, 0.68, 0.6, 0.52];
 const TRACO = 3.86;
 
-// a capa do perfil enfeitado: sete corações de fios do espectro, a foto no vão e o ramo do buquê
 @Component({
   selector: 'app-capa-coracao',
   standalone: true,

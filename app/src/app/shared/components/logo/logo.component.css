@@ -1,6 +1,4 @@
-/* A altura vem de quem usa (h-7, h-32...); a largura sai do viewBox.
-   A cor é o creme da marca. Esconder/mostrar por breakpoint num wrapper:
-   o display do :host empata em especificidade com as utilities do Tailwind. */
+/* esconder por breakpoint num wrapper: o display do :host empata com as utilities do Tailwind */
 :host {
   display: inline-flex;
   color: #f3ead6;
@@ -13,9 +11,6 @@ svg {
   overflow: visible;
 }
 
-/* Abertura (~1.7s): a janela surge e a folha abre na dobradiça; conforme ela
-   abre, as letras entram da esquerda e o ponto vermelho fecha.
-   Tudo com fill "both", sem estado em TS. */
 :host(.intro) .caixilho {
   animation: surgir 400ms ease-out both;
 }

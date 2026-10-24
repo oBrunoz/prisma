@@ -5,7 +5,7 @@ export class NavigationStateService {
   private readonly scrollByUrl = new Map<string, number>();
   private readonly pagesByUrl = new Map<string, number>();
 
-  // Verdadeiro enquanto a navegação atual for voltar/avançar do histórico.
+  // verdadeiro enquanto a navegação atual for voltar/avançar do histórico
   private restoring = false;
 
   setRestoring(value: boolean): void {

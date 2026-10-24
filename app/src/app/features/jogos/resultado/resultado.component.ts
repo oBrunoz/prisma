@@ -28,7 +28,6 @@ import { MiniIngressoComponent } from '../../../shared/components/mini-ingresso/
 import { QuickActionsComponent } from '../../../shared/components/quick-actions/quick-actions.component';
 import { tempoAteAVirada, textoDoResultado } from '../jogos.util';
 
-// o fim da partida: a resposta (filme, pessoa ou o placar), os números e o texto para compartilhar
 @Component({
   selector: 'app-resultado',
   standalone: true,
@@ -41,9 +40,7 @@ export class ResultadoComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) info!: InfoJogo;
   @Input({ required: true }) partida!: Partida;
   @Input() estatisticas: EstatisticasJogo | null = null;
-  // o próximo jogo de hoje (o que falta, ou o primeiro se já fez todos)
   @Input() proximo: { info: InfoJogo; feito: boolean } | null = null;
-  // sorteada: sem números do diário, e o convite é para outro sorteio
   @Input() aleatorio = false;
   @Input() sorteando = false;
 
@@ -64,7 +61,6 @@ export class ResultadoComponent implements OnInit, OnChanges, OnDestroy {
     return d ? textoDoResultado(this.info.nome, d.p) : '';
   });
 
-  // a linha de cima: em que tentativa acertou (com as dicas), ou o placar
   readonly manchete = computed(() => {
     const p = this.dados()?.p;
     if (!p) return '';
@@ -79,7 +75,6 @@ export class ResultadoComponent implements OnInit, OnChanges, OnDestroy {
     return p?.kind === 'DUELO' ? (p.content as ConteudoDuelo).duelos : [];
   });
 
-  // linha do tempo e carreira: a ordem certa, com o que a pessoa errou marcado
   readonly fita = computed(() => {
     const p = this.dados()?.p;
     if (p?.kind === 'LINHA') {
@@ -111,7 +106,6 @@ export class ResultadoComponent implements OnInit, OnChanges, OnDestroy {
         cor: placar ? (i === 0 ? '#D85057' : ESPECTRO[i - 1]) : i < TENTATIVAS ? ESPECTRO[i] : '#D85057',
       };
     });
-    // no placar, o melhor (7) em cima
     return placar ? linhas.reverse() : linhas;
   });
 

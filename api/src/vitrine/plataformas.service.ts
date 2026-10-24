@@ -30,8 +30,7 @@ const LOTE = 10;
 const MAX_GUARDADOS = 5000;
 const PAIS = 'BR';
 
-// onde assistir de cada card: a home inteira daria ~200 consultas a TMDB por visita,
-// entao cada titulo e consultado uma vez por dia e servido daqui
+// a home inteira daria ~200 consultas a TMDB por visita: cada titulo e consultado uma vez por dia
 @Injectable()
 export class PlataformasService {
   private readonly guardados = new Map<string, { ate: number; dados: Promise<OndeAssistir> }>();

@@ -1,5 +1,3 @@
-// seções da home montadas pela API (GET /vitrine/...)
-
 export interface EstreiaDoDia {
   tmdbId: number;
   title: string;

@@ -43,7 +43,6 @@ export interface PartidaView {
   words: string[];
   hints: string[];
   status: SituacaoDaPartida;
-  // duelo e linha: quantos acertos
   score: number | null;
   // o que o jogo de texto ou de escolha mostra agora (pistas abertas, letras, filmes)
   content: unknown;
@@ -69,7 +68,6 @@ type DesafioComMidia = GameChallenge & { media: Media | null };
 
 const VAZIA: Jogada = { guesses: [], words: [], hints: [] };
 const iguaisAte = <T>(a: T[], b: T[]) => a.every((v, i) => b[i] === v);
-// a jogada a esta comeca igual a b
 const comecaCom = (a: Jogada, b: Jogada) =>
   iguaisAte(b.guesses, a.guesses) &&
   iguaisAte(b.words, a.words) &&
@@ -116,7 +114,6 @@ export class GamesService {
     };
   }
 
-  // confere a jogada inteira; quem esta logado tem a partida gravada
   async jogar(
     challengeId: string,
     bruta: Partial<Jogada>,
@@ -286,7 +283,6 @@ export class GamesService {
     return saida;
   }
 
-  // jogada fora das regras do desafio vira 400 com a mensagem para a pessoa
   private normalizar(desafio: DesafioComMidia, bruta: Partial<Jogada>): Jogada {
     try {
       return normalizarJogada(paraRegras(desafio), bruta, palavraAceita);

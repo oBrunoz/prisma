@@ -37,7 +37,6 @@ export class AbaDiarioComponent implements OnInit, OnDestroy {
   readonly erro = signal('');
   readonly fim = signal(false);
 
-  // o diário é por mês de quando assistiu, do mais recente para trás
   readonly meses = computed<Mes[]>(() => {
     const meses: Mes[] = [];
     for (const item of this.itens()) {

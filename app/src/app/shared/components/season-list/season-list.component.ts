@@ -17,7 +17,7 @@ export class SeasonListComponent implements OnDestroy {
   @Input({ required: true }) tvId!: number;
 
   @Input() set seasons(value: Season[]) {
-    // Especiais (temporada 0) vão para o fim da lista.
+    // especiais (temporada 0) vão para o fim
     this.orderedSeasons.set(
       [...(value ?? [])].sort((a, b) => {
         if (a.season_number === 0) return 1;

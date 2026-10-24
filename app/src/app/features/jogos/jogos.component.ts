@@ -5,7 +5,6 @@ import { filter, map } from 'rxjs';
 import { TravessiaComponent } from '../../shared/components/travessia/travessia.component';
 import { JogosEstado } from './jogos.estado';
 
-// a aba: a janela abre, as listras viram o fundo e a escolha ou a partida entram por cima
 @Component({
   selector: 'app-jogos',
   standalone: true,

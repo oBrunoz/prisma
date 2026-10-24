@@ -1,4 +1,4 @@
-/* as cores da legenda: trechos do espectro, sem o amarelo (que no site é só de nota) */
+/* sem amarelo: no site ele é só de nota */
 :host {
   --certo: #78c4c4;
   --lugar: #eca352;
@@ -78,7 +78,6 @@
   animation: aparece 2.2s ease both;
 }
 
-/* teclado: alvo de toque com 52px de altura */
 .tecla {
   flex: 1;
   max-width: 2.875rem;

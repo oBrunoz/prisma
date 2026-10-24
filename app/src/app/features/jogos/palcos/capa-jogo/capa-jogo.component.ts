@@ -14,7 +14,7 @@ import {
 } from '../../../../core/models/jogos.models';
 import { PosterListrasComponent } from '../../../../shared/components/poster-listras/poster-listras.component';
 
-// a capa do card de cada jogo: o que o desafio de hoje já mostra na primeira tentativa, nada além
+// só o que a primeira tentativa já mostra, nada além
 @Component({
   selector: 'app-capa-jogo',
   standalone: true,
@@ -43,7 +43,6 @@ export class CapaJogoComponent {
   readonly duelo = computed(() => (this.p()?.content as ConteudoDuelo)?.duelos[0] ?? null);
   readonly linha = computed(() => this.p()?.content as ConteudoLinha);
 
-  // o letreiro: as duas primeiras palavras, apagadas
   readonly letreiro = computed(() => {
     const c = this.p()?.content as ConteudoLetreiro | undefined;
     if (!c) return [];
@@ -55,7 +54,6 @@ export class CapaJogoComponent {
     return palavras.filter((p) => p.length).slice(0, 2);
   });
 
-  // a legenda: as casas vazias, três linhas
   readonly legenda = computed(() => {
     const c = this.p()?.content as ConteudoLegenda | undefined;
     return Array.from({ length: c?.tamanho ?? 5 }, (_, i) => i);

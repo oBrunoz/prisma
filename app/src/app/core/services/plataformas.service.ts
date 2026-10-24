@@ -17,8 +17,7 @@ const POR_PEDIDO = 60;
 
 const chave = (tmdbId: number, tipo: TipoMidia) => `${tipo}-${tmdbId}`;
 
-// onde assistir de cada card: os cards pedem ao nascer, o service junta num pedido por
-// fileira e o hover só mostra o que já chegou
+// os cards pedem ao nascer e o service junta num pedido por fileira; o hover só mostra o que já chegou
 @Injectable({ providedIn: 'root' })
 export class PlataformasService {
   private readonly http = inject(HttpClient);

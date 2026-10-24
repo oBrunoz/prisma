@@ -1,4 +1,3 @@
-/* a carta: 76px no celular, 96px a partir do sm; a vaga tem a altura do pôster */
 :host {
   --larg: 4.75rem;
   --alt: calc(var(--larg) * 1.5);
@@ -16,7 +15,6 @@
   scrollbar-color: rgb(255 255 255 / 0.15) transparent;
 }
 
-/* sem rolagem, a linha fica no meio */
 .trilho > :first-child {
   margin-left: auto;
 }
@@ -25,7 +23,6 @@
   margin-right: auto;
 }
 
-/* a régua: um fio entre o pôster e o ano */
 .trilho-wrap::before {
   content: '';
   position: absolute;

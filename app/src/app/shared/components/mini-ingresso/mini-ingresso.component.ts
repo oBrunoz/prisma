@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { ESPECTRO } from '../../../core/models/espectro';
 import { ZONA_DO_TIPO } from '../../../core/models/toast.models';
 
-// confirmação pequena que sai do próprio botão; o pai precisa ser relative
+// o botão pai precisa ser relative
 @Component({
   selector: 'app-mini-ingresso',
   standalone: true,

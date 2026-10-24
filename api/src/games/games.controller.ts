@@ -34,7 +34,6 @@ export class GamesController {
     return this.games.estatisticas(user.sub);
   }
 
-  // desafio antigo ao acaso: e o que a conta destrava
   @Get('random')
   @UseGuards(JwtAuthGuard)
   sortear(

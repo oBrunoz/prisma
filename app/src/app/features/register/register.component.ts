@@ -52,7 +52,6 @@ export class RegisterComponent {
   showPassword = signal(false);
   enviando = signal(false);
   erroGeral = signal('');
-  // mostra o atalho para entrar na conta que já existe
   emailJaCadastrado = signal(false);
 
   readonly campos = new Campos<Campo>(() => ({
@@ -114,7 +113,6 @@ export class RegisterComponent {
 
     const status = falha instanceof HttpErrorResponse ? falha.status : -1;
 
-    // o cadastro tem dois campos únicos: o conflito diz qual deles
     if (status === 409) {
       if (erroMenciona(falha, 'usuario')) {
         this.campos.recusar('username', 'Esse nome de usuário já está em uso.');

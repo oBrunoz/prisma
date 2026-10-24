@@ -15,7 +15,6 @@ import type {
 } from './games.regras.js';
 import { semAcento } from './games.regras.js';
 
-// monta o conteúdo de cada jogo a partir da TMDB; quem chama decide de onde vem o buscar
 export type Buscar = <T>(
   caminho: string,
   params?: Record<string, unknown>,
@@ -121,7 +120,6 @@ function taglineSegura(d: DetalhesTmdb): string | null {
   return palavras.some((p) => tag.includes(p)) ? null : d.tagline;
 }
 
-// as três pistas que a dica do letreiro e da legenda entrega, da mais vaga à mais forte
 function pistasDeDica(d: DetalhesTmdb, c: CreditosTmdb): Pista[] {
   return [
     {
@@ -142,8 +140,6 @@ function pistasDeDica(d: DetalhesTmdb, c: CreditosTmdb): Pista[] {
   ];
 }
 
-/* ---------- Ficha ---------- */
-
 export async function montarFicha(
   buscar: Buscar,
   tmdbId: number,
@@ -161,7 +157,6 @@ export async function montarFicha(
   const paises = d.production_countries
     .map((p) => regiao.of(p.iso_3166_1) ?? p.iso_3166_1)
     .slice(0, 2);
-  // a quarta pista: palavras-chave traduzidas na curadoria, a tagline ou quem produziu
   const quarta: Pista = curadoria.palavrasChave?.length
     ? { rotulo: 'Palavras-chave', valor: curadoria.palavrasChave.join(' · ') }
     : taglineSegura(d)
@@ -206,8 +201,6 @@ export async function montarFicha(
     ],
   };
 }
-
-/* ---------- Personagens ---------- */
 
 // personagem que não ajuda: figurante numerado ou descrito pela função, a própria pessoa, sem nome
 const PERSONAGEM_VAZIO =
@@ -279,8 +272,6 @@ export async function montarPersonagens(
   };
 }
 
-/* ---------- Letreiro ---------- */
-
 const VOGAIS = new Set(['A', 'E', 'I', 'O', 'U']);
 
 // acendem primeiro as consoantes raras; vogais e letras repetidas ficam para o fim
@@ -318,8 +309,6 @@ export async function montarLetreiro(
   return { titulo, ordem, abertas, pistas: pistasDeDica(d, c) };
 }
 
-/* ---------- Legenda ---------- */
-
 export async function montarLegenda(
   buscar: Buscar,
   tmdbId: number,
@@ -334,8 +323,6 @@ export async function montarLegenda(
   }
   return { palavra, exibe, pistas: pistasDeDica(d, c) };
 }
-
-/* ---------- Assinatura e Carreira ---------- */
 
 async function filmesDirigidos(
   buscar: Buscar,
@@ -434,9 +421,6 @@ export async function montarCarreira(
   return { pessoa, filmes: certos, inicial };
 }
 
-/* ---------- Duelo e Linha do tempo ---------- */
-
-// os mais votados (conhecidos) e os mais bem avaliados (inclui o lado B), sem documentário
 async function poolDeFilmes(
   buscar: Buscar,
   paginas: { caminho: string; params?: Record<string, unknown> }[],

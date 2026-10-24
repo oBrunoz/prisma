@@ -29,7 +29,7 @@
   }
 </div>
 
-<!-- o painel ocupa a largura da tela logo abaixo da navbar; segurar o mousedown mantém o foco no campo -->
+<!-- segurar o mousedown mantém o foco no campo -->
 <div
   data-lenis-prevent
   class="dropdown-panel fixed inset-x-0 top-16 z-40 max-h-[calc(100svh-4rem)] overflow-y-auto bg-[#1a1a1a] border-b border-white/10 shadow-2xl text-white"
@@ -38,7 +38,6 @@
 
   <div class="px-gutter py-6">
     @if (vazia()) {
-      <!-- no celular: recentes, fileiras, gêneros; do lg em diante as fileiras à esquerda e o resto numa coluna -->
       <div class="grid gap-8 lg:gap-y-0 lg:gap-x-12 lg:grid-cols-[minmax(0,1fr)_18rem] lg:grid-rows-[auto_1fr] xl:grid-cols-[minmax(0,1fr)_20rem]">
         @if (recentes.itens().length > 0) {
           <section class="min-w-0 lg:col-start-2 lg:row-start-1 lg:mb-8">
@@ -230,7 +229,6 @@
   }
 </div>
 
-<!-- o mesmo pôster no "em alta" e nos resultados; o anel por dentro marca a escolha pelo teclado -->
 <ng-template #poster let-titulo let-indice="indice">
   <a
     [attr.data-indice]="indice"
@@ -254,7 +252,6 @@
     <p
       class="mt-2 text-xs truncate transition duration-300 group-hover:text-white"
       [class]="ativo() === indice ? 'text-white' : 'text-gray-300'">@for (p of titulo.partes; track $index) {<span [class.text-white]="p.destaque" [class.font-semibold]="p.destaque">{{ p.texto }}</span>}</p>
-    <!-- nos resultados filme e série se misturam; no "em alta" a fileira já diz o tipo -->
     <p class="text-xs text-gray-500">
       @if (indice !== undefined) {
         {{ titulo.tipo === 'movies' ? 'Filme' : 'Série' }}{{ titulo.ano ? ' · ' + titulo.ano : '' }}

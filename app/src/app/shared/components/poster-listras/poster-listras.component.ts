@@ -13,11 +13,8 @@ import {
 import { ESPECTRO } from '../../../core/models/espectro';
 
 interface Nivel {
-  // quantas faixas cabem na altura
   faixas: number;
-  // quanto cada trecho da faixa se alonga
   alonga: number;
-  // quanto a cor puxa para a tinta mais próxima da paleta
   tinta: number;
 }
 
@@ -37,16 +34,13 @@ export const ROTULOS_DOS_NIVEIS = NIVEIS.map((n) => (n ? `${n.faixas} faixas` : 
 
 // a mesma subida das faixas da logo espectral
 const ANGULO = -0.21;
-// o espectro e o #111 do corte
 const TINTAS = [...ESPECTRO, '#111111'].map((h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16)));
 
-// a TMDB só manda o cabeçalho de CORS quando o pedido traz Origin, sem variar o cache por isso:
-// com a mesma URL, o canvas pegaria a cópia sem CORS que um <img> comum deixou no cache
+// a TMDB não varia o cache pelo Origin: na mesma URL o canvas pegaria a cópia sem CORS do <img>
 const comCors = (src: string) => `${src}${src.includes('?') ? '&' : '?'}cors`;
 const nivel = (i: number) => NIVEIS[i] ?? NITIDO;
 const nitidez = (i: number) => (NIVEIS[i] ? 0 : 1);
 
-// o pôster desenhado em listras inclinadas com as cores da marca; muda de nível sem salto
 @Component({
   selector: 'app-poster-listras',
   standalone: true,
@@ -56,13 +50,10 @@ const nitidez = (i: number) => (NIVEIS[i] ? 0 : 1);
 })
 export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input({ required: true }) src!: string;
-  // 0 a 6, o mesmo índice da tentativa
   @Input() nivel = 0;
-  // no card da escolha só cabe a parte de cima
   @Input() recorte: 'inteiro' | 'topo' = 'inteiro';
-  // tempo da passagem entre níveis, em ms
+  // em ms
   @Input() duracao = 700;
-  // teto de quadros por segundo da passagem; várias telas animando juntas pedem menos
   @Input() fps = 60;
 
   @ViewChild('tela', { static: true }) private tela!: ElementRef<HTMLCanvasElement>;
@@ -161,8 +152,7 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
     this.quadro = requestAnimationFrame(passo);
   }
 
-  // cada faixa é uma fileira inclinada de trechos com a cor média do pôster ali;
-  // `nitido` (0 a 1) cobre com o pôster real
+  // `nitido` (0 a 1) cobre as faixas com o pôster real
   private pintar(n: Nivel, nitido: number): void {
     const img = this.imagem;
     if (!img.complete || !img.naturalWidth) return;
@@ -196,7 +186,6 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
       const gr = Math.ceil(bh / ch) + 1;
       const S = 4;
 
-      // pôster girado para o eixo das faixas, na escala da amostra
       const amostra = this.amostra;
       amostra.width = gc * S;
       amostra.height = gr * S;
@@ -240,7 +229,6 @@ export class PosterListrasComponent implements AfterViewInit, OnChanges, OnDestr
       ctx.rotate(ANGULO);
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(miudo, (-gc * cw) / 2, (-gr * ch) / 2, gc * cw, gr * ch);
-      // o corte #111 entre as faixas, como no stripes-backdrop
       if (ch > 7) {
         const lw = Math.max(1, ch * 0.07);
         for (let r = 0; r <= gr; r++) {

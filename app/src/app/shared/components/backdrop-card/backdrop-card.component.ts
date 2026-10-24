@@ -22,7 +22,6 @@ import { AcoesCardComponent } from '../acoes-card/acoes-card.component';
 import { MediaFallbackComponent } from '../media-fallback/media-fallback.component';
 import { SeloMarcasComponent } from '../selo-marcas/selo-marcas.component';
 
-// o par horizontal do movie-card: backdrop com a logo do título, mesmas ações, selo e nota
 @Component({
   selector: 'app-backdrop-card',
   standalone: true,

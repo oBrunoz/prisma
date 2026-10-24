@@ -32,7 +32,6 @@ export class ReviewController {
     return this.reviews.minhaNoTitulo(user.sub, ref.tmdbId, ref.mediaType);
   }
 
-  // as resenhas com texto mais novas, uma por pessoa, para a home
   @Get('recentes')
   recentes(@Query() pagina: PaginationDto) {
     return this.reviews.recentes(pagina);

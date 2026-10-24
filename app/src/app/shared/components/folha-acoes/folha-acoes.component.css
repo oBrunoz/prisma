@@ -1,4 +1,3 @@
-/* no celular a folha sobe de baixo; a partir de sm, aparece no centro */
 .fundo {
   animation: escurece 250ms ease-out both;
 }

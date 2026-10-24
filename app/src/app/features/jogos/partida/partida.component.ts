@@ -60,7 +60,6 @@ type Evento = 'erro' | 'pulou' | 'acerto' | 'perdeu' | 'jogou';
 
 const vazia = (p: Partida): Jogada => ({ guesses: [...p.guesses], words: [...p.words], hints: [...p.hints] });
 
-// a partida: o palco de cada jogo, o palpite (quando é de adivinhar) e o resultado no fim
 @Component({
   selector: 'app-partida',
   standalone: true,
@@ -113,7 +112,6 @@ export class PartidaComponent implements OnDestroy {
   readonly info = computed(() => jogoPorSlug(this.slug()));
   readonly mecanica = computed(() => this.info()?.mecanica ?? 'filme');
   readonly adivinha = computed(() => this.mecanica() === 'filme' || this.mecanica() === 'pessoa');
-  // jogo só com conta, deslogado: o convite no lugar do palco (a API recusa a jogada)
   readonly trancado = computed(() => !!this.info()?.soComConta && !this.auth.autenticado());
   readonly partida = computed(() => {
     const info = this.info();
@@ -121,7 +119,6 @@ export class PartidaComponent implements OnDestroy {
     return this.aleatorio ? this.estado.sorteada(info.tipo) : this.estado.partida(info.tipo);
   });
 
-  // o próximo jogo de hoje que ainda falta, na ordem do menu
   readonly proximo = computed<{ info: InfoJogo; feito: boolean } | null>(() => {
     const atual = this.info();
     if (!atual) return null;
@@ -133,7 +130,6 @@ export class PartidaComponent implements OnDestroy {
     return comDesafio[0] ? { info: comDesafio[0], feito: true } : null;
   });
 
-  // qual imagem (ou nível do pôster) está na tela; segue a última liberada
   readonly vendo = signal(0);
   readonly enviando = signal(false);
   readonly evento = signal<{ tipo: Evento; indice: number } | null>(null);
@@ -157,7 +153,6 @@ export class PartidaComponent implements OnDestroy {
   });
   readonly liberadas = computed(() => (this.fim() ? TENTATIVAS : Math.min((this.partida()?.guesses.length ?? 0) + 1, TENTATIVAS)));
 
-  // o que fica no canto da barra: tentativas que restam, ou o andamento do duelo e da linha
   readonly contagem = computed(() => {
     const p = this.partida();
     if (!p || this.fim() || this.trancado()) return '';
@@ -168,7 +163,6 @@ export class PartidaComponent implements OnDestroy {
     return `${restam} ${restam === 1 ? 'tentativa' : 'tentativas'}`;
   });
 
-  // o mais recente em cima
   readonly palpites = computed(() => {
     const p = this.partida();
     if (!p || !this.adivinha()) return [];
@@ -212,7 +206,6 @@ export class PartidaComponent implements OnDestroy {
 
   readonly palpitesFeitos = computed(() => this.partida()?.guesses.filter((g) => g !== PULO) ?? []);
 
-  // o conteúdo de cada jogo, já no formato do palco
   readonly linhasDaFicha = computed<LinhaDePista[]>(() =>
     (this.partida()?.content as ConteudoFicha | undefined)?.pistas.map((p) => ({ rotulo: p.rotulo, valor: p.valor })) ?? [],
   );
@@ -243,7 +236,6 @@ export class PartidaComponent implements OnDestroy {
       });
     });
 
-    // ao abrir (ou quando a partida chega), mostra a última imagem liberada
     effect(() => {
       const p = this.partida();
       if (!p) return;
@@ -255,7 +247,6 @@ export class PartidaComponent implements OnDestroy {
           this.resultadoAberto.set(false);
           this.estatisticas.set(null);
           this.recusa.set(null);
-          // a primeira vez em cada jogo, o como jogar abre sozinho
           if (p.status === 'PLAYING' && !this.trancado() && !this.jogos.jaViuComoJogar(p.kind)) this.comoJogarAberto.set(true);
         }
         if (this.evento()) return;
@@ -283,8 +274,6 @@ export class PartidaComponent implements OnDestroy {
     const info = this.info();
     if (info) this.jogos.marcarComoJogarVisto(info.tipo);
   }
-
-  /* ---------- as jogadas de cada jogo ---------- */
 
   chutar(opcao: Opcao): void {
     this.jogos.lembrarTitulo(opcao.tmdbId, { title: opcao.title, year: opcao.year }, this.mecanica() === 'pessoa');
@@ -339,7 +328,6 @@ export class PartidaComponent implements OnDestroy {
       else this.router.navigate(['/jogos']);
       return;
     }
-    // digitar em qualquer lugar vai direto para o palpite (nos jogos de adivinhar)
     const alvo = evento.target as HTMLElement | null;
     if (
       this.adivinha() &&
@@ -409,7 +397,6 @@ export class PartidaComponent implements OnDestroy {
       });
   }
 
-  // as faixas cruzam a tela (ou rebobinam) e o resultado aparece por baixo delas
   private terminar(acertou: boolean): void {
     this.carregarEstatisticas();
     // a legenda espera a última linha virar
@@ -430,7 +417,6 @@ export class PartidaComponent implements OnDestroy {
       .subscribe({ next: (e) => this.estatisticas.set(e[info.tipo] ?? null), error: () => this.estatisticas.set(null) });
   }
 
-  // frames: a imagem do acerto ou a última liberada; pôster: nítido no fim
   private posicaoFinal(p: Partida): number {
     if (p.status === 'WON' && p.kind === 'FRAMES') return p.guesses.length - 1;
     if (p.status !== 'PLAYING') return TENTATIVAS - 1;

@@ -1,7 +1,6 @@
 import { computed, signal } from '@angular/core';
 
-// erro de cada campo: o da regra aparece depois de sair do campo ou tentar enviar;
-// o do servidor aparece na hora e some quando o usuário mexe naquele campo
+// o erro da regra aparece ao sair do campo ou enviar; o do servidor, na hora, até mexer no campo
 export class Campos<C extends string> {
   private readonly tocados = signal<ReadonlySet<C>>(new Set());
   private readonly tentouEnviar = signal(false);

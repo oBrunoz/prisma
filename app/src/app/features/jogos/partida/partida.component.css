@@ -32,7 +32,6 @@
   }
 }
 
-/* frame novo entra com a cintilação do projetor */
 .projeta {
   animation: projeta 550ms ease-out;
 }
@@ -57,7 +56,6 @@
   }
 }
 
-/* trilha: miniatura (frames) ou degrau de nitidez (pôster), sempre com o fio embaixo */
 .degrau {
   position: relative;
   display: grid;
@@ -195,7 +193,6 @@ li.novo {
   }
 }
 
-/* varredura: ida no acerto, volta (rebobinando) no erro; com o grão das listras */
 .varredura i {
   display: block;
   clip-path: inset(0 100% 0 0);

@@ -3,7 +3,6 @@ import { LucideBookmark, LucideCheck, LucideEye, LucideHeart } from '@lucide/ang
 import { TipoMidia } from '../../../core/models/catalogo.models';
 import { ACOES_RAPIDAS, MarcasService } from '../../../core/services/marcas.service';
 
-// assistido, curtir e watchlist sobre a imagem do card; só com mouse (no toque é a folha)
 @Component({
   selector: 'app-acoes-card',
   standalone: true,

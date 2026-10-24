@@ -1,21 +1,4 @@
-<!--
-  Uma única fita de listras anos 70 (violeta → carmim) atravessando a página.
-  As cores já vêm envelhecidas (sepia 0.18 + saturate 0.92 aplicados no hex);
-  um filter CSS tingiria também a faixa de corte e ela apareceria.
-
-  O viewBox é "percentual": 100 unidades de largura, 1000 de altura, esticado
-  para o tamanho do documento com preserveAspectRatio="none". Como os traços
-  usam vector-effect="non-scaling-stroke", a espessura fica travada em px de tela
-  independentemente do quanto a página estica — o que permite ancorar cada
-  curva a uma região da página (y=200 é sempre a área das listas, y=560 é
-  sempre o CTA) sem nenhum JavaScript.
-
-  As faixas são o mesmo traçado deslocado no eixo X (via --i, no CSS), coladas
-  umas nas outras como as listras dos anos 70: a espessura em vw acompanha o
-  deslocamento em % de largura, então não sobra vão entre elas em nenhuma tela.
-  Cada faixa cobre a sobra da anterior; nas diagonais elas afinam um pouco,
-  o que mantém a leitura de fita única.
--->
+<!-- viewBox percentual + non-scaling-stroke: cada curva fica ancorada a uma região da página, sem JS -->
 <svg
   class="ribbon"
   viewBox="0 0 100 1800"
@@ -25,7 +8,6 @@
 
   <g stroke-linecap="round">
 
-    <!-- VIOLETA -->
     <path
       class="wire" style="--i: 0"
       stroke="#45417c"
@@ -44,7 +26,6 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- AZUL -->
     <path
       class="wire" style="--i: 1"
       stroke="#2880a8"
@@ -63,7 +44,6 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- CIANO -->
     <path
       class="wire" style="--i: 2"
       stroke="#78c4c4"
@@ -82,7 +62,6 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- CREME -->
     <path
       class="wire" style="--i: 3"
       stroke="#f0e0c5"
@@ -101,7 +80,6 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- LARANJA -->
     <path
       class="wire" style="--i: 4"
       stroke="#eca352"
@@ -120,7 +98,6 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- CORAL -->
     <path
       class="wire" style="--i: 5"
       stroke="#d85057"
@@ -139,7 +116,6 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- CARMIM -->
     <path
       class="wire" style="--i: 6"
       stroke="#942548"
@@ -158,7 +134,7 @@
         C 53 1765, 51 1790, 50 1880
       " />
 
-    <!-- CORTE: cor do body; apara a última faixa na largura das outras (a opacidade é do svg inteiro, então não aparece) -->
+    <!-- corte na cor do body: apara a última faixa na largura das outras -->
     <path
       class="wire" style="--i: 7"
       stroke="#111111"

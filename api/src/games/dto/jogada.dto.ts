@@ -24,7 +24,6 @@ export class JogadaDto {
   @Max(MAX_INT4, { each: true })
   guesses: number[];
 
-  // legenda: as palavras tentadas
   @IsOptional()
   @IsArray()
   @ArrayMaxSize(TENTATIVAS)

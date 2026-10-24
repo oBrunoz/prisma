@@ -13,15 +13,13 @@ interface CardJogo {
   info: InfoJogo;
   partida: Partida;
   fim: boolean;
-  // só com conta e deslogado: o card abre o convite
   trancado: boolean;
   fios: { cor: string; gasto: boolean; vazio: boolean }[];
   status: string;
   botao: string;
 }
 
-// os jogos do dia na home, numa fileira, com o andamento de cada um; some se não houver desafio.
-// Nasce com o esqueleto da fileira para a altura não mudar quando o dia chega
+// nasce com o esqueleto da fileira para a altura não mudar quando o dia chega
 @Component({
   selector: 'app-jogos-hoje',
   standalone: true,
@@ -39,7 +37,6 @@ export class JogosHojeComponent implements OnDestroy {
   readonly dia = signal<DesafiosDoDia | null>(null);
   readonly carregado = signal(false);
 
-  // os que faltam primeiro: quem já jogou um vê o próximo logo de cara
   readonly cards = computed(() =>
     JOGOS.flatMap((info): CardJogo[] => {
       const partida = this.dia()?.challenges.find((c) => c.kind === info.tipo);
@@ -72,12 +69,11 @@ export class JogosHojeComponent implements OnDestroy {
     }).sort((a, b) => Number(a.fim) - Number(b.fim)),
   );
 
-  // o dia é pequeno e decide se a seção existe: vem logo na abertura, com a pessoa ainda no destaque
+  // pequeno e decide se a seção existe: vem logo na abertura
   constructor() {
     this.jogos
       .hoje()
       .pipe(takeUntil(this.destroy$))
-      // sem o dia, a seção só não aparece
       .subscribe({
         next: (dia) => this.dia.set(dia),
         error: () => {

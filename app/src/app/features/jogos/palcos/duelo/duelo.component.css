@@ -40,7 +40,6 @@
   animation: nota 350ms ease-out both;
 }
 
-/* um fio por duelo: aceso no acerto, apagado no erro */
 .fio {
   display: block;
   width: 1.375rem;

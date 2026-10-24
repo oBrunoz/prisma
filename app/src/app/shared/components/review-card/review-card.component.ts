@@ -25,7 +25,7 @@ export class ReviewCardComponent {
   get avatarUrl(): string {
     const path = this.review.author_details?.avatar_path;
     if (!path) return '';
-    // Alguns avatares vêm como "/https://..." (Gravatar) — nesse caso o path já é a URL.
+    // alguns avatares vêm como "/https://..." (Gravatar): o path já é a URL
     if (path.startsWith('/http')) return path.slice(1);
     return `${environment.tmdbImageUrl}/w185${path}`;
   }
@@ -38,7 +38,7 @@ export class ReviewCardComponent {
     return this.review.author_details?.rating ?? null;
   }
 
-  /** Texto da TMDB vem em markdown leve; limpa o básico para exibição. */
+  // a TMDB manda markdown leve
   get content(): string {
     return (this.review.content || '')
       .replace(/<\/?[^>]+>/g, '')

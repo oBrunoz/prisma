@@ -21,10 +21,8 @@ import { JogosEstado } from '../jogos.estado';
 import { dataPorExtenso, tempoAteAVirada } from '../jogos.util';
 import { CapaJogoComponent } from '../palcos/capa-jogo/capa-jogo.component';
 
-// teclas do 1 ao 0: os dez jogos, na ordem do menu
 const TECLAS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
-// a escolha do dia: os jogos lado a lado, com o andamento de cada um
 @Component({
   selector: 'app-jogos-menu',
   standalone: true,
@@ -109,7 +107,6 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // o aleatório é o que a conta destrava: deslogado, o convite sem sair da página
   jogarAleatorio(slug: string): void {
     if (!this.auth.autenticado()) {
       this.auth.pedirLogin('Crie uma conta para jogar desafios aleatórios');
@@ -118,7 +115,6 @@ export class JogosMenuComponent implements OnInit, OnDestroy {
     this.router.navigate(['/jogos', slug, 'aleatorio']);
   }
 
-  // os jogos mais legais pedem conta: deslogado, o convite sem sair da página
   pedirConta(nome: string): void {
     this.auth.pedirLogin(`Entre para jogar ${nome}`);
   }

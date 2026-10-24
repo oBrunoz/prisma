@@ -85,8 +85,7 @@ export class TokenService {
     });
   }
 
-  // apaga em vez de revogar: um token revogado que volta e lido como roubo e
-  // derrubaria a sessao nova junto. Os access tokens ja emitidos vivem ate expirar.
+  // apaga em vez de revogar: token revogado que volta e lido como roubo e derrubaria a sessao nova
   async restart(userId: string): Promise<TokenPair> {
     await this.prisma.refreshToken.deleteMany({ where: { userId } });
     return this.issue(userId);

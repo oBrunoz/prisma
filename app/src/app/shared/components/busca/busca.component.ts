@@ -40,10 +40,8 @@ interface Resultados {
 
 const VAZIO: Resultados = { titulos: [], pessoas: [], usuarios: [], falhou: false };
 
-// a ordem das setas: pôsteres, depois elenco, depois usuários
 type Navegavel = { rota: unknown[] };
 
-// atalhos do painel vazio; os mesmos gêneros da home
 const GENEROS = [
   { id: 28, nome: 'Ação' },
   { id: 35, nome: 'Comédia' },
@@ -83,7 +81,6 @@ export class BuscaComponent implements OnInit, OnDestroy {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly recentes = inject(BuscasRecentesService);
 
-  // a navbar recolhe a barra no celular quando a busca fecha vazia
   readonly recolher = output<void>();
 
   @ViewChild('campo') campo?: ElementRef<HTMLInputElement>;
@@ -182,7 +179,6 @@ export class BuscaComponent implements OnInit, OnDestroy {
     this.focar();
   }
 
-  // clicou num resultado: guarda o termo e sai do caminho
   aoAbrir(): void {
     this.recentes.guardar(this.digitado());
     this.limpar();
@@ -230,7 +226,6 @@ export class BuscaComponent implements OnInit, OnDestroy {
     }
   }
 
-  // o painel fica no próprio componente: clique fora dele fecha
   @HostListener('document:pointerdown', ['$event'])
   aoTocarFora(evento: PointerEvent): void {
     if (!this.aberta()) return;
@@ -291,7 +286,6 @@ export class BuscaComponent implements OnInit, OnDestroy {
     );
   }
 
-  // só na primeira abertura; o MovieService guarda em cache
   private carregarEmAlta(): void {
     if (this.emAltaPedido) return;
     this.emAltaPedido = true;
@@ -312,7 +306,6 @@ export class BuscaComponent implements OnInit, OnDestroy {
         this.carregandoEmAlta.set(false);
         if (filmes) this.filmesEmAlta.set(filmes);
         if (series) this.seriesEmAlta.set(series);
-        // pede de novo na próxima abertura o que falhou
         if (!filmes || !series) this.emAltaPedido = false;
       });
   }

@@ -4,7 +4,6 @@ const ESPERA = 450;
 // dedo que andou mais que isso está rolando a fileira, não segurando
 const FOLGA = 10;
 
-// segurar o card no toque: abre as ações e engole o clique que viria ao soltar
 @Directive({
   selector: '[appSegurar]',
   standalone: true,

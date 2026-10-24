@@ -1,4 +1,3 @@
-// convite para avaliar depois de um atalho: banner da home e cards usam os mesmos textos
 export const CONVITES_ASSISTIDO = [
   'Assistiu? Então conta aí: valeu a pipoca?',
   'E aí, amou, odiou ou ficou no meio-termo? Deixa sua nota enquanto tá fresquinho.',

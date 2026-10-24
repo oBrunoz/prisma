@@ -1,5 +1,4 @@
 <div class="min-h-svh flex">
-  <!-- arte: a folha abre e a câmera atravessa a janela até as listras -->
   <div class="relative hidden md:block md:w-[52%] shrink-0">
     <app-travessia class="absolute inset-0"></app-travessia>
     <div class="absolute left-gutter right-12 top-28 z-10 max-w-sm">
@@ -16,7 +15,6 @@
       </div>
 
       <form class="space-y-5" (ngSubmit)="onSubmit()">
-        <!-- Nome -->
         <div>
           <label for="name" class="block text-sm text-gray-300 mb-2">Nome</label>
           <div class="relative">
@@ -45,7 +43,6 @@
           }
         </div>
 
-        <!-- Nome de usuário: no erro, a ajuda dá lugar à mensagem -->
         <div>
           <label for="username" class="block text-sm text-gray-300 mb-2">Nome de usuário</label>
           <div class="relative">
@@ -75,7 +72,6 @@
           </p>
         </div>
 
-        <!-- E-mail -->
         <div>
           <label for="email" class="block text-sm text-gray-300 mb-2">E-mail</label>
           <div class="relative">
@@ -106,7 +102,6 @@
           }
         </div>
 
-        <!-- Senha -->
         <div>
           <label for="password" class="block text-sm text-gray-300 mb-2">Senha</label>
           <div class="relative">

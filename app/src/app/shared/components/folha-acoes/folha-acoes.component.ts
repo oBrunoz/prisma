@@ -23,7 +23,6 @@ export class FolhaAcoesComponent {
   readonly plataformas = inject(PlataformasService);
 
   private readonly fecharBtn = viewChild<ElementRef<HTMLButtonElement>>('fecharBtn');
-  // o foco volta para o ⋯ (ou o card) que abriu a folha
   private origem: HTMLElement | null = null;
 
   constructor() {

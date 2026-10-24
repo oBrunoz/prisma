@@ -20,7 +20,6 @@ export function tempoAteAVirada(agora = Date.now()): string {
   return `${dois(Math.floor(s / 3600))}:${dois(Math.floor(s / 60) % 60)}:${dois(s % 60)}`;
 }
 
-// "quinta, 15 de outubro" a partir do YYYY-MM-DD da API
 export function dataPorExtenso(dia: string): string {
   return new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
@@ -34,7 +33,6 @@ export function dataPorExtenso(dia: string): string {
 
 const COR_DA_LETRA: Record<CorDaLetra, string> = { certo: '🟦', lugar: '🟧', ausente: '⬛' };
 
-// texto para colar no grupo: erros, o acerto e o que sobrou; as dicas aparecem como lâmpadas
 export function textoDoResultado(nome: string, p: Partida): string {
   const cabeca = `Prisma · ${nome} Nº ${p.number}`;
   const acertou = p.status === 'WON';

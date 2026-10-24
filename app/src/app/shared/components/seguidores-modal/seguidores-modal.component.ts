@@ -45,7 +45,6 @@ export class SeguidoresModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor() {
-    // a página atrás não rola enquanto a janela está aberta
     this.smoothScroll.stop();
   }
 

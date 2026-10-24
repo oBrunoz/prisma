@@ -28,14 +28,12 @@ const GENEROS_SEM_PAPEL = new Set([10767, 10763, 10764]);
 
 const IMAGEM_TMDB = /^(.*\/t\/p\/)(?:w\d+|h\d+|original)(\/.+)$/;
 
-// a mesma imagem da TMDB em outro tamanho
 export function noTamanho(url: string, tamanho: string): string {
   const partes = url.match(IMAGEM_TMDB);
   return partes ? `${partes[1]}${tamanho}${partes[2]}` : url;
 }
 
-// fundo de destaque: cada tela baixa só o que precisa. O celular fica na w780/w1280;
-// tela grande ou retina leva a original, com a largura real que a TMDB informa
+// o celular fica na w780/w1280; tela grande ou retina leva a original
 export function srcsetDeFundo(url: string, larguraOriginal = 1920): string | null {
   if (!IMAGEM_TMDB.test(url)) return null;
   const lista = [`${noTamanho(url, 'w780')} 780w`, `${noTamanho(url, 'w1280')} 1280w`];
@@ -43,7 +41,6 @@ export function srcsetDeFundo(url: string, larguraOriginal = 1920): string | nul
   return lista.join(', ');
 }
 
-// logo de destaque: w500 na tela comum, a original na retina
 export function srcsetDeLogo(url: string, larguraOriginal: number): string | null {
   if (!IMAGEM_TMDB.test(url) || larguraOriginal <= 500) return null;
   return `${noTamanho(url, 'w500')} 500w, ${noTamanho(url, 'original')} ${larguraOriginal}w`;
@@ -58,7 +55,6 @@ export class MovieService {
 
   constructor(private http: HttpClient) {}
 
-  // Cache de leitura da TMDB
   private readonly cache = new Map<string, { at: number; stream$: Observable<unknown> }>();
   private readonly cacheTtl = 10 * 60 * 1000;
   private readonly cacheMaxEntries = 150;
@@ -91,7 +87,6 @@ export class MovieService {
     return stream$;
   }
 
-  // Remove o que venceu e, se ainda estiver grande, as entradas mais antigas.
   private pruneCache(): void {
     const now = Date.now();
 
@@ -170,9 +165,7 @@ export class MovieService {
     return type === 'movie' ? this.getMovieDetails(id) : this.getTvDetails(id);
   }
 
-  /**
-   * As reviews da TMDB são quase todas em inglês; pedir em pt-BR devolve lista vazia.
-   */
+  // as reviews da TMDB são quase todas em inglês; pedir em pt-BR devolve lista vazia
   getReviews(id: number, type: 'movie' | 'tv', page = 1): Observable<TmdbListResponse<Review>> {
     const params = new HttpParams().set('language', 'en-US').set('page', String(page));
 
@@ -185,12 +178,10 @@ export class MovieService {
     return this.get<SeasonDetails>(`/tv/${tvId}/season/${seasonNumber}`);
   }
 
-  /** Provedores de streaming do país informado (padrão Brasil). */
   getWatchProviders(details: ContentDetails | null, country = 'BR'): WatchProviderCountry | null {
     return details?.['watch/providers']?.results?.[country] ?? null;
   }
 
-  /** Classificação indicativa brasileira (filme usa release_dates, série usa content_ratings). */
   getCertification(details: ContentDetails | null, country = 'BR'): string {
     if (!details) return '';
 
@@ -202,15 +193,7 @@ export class MovieService {
     return cert ?? '';
   }
 
-  /**
-   * Filmografia relevante da pessoa, de cast e crew juntos.
-   *
-   * Só cast não serve: diretor e roteirista não aparecem lá, e o que sobra são
-   * entrevistas e documentários — o "Conhecido por" do Nolan vinha sem os filmes
-   * dele. Entram os papéis de atuação e as funções do próprio ofício da pessoa;
-   * aparições como ela mesma, talk show, jornalismo e reality ficam de fora.
-   * Um mesmo título creditado duas vezes (dirigiu e escreveu) aparece uma só.
-   */
+  // só cast não serve: diretor e roteirista não aparecem lá, então entra o crew do próprio ofício
   getPersonCredits(person: PersonDetails | null): PersonCredit[] {
     if (!person) return [];
 
@@ -239,7 +222,6 @@ export class MovieService {
     return [...porTitulo.values()].sort((a, b) => (b.vote_count ?? 0) - (a.vote_count ?? 0));
   }
 
-  // aparição como si mesmo não é trabalho
   private isAparicao(credit: PersonCredit): boolean {
     return /(self|himself|herself|themselves|ele mesmo|ela mesma)/i.test(
       credit.character ?? ''
@@ -253,14 +235,7 @@ export class MovieService {
     return 0;
   }
 
-  /**
-   * Detalhes de uma pessoa.
-   *
-   * A TMDB frequentemente não tem biografia em pt-BR para nomes menos
-   * conhecidos (volta string vazia), então cai para o inglês em vez de mostrar
-   * um espaço em branco. O `language` no extraParams sobrescreve o padrão e
-   * entra na chave do cache, então o fallback também é cacheado.
-   */
+  // a TMDB costuma não ter biografia em pt-BR de nomes menos conhecidos: cai para o inglês
   getPersonDetails(id: number): Observable<PersonDetails> {
     return this.get<PersonDetails>(`/person/${id}`, {
       append_to_response: 'combined_credits,external_ids',
@@ -314,7 +289,6 @@ export class MovieService {
     return logos.find((l) => l.iso_639_1 === 'pt') ?? logos.find((l) => l.iso_639_1 === 'en') ?? logos[0];
   }
 
-  // fundo e logo do destaque com os tamanhos que cada tela pode pedir
   private imagensDoDestaque(images: ImagesResponse) {
     const fundo = images.backdrops?.[0];
     const logo = this.escolherLogo(images);
@@ -342,7 +316,6 @@ export class MovieService {
         );
         if (trailer) return of(`https://www.youtube-nocookie.com/embed/${trailer.key}`);
 
-        // Fallback: busca em inglês se não encontrar em pt-BR
         let params = new HttpParams().set('language', 'en-US');
         const endpoint = type === 'movie' ? `/movie/${id}/videos` : `/tv/${id}/videos`;
         return this.http.get<VideoResponse>(`${this.baseUrl}${endpoint}`, { params }).pipe(
@@ -363,7 +336,6 @@ export class MovieService {
     return `${environment.tmdbImageUrl}/${size}${path}`;
   }
 
-  /** Monta o destaque a partir de um único /movie/{id} — imagens e vídeos já vêm anexados. */
   private toSpotlight(movie: Movie, details: ContentDetails): SpotlightData {
     const images = details.images ?? ({ backdrops: [], posters: [], logos: [] } as ImagesResponse);
     const trailer = (details.videos?.results ?? []).find(
@@ -378,8 +350,7 @@ export class MovieService {
     };
   }
 
-  // o destaque da home só usa os dados básicos, as imagens e o trailer: sem elenco,
-  // similares e recomendações, cada filme pesa uma fração do getMovieDetails
+  // sem elenco, similares e recomendações, cada filme pesa uma fração do getMovieDetails
   private getSpotlightDetails(id: number): Observable<ContentDetails> {
     return this.get<ContentDetails>(`/movie/${id}`, {
       append_to_response: 'images,videos,watch/providers',
@@ -413,8 +384,6 @@ export class MovieService {
     );
   }
 
-  // Lista de gêneros
-  // logos dos streamings disponíveis numa região
   getStreamingsDaRegiao(regiao = 'BR'): Observable<{ provider_id: number; provider_name: string; logo_path: string }[]> {
     return this.get<{ results: { provider_id: number; provider_name: string; logo_path: string }[] }>(
       '/watch/providers/movie',
@@ -432,7 +401,6 @@ export class MovieService {
     );
   }
 
-  // Catálogo por gênero. Sem `genreId` devolve o populares geral.
   discover<T>(
     type: 'movie' | 'tv',
     options: {
@@ -454,14 +422,12 @@ export class MovieService {
     return this.get<TmdbListResponse<T>>(`/discover/${type}`, params);
   }
 
-  // Destaque de um título qualquer
   getSpotlight(id: number, type: 'movie' | 'tv'): Observable<Spotlight> {
     return this.getContentDetails(id, type).pipe(
       map((details) => this.toGenericSpotlight(details, type))
     );
   }
 
-  // Monta o destaque a partir de um /movie/{id} ou /tv/{id}
   private toGenericSpotlight(details: ContentDetails, type: 'movie' | 'tv'): Spotlight {
     const images = details.images ?? ({ backdrops: [], posters: [], logos: [] } as ImagesResponse);
     const trailer = (details.videos?.results ?? []).find(

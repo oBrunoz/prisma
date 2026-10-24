@@ -1,8 +1,6 @@
 <div>
-  <!-- Cabeçalho -->
   <section class="relative overflow-hidden bg-black rounded-b-3xl sm:rounded-b-[2rem] border-b border-white/10 hero-edge">
 
-    <!-- fundo: cena do título mais conhecido -->
     <div class="absolute inset-0">
       <div class="absolute inset-0 bg-black bg-opacity-60">
         @if (backdropUrl()) {
@@ -17,13 +15,11 @@
       </div>
     </div>
 
-    <!-- vinheta -->
     <div
       class="absolute inset-0 pointer-events-none"
       style="background: radial-gradient(ellipse at center, transparent 75%, rgba(0, 0, 0, 0.397) 100%); z-index: 11;">
     </div>
 
-    <!-- fade -->
     <div
       class="absolute bottom-0 left-0 right-0 h-56 pointer-events-none"
       style="background: linear-gradient(to bottom, transparent, rgba(17,17,17,0.92)); z-index: 11;">
@@ -91,7 +87,6 @@
               }
             </div>
 
-            <!-- a carreira resumida em três números -->
             @if (titleCount() > 0) {
               <div class="flex flex-wrap gap-x-8 sm:gap-x-16 gap-y-5 sm:gap-y-6 pt-2">
                 <div>
@@ -126,7 +121,6 @@
   </section>
 
   @if (person(); as person) {
-    <!-- Biografia -->
     @if (person.biography) {
       <section class="bg-[#0d0d0d] py-12 sm:py-16">
         <div class="px-gutter">
@@ -146,7 +140,6 @@
       </section>
     }
 
-    <!-- Conhecido por -->
     @if (knownFor().length > 0) {
       <section class="py-12 sm:py-16">
         <div class="px-gutter">

@@ -20,7 +20,6 @@ export interface Opcao {
   tmdbId: number;
   title: string;
   year: number | null;
-  // título original, só quando difere do traduzido
   original: string | null;
 }
 
@@ -46,7 +45,6 @@ function aderencia(termo: string, titulo: string): number {
   return t.includes(termo) ? 3 : 4;
 }
 
-// reordena o que a TMDB devolve: quem bate com o que foi digitado primeiro, depois o mais votado
 function ordenar(termo: string, filmes: Movie[]): Movie[] {
   const q = normalizar(termo);
   return filmes
@@ -66,7 +64,7 @@ const OFICIOS: Record<string, string> = {
   Sound: 'Som',
 };
 
-// pessoa: a mesma régua do filme, sem corte por votos (a TMDB já devolve pela fama)
+// sem corte por votos: a TMDB já devolve pela fama
 function ordenarPessoas(termo: string, pessoas: Person[]): Person[] {
   const q = normalizar(termo);
   return pessoas
@@ -76,7 +74,7 @@ function ordenarPessoas(termo: string, pessoas: Person[]): Person[] {
     .map(({ p }) => p);
 }
 
-// o palpite: busca de filmes (ou de pessoas) da TMDB; a resposta é conferida pelo id, não pelo texto
+// a resposta é conferida pelo id, não pelo texto
 @Component({
   selector: 'app-palpite',
   standalone: true,
@@ -86,10 +84,8 @@ function ordenarPessoas(termo: string, pessoas: Person[]): Person[] {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PalpiteComponent implements OnInit, OnDestroy {
-  // ids já chutados não aparecem de novo
   @Input() excluir: number[] = [];
   @Input() desabilitado = false;
-  // assinatura: o palpite é quem dirigiu
   @Input() modo: 'filme' | 'pessoa' = 'filme';
 
   @Output() chutar = new EventEmitter<Opcao>();
@@ -108,7 +104,6 @@ export class PalpiteComponent implements OnInit, OnDestroy {
   readonly ativa = signal(-1);
   readonly buscando = signal(false);
   readonly escolhida = signal<Opcao | null>(null);
-  // pisca o campo em coral quando o palpite erra
   readonly errou = signal(false);
 
   ngOnInit(): void {
