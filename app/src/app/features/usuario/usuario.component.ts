@@ -6,7 +6,7 @@ import { LucideCamera, LucidePencil, LucideUserCheck, LucideUserPlus } from '@lu
 import { EMPTY, Subject, catchError, map, merge, switchMap, takeUntil, tap } from 'rxjs';
 import { ENFEITES } from '../../core/config/enfeites';
 import { mensagemDeErro } from '../../core/errors/mensagens';
-import { PerfilPublico, PublicUser } from '../../core/models/auth.models';
+import { FOCO_PADRAO, PerfilPublico, PublicUser, estiloDaCapa } from '../../core/models/auth.models';
 import { Midia } from '../../core/models/catalogo.models';
 import { AuthService } from '../../core/services/auth.service';
 import { FundoService } from '../../core/services/fundo.service';
@@ -93,6 +93,8 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     const perfil = this.perfil();
     return !!perfil && perfil.id === this.auth.usuario()?.id;
   });
+
+  readonly estiloCapa = computed(() => estiloDaCapa(this.perfil()?.capa.foco ?? FOCO_PADRAO));
 
   readonly enfeite = computed(() => {
     const perfil = this.perfil();

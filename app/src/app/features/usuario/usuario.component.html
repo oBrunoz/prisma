@@ -1,38 +1,42 @@
 <div class="pt-32 pb-20">
   <section
-    class="relative -mt-32 pt-32 sm:pt-40 overflow-hidden"
+    class="relative -mt-32 overflow-hidden"
     [ngClass]="
       enfeite()
-        ? 'bg-[#0d0d0d] min-h-[30rem] sm:min-h-[34rem] flex flex-col justify-end pb-8 sm:pb-10'
-        : capaPath()
-          ? 'min-h-[30rem] sm:min-h-[34rem] flex flex-col justify-end pb-8 sm:pb-10'
-          : 'bg-[#0d0d0d] border-b border-white/5 pb-10 sm:pb-12'
+        ? 'pt-32 sm:pt-40 bg-[#0d0d0d] min-h-[35rem] sm:min-h-[40rem] flex flex-col justify-end pb-8 sm:pb-10'
+        : 'pt-[15rem] sm:pt-[23rem] lg:pt-[28rem] pb-8 sm:pb-10'
     ">
 
     @if (enfeite(); as enfeite) {
       <app-lirios-defs></app-lirios-defs>
       <app-capa-coracao [src]="enfeite.capa.src"></app-capa-coracao>
-    } @else if (capaPath(); as capa) {
-      <img
-        [src]="capaSrc(capa)"
-        [srcset]="capaSrcset(capa)"
-        sizes="100vw"
-        alt=""
-        fetchpriority="high"
-        class="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
-      <div class="absolute inset-0 bg-gradient-to-r from-[#111111] from-10% via-[#111111]/70 to-[#111111]/10"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent"></div>
-      <!-- a navbar fica transparente no topo: sem isto, some sobre capa clara -->
-      <div class="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#111111]/85 to-transparent"></div>
-      @if (perfil(); as perfil) {
-        @if (perfil.capa.media; as midia) {
-          <p class="hidden sm:block absolute top-24 right-[var(--gutter)] z-[1] text-xs text-gray-400">
-            Capa: <span class="text-gray-300">{{ midia.title }}</span>{{ perfil.capa.tipo === 'favorito' ? ', favorito de ' + perfil.username : '' }}
-          </p>
+    } @else {
+      <!-- mesma altura com ou sem cena, para o topo não pular quando ela chega -->
+      <div class="absolute inset-x-0 top-0 h-[20rem] sm:h-[27rem] lg:h-[32rem] overflow-hidden">
+        @if (capaPath(); as capa) {
+          <img
+            [src]="capaSrc(capa)"
+            [srcset]="capaSrcset(capa)"
+            sizes="100vw"
+            alt=""
+            fetchpriority="high"
+            [style]="estiloCapa()"
+            class="absolute inset-0 w-full h-full object-cover" />
+        } @else {
+          <app-stripes-banner></app-stripes-banner>
+        }
+        <div class="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/75 via-30% to-transparent to-70%"></div>
+      </div>
+      @if (capaPath()) {
+        <div class="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#111111]/85 to-transparent"></div>
+        @if (perfil(); as perfil) {
+          @if (perfil.capa.media; as midia) {
+            <p class="hidden sm:block absolute top-24 right-[var(--gutter)] z-[1] text-xs text-gray-400">
+              Capa: <span class="text-gray-300">{{ midia.title }}</span>{{ perfil.capa.tipo === 'favorito' ? ', favorito de ' + perfil.username : '' }}
+            </p>
+          }
         }
       }
-    } @else {
-      <app-stripes-banner></app-stripes-banner>
     }
 
     <div class="relative px-gutter">
