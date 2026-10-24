@@ -13,6 +13,7 @@ import { UsuarioService } from '../../../../core/services/usuario.service';
 import { MediaFallbackComponent } from '../../../../shared/components/media-fallback/media-fallback.component';
 import { StripesBannerComponent } from '../../../../shared/components/stripes-banner/stripes-banner.component';
 import { EnquadrarCapaComponent } from '../enquadrar-capa/enquadrar-capa.component';
+import { Router } from '@angular/router';
 
 interface Cena {
   titulo: TituloBusca;
@@ -38,6 +39,7 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
   private readonly usuarioService = inject(UsuarioService);
   private readonly movieService = inject(MovieService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly opcoes = OPCOES;
 
@@ -189,7 +191,13 @@ export class EscolherCapaComponent implements OnInit, OnDestroy {
         next: (capa) => {
           this.salvando.set(false);
           this.salva.set(capa);
-          this.toast.sucesso('Capa atualizada', { chave: 'capa' });
+          const username = this.auth.usuario()?.username;
+          this.toast.sucesso('Capa atualizada', {
+            chave: 'capa',
+            acao: username
+              ? { rotulo: 'Ver perfil', executar: () => void this.router.navigate(['/username', username]) }
+              : undefined,
+          });
         },
         error: (falha) => {
           this.salvando.set(false);
